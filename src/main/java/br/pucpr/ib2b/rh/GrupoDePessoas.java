@@ -1,24 +1,18 @@
 package br.pucpr.ib2b.rh;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.pucpr.ib2b.persistencia.RepositorioRelacionamento;
 
-/** Guarda as pessoas cadastradas (Astah: GrupoDePessoas). Os tratadores acessam por delegação. */
+/** Guarda as pessoas cadastradas (Astah: GrupoDePessoas), delegando ao repositório da família em uso. */
 public class GrupoDePessoas {
 
-    private final List<Pessoa> pessoas = new ArrayList<>();
+    private final RepositorioRelacionamento repositorio;
 
-    public void adicionar(Pessoa p) { pessoas.add(p); }
+    public GrupoDePessoas(RepositorioRelacionamento repositorio) { this.repositorio = repositorio; }
 
-    public boolean remover(String cpf) {
-        return pessoas.removeIf(p -> p.getCpf().equals(cpf));
-    }
+    public void adicionar(Pessoa p) { repositorio.salvarPessoa(p); }
+
+    public boolean remover(String cpf) { return repositorio.removerPessoa(cpf); }
 
     /** Devolve a pessoa com esse CPF, ou {@code null} se não estiver cadastrada. */
-    public Pessoa buscarPorCpf(String cpf) {
-        for (Pessoa p : pessoas) {
-            if (p.getCpf().equals(cpf)) return p;
-        }
-        return null;
-    }
+    public Pessoa buscarPorCpf(String cpf) { return repositorio.buscarPessoa(cpf); }
 }

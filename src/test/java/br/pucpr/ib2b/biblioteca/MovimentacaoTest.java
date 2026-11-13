@@ -1,49 +1,39 @@
 package br.pucpr.ib2b.biblioteca;
 
-import br.pucpr.ib2b.academico.Estudante;
-import br.pucpr.ib2b.rh.Atendente;
-import br.pucpr.ib2b.rh.Pessoa;
+import br.pucpr.ib2b.Cenario;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Movimentacao: ponto único de acesso às transações. */
+/** Movimentacao: ponto único de acesso às transações, com reservas, empréstimos e devoluções separados. */
 class MovimentacaoTest {
 
-    private final Movimentacao movimentacao = new Movimentacao();
-    private final Livro livro = new Livro(1, "Dom Casmurro");
-    private final Estudante ana = new Estudante(1, "M-100", new Pessoa("111", "Ana", "Souza", "ana@pucpr.br"));
-    private final Atendente bruno = new Atendente(1, "F-01", new Pessoa("222", "Bruno", "Alves", "bruno@pucpr.br"));
-    private final LocalDate hoje = LocalDate.of(2026, 11, 13);
+    private final Cenario c = new Cenario();
+    private final Movimentacao movimentacao = c.movimentacao();
 
     @Test
     void buscaAReservaPeloLivroEPeloEstudante() {
-        Reserva r = new Reserva(1, hoje, livro, ana, bruno);
-        movimentacao.adicionar(r);
+        Reserva r = c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
 
-        assertSame(r, movimentacao.buscarReserva(1, "M-100"));
+        assertEquals(r.getIdTransacao(), movimentacao.buscarReserva(1, "M-100").getIdTransacao());
+        assertSame(movimentacao.buscarReserva(1, "M-100"), movimentacao.buscarReservaAtiva(1));
         assertNull(movimentacao.buscarReserva(1, "M-999"));   // outro estudante
         assertNull(movimentacao.buscarReserva(2, "M-100"));   // outro livro
     }
 
     @Test
-    void reservaRemovidaDeixaDeSerEncontrada() {
-        Reserva r = new Reserva(1, hoje, livro, ana, bruno);
-        movimentacao.adicionar(r);
+    void emprestimoRemoveAReservaECadaBuscaDevolveSoOSeuTipo() {
+        c.emprestarLivro1();
 
-        assertTrue(movimentacao.remover(r));
         assertNull(movimentacao.buscarReserva(1, "M-100"));
+        assertNotNull(movimentacao.buscarEmprestimo(1, "M-100"));
+        assertNull(movimentacao.buscarDevolucao(1, "M-100"));
     }
 
     @Test
-    void cadaBuscaDevolveSoOSeuTipoDeTransacao() {
-        Emprestimo e = new Emprestimo(2, hoje, livro, ana, bruno);
-        movimentacao.adicionar(e);
-
-        assertSame(e, movimentacao.buscarEmprestimo(1, "M-100"));
-        assertNull(movimentacao.buscarReserva(1, "M-100"));
-        assertNull(movimentacao.buscarDevolucao(1, "M-100"));
+    void idsDeTransacaoNaoSeRepetem() {
+        int a = movimentacao.gerarIdTransacao();
+        int b = movimentacao.gerarIdTransacao();
+        assertNotEquals(a, b);
     }
 }

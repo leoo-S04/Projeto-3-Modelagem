@@ -35,7 +35,13 @@ livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 
 
 **A partir daqui: MODO AUTÔNOMO (CLAUDE.md).** Etapas executadas em sequência; decisões em `docs/DECISOES.md`.
 
-## Etapa 2 — Cadastros e persistência: Template Method (Req 7) e Abstract Factory (Req 8) ⬜
+## Etapa 2 — Cadastros e persistência: Template Method (Req 7) e Abstract Factory (Req 8) ✅
+
+- ✅ Template Method: `comum.TratadorDeCadastro` (método-modelo `inserir` final), `ResultadoCadastro`; 4 tratadores de cadastro como ConcreteClass
+- ✅ Abstract Factory: pacote `persistencia` — fábricas em memória e JSON, unidade de trabalho compartilhada, gravação atômica
+- ✅ `Movimentacao` em 3 associações; `Sistema` (montagem); `RelogioAjustavel`
+- ✅ Testes `R07_CadastroTemplateMethodTest`, `R08_FamiliasDePersistenciaTest` (63 testes aprovados)
+- ✅ Guia `docs/estudo/ETAPA02_TemplateMethod_AbstractFactory.md`; decisões D15–D27
 
 ## Etapa 3 — Circulação: Facade (Req 4) e Command (Req 6) ⬜
 

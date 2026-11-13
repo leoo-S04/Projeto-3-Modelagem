@@ -30,6 +30,20 @@ public class Livro {
         this.titulo = titulo;
     }
 
+    /**
+     * Reconstitui um livro lido da persistência: a situação gravada como texto vira de novo o objeto de
+     * estado correspondente (EstadoLivro.para), junto com os dados do ciclo.
+     */
+    public static Livro reconstituir(int idLivro, String titulo, Situacao situacao, Estudante reservante,
+                                     LocalDate vencimento, int numRenovacoes) {
+        Livro l = new Livro(idLivro, titulo);
+        l.estado = EstadoLivro.para(situacao);
+        l.reservante = reservante;
+        l.vencimento = vencimento;
+        l.numRenovacoes = numRenovacoes;
+        return l;
+    }
+
     // ---- Eventos da máquina de estados (nomes do Astah): só delegam ao estado ----
     public void reservarLivro(Estudante e)                  { estado.reservarLivro(this, e); }
     public void emprestarLivro(Estudante e, LocalDate data) { estado.emprestarLivro(this, e, data); }

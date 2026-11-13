@@ -18,7 +18,7 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | 5 | Reorganizar a Etapa 0 em 3 passos e usar o formato curto de resposta | `PROGRESSO.md` reorganizado | | |
 | 6 | Passo 2 — domínio e cadastros | Classes de RH, Acadêmico e Livro/Acervo com seus tratadores (regras 1 a 4) e 19 testes | | |
 | 7 | Passo 3 — circulação e documentação | `Transacao`, `Reserva`, `Emprestimo`, `Devolucao`, `Movimentacao`, `Relacionamento`, tratadores de circulação (f2 funcionando; f1, f3, f4, f5 e inspeção pendentes para a Etapa 1), 8 testes, este registro e `docs/RASTREABILIDADE.md`. Apontou divergência: Movimentacao com lista única (Astah) × associações separadas (T02 e professor) | Equipe decidiu separar em 3 associações na Etapa 2 | |
-| 8a | Fechamento da Etapa 0 | Execução completa dos testes (27 aprovados), guia `docs/estudo/ETAPA00_Fundacao.md`, atualização da rastreabilidade e deste registro, lista de mudanças no Astah, sugestão de commit | | |
+| 8 | Fechamento da Etapa 0 | Execução completa dos testes (27 aprovados), guia `docs/estudo/ETAPA00_Fundacao.md`, atualização da rastreabilidade e deste registro, lista de mudanças no Astah, sugestão de commit | | |
 
 ## Etapa 1 — State (Req. 1)
 
@@ -27,3 +27,9 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | 9 | Apresentar o plano da Etapa 1 | Plano com 2 passos e 3 divergências: onde ficam vencimento/renovações, nomes dos eventos, tratamento da recusa | Equipe aceitou as recomendações (A, A, A; prazo de 30 dias) | |
 | 10 | Passo 1 — State no Livro | `EstadoLivro`, 7 estados, 2 exceções; `Livro` como Context; `Emprestimo`/`Devolucao` ajustados; `EstadoLivroTest` | | |
 | 11 | Mudar para o modo autônomo (CLAUDE.md) e executar as Etapas 1 a 6 com commit e push ao fim de cada uma | Passo 2 (tratadores usando o State), `R01_CicloDeVidaDoLivroTest`, `TratadorDeDevolucaoTest`, guia `ETAPA01_State.md`, `docs/DECISOES.md` | | |
+
+## Etapa 2 — Template Method (Req. 7) e Abstract Factory (Req. 8) — modo autônomo
+
+| # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
+|---|---|---|---|---|
+| 12 | Executar a Etapa 2 (CLAUDE.md, modo autônomo) | `TratadorDeCadastro` (método-modelo final) e os 4 tratadores como ConcreteClass; pacote `persistencia` com fábrica abstrata, famílias em memória e JSON (gravação atômica), unidade de trabalho compartilhada; `Movimentacao` em 3 associações; `Sistema` (montagem) e `RelogioAjustavel`; R07 e R08; guia `ETAPA02_TemplateMethod_AbstractFactory.md`; decisões D15–D27 | | |

@@ -16,22 +16,44 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Sistema de Biblioteca com Padrões GoF</name>
+    <name>Sistema de Biblioteca com Padroes GoF</name>
 
     <properties>
         <!-- Gera bytecode para Java 17 (JVM 17 do diagrama de implantação), mesmo compilando com um JDK mais novo -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <junit.version>5.11.4</junit.version>
+        <spring-boot.version>3.5.6</spring-boot.version>
     </properties>
 
+    <!-- Versões de bibliotecas gerenciadas pelo BOM do Spring Boot (Jackson, JUnit...) -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!-- Jackson: família de persistência em arquivo JSON (Req. 8) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- JUnit 5: um teste por cenário de verificação (R01_ ... R10_) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -24,9 +24,10 @@ class R01_CicloDeVidaDoLivroTest {
         assertThrows(RenovacaoNegadaException.class,
                 () -> c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100"));
 
-        assertEquals(LocalDate.of(2027, 2, 11), livro.getVencimento());  // vencimento inalterado
-        assertEquals(2, livro.getNumRenovacoes());
-        assertEquals(Situacao.RENOVADO, livro.getEstado());
+        Livro depois = c.tratadorDeAcervo.consultarLivro(1);
+        assertEquals(LocalDate.of(2027, 2, 11), depois.getVencimento());  // vencimento inalterado
+        assertEquals(2, depois.getNumRenovacoes());
+        assertEquals(Situacao.RENOVADO, depois.getEstado());
     }
 
     @Test

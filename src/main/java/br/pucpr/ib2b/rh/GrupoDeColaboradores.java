@@ -1,24 +1,21 @@
 package br.pucpr.ib2b.rh;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.pucpr.ib2b.persistencia.RepositorioRelacionamento;
 
-/** Guarda os atendentes cadastrados (Astah: GrupoDeColaboradores). */
+/** Guarda os atendentes cadastrados (Astah: GrupoDeColaboradores), delegando ao repositório da família em uso. */
 public class GrupoDeColaboradores {
 
-    private final List<Atendente> atendentes = new ArrayList<>();
+    private final RepositorioRelacionamento repositorio;
 
-    public void adicionar(Atendente a) { atendentes.add(a); }
+    public GrupoDeColaboradores(RepositorioRelacionamento repositorio) { this.repositorio = repositorio; }
 
-    public boolean remover(String matricula) {
-        return atendentes.removeIf(a -> a.getMatriculaFuncional().equals(matricula));
-    }
+    public void adicionar(Atendente a) { repositorio.salvarAtendente(a); }
+
+    public boolean remover(String matricula) { return repositorio.removerAtendente(matricula); }
 
     /** Devolve o atendente com essa matrícula funcional, ou {@code null}. */
-    public Atendente buscarPorMatricula(String matricula) {
-        for (Atendente a : atendentes) {
-            if (a.getMatriculaFuncional().equals(matricula)) return a;
-        }
-        return null;
-    }
+    public Atendente buscarPorMatricula(String matricula) { return repositorio.buscarAtendente(matricula); }
+
+    /** Id do próximo papel ("todo papel tem um id"). */
+    public int gerarIdPapel() { return repositorio.gerarIdPapel(); }
 }

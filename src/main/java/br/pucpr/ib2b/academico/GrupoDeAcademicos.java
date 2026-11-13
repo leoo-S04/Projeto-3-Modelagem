@@ -1,24 +1,21 @@
 package br.pucpr.ib2b.academico;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.pucpr.ib2b.persistencia.RepositorioRelacionamento;
 
-/** Guarda os estudantes cadastrados (Astah: GrupoDeAcademicos). */
+/** Guarda os estudantes cadastrados (Astah: GrupoDeAcademicos), delegando ao repositório da família em uso. */
 public class GrupoDeAcademicos {
 
-    private final List<Estudante> estudantes = new ArrayList<>();
+    private final RepositorioRelacionamento repositorio;
 
-    public void adicionar(Estudante e) { estudantes.add(e); }
+    public GrupoDeAcademicos(RepositorioRelacionamento repositorio) { this.repositorio = repositorio; }
 
-    public boolean remover(String matricula) {
-        return estudantes.removeIf(e -> e.getMatricula().equals(matricula));
-    }
+    public void adicionar(Estudante e) { repositorio.salvarEstudante(e); }
+
+    public boolean remover(String matricula) { return repositorio.removerEstudante(matricula); }
 
     /** Devolve o estudante com essa matrícula, ou {@code null}. */
-    public Estudante buscarPorMatricula(String matricula) {
-        for (Estudante e : estudantes) {
-            if (e.getMatricula().equals(matricula)) return e;
-        }
-        return null;
-    }
+    public Estudante buscarPorMatricula(String matricula) { return repositorio.buscarEstudante(matricula); }
+
+    /** Id do próximo papel ("todo papel tem um id"). */
+    public int gerarIdPapel() { return repositorio.gerarIdPapel(); }
 }

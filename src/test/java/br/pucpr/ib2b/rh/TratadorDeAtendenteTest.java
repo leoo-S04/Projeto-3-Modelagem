@@ -1,6 +1,7 @@
 package br.pucpr.ib2b.rh;
 
-import org.junit.jupiter.api.BeforeEach;
+import br.pucpr.ib2b.Cenario;
+import br.pucpr.ib2b.comum.StatusCadastro;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,49 +9,43 @@ import static org.junit.jupiter.api.Assertions.*;
 /** Regras 4.1 a 4.4 (manter Atendente) e a restrição de pessoa já cadastrada. */
 class TratadorDeAtendenteTest {
 
-    private iPessoa pessoas;
-    private iAtendente tratador;
-
-    @BeforeEach
-    void preparar() {
-        pessoas = new TratadorDePessoa(new GrupoDePessoas());
-        tratador = new TratadorDeAtendente(new GrupoDeColaboradores(), pessoas);
-        pessoas.inserirPessoa("222", "Bruno", "Alves", "bruno@pucpr.br");
-    }
+    private final Cenario c = new Cenario();               // já tem F-01 (Bruno, CPF 222)
+    private final iAtendente tratador = c.atendentes;
 
     @Test
     void inserirAtendenteDePessoaCadastradaGrava() {
-        Atendente a = tratador.inserirAtendente("222", "F-01");
+        var r = tratador.inserirAtendente("111", "F-02");
 
-        assertEquals("222", a.getPessoa().getCpf());
-        assertSame(a, tratador.consultarAtendente("F-01"));
+        assertEquals(StatusCadastro.NOVO, r.getStatus());
+        assertEquals("111", r.getEntidade().getPessoa().getCpf());
+        assertSame(r.getEntidade(), tratador.consultarAtendente("F-02"));
     }
 
     @Test
     void inserirAtendenteDeCpfNaoCadastradoNaoGravaNada() {
-        assertNull(tratador.inserirAtendente("999", "F-02"));
-        assertNull(tratador.consultarAtendente("F-02"));
+        var r = tratador.inserirAtendente("999", "F-03");
+
+        assertEquals(StatusCadastro.RECUSADO, r.getStatus());
+        assertTrue(r.getMotivo().contains("pessoa não cadastrada"));
+        assertNull(tratador.consultarAtendente("F-03"));
     }
 
     @Test
     void inserirAtendenteDuplicadoDevolveOExistente() {
-        Atendente primeiro = tratador.inserirAtendente("222", "F-01");
+        var r = tratador.inserirAtendente("222", "F-01");
 
-        assertSame(primeiro, tratador.inserirAtendente("222", "F-01"));
+        assertEquals(StatusCadastro.EXISTENTE, r.getStatus());
+        assertSame(tratador.consultarAtendente("F-01"), r.getEntidade());
     }
 
     @Test
     void atualizarAtendenteParaCpfNaoCadastradoDevolveFalse() {
-        tratador.inserirAtendente("222", "F-01");
-
         assertFalse(tratador.atualizarAtendente("F-01", "999"));
         assertEquals("222", tratador.consultarAtendente("F-01").getPessoa().getCpf());
     }
 
     @Test
     void excluirAtendenteCadastrado() {
-        tratador.inserirAtendente("222", "F-01");
-
         assertTrue(tratador.excluirAtendente("F-01"));
         assertFalse(tratador.excluirAtendente("F-01"));
     }

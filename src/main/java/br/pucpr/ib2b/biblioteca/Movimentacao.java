@@ -1,45 +1,61 @@
 package br.pucpr.ib2b.biblioteca;
 
-import java.util.ArrayList;
+import br.pucpr.ib2b.persistencia.RepositorioMovimentacao;
+
 import java.util.List;
 
 /**
- * Ponto interno único de acesso às transações (Astah: Movimentacao): reservas, empréstimos e devoluções.
- * Os tratadores de circulação acessam as transações por delegação a esta classe.
+ * Ponto interno único de acesso às transações (Astah: Movimentacao), mantido por três associações distintas:
+ * reservas, empréstimos e devoluções (Trabalho 02; decisão D06). Os dados ficam no RepositorioMovimentacao
+ * da família de persistência em uso.
  */
 public class Movimentacao {
 
-    private final List<Transacao> transacoes = new ArrayList<>();
-    private int ultimoIdTransacao = 0;
+    private final RepositorioMovimentacao repositorio;
+
+    public Movimentacao(RepositorioMovimentacao repositorio) { this.repositorio = repositorio; }
 
     /** Gera o id da próxima transação (reserva, empréstimo ou devolução), sem repetição. */
-    public int gerarIdTransacao() { return ++ultimoIdTransacao; }
+    public int gerarIdTransacao() { return repositorio.gerarIdTransacao(); }
 
-    public Transacao adicionar(Transacao t) {
-        transacoes.add(t);
-        return t;
-    }
-
-    public boolean remover(Transacao t) { return transacoes.remove(t); }
+    // ---- Reservas ----
+    public void registrarReserva(Reserva r) { repositorio.salvarReserva(r); }
+    public boolean removerReserva(Reserva r) { return repositorio.removerReserva(r); }
 
     /** Reserva do livro para esse estudante (idEstudante = matrícula), ou {@code null}. */
     public Reserva buscarReserva(int idLivro, String idEstudante) {
-        return buscar(Reserva.class, idLivro, idEstudante);
+        return ultima(repositorio.reservas(), idLivro, idEstudante);
     }
+
+    /** Reserva ativa do livro, de qualquer estudante, ou {@code null}. */
+    public Reserva buscarReservaAtiva(int idLivro) { return ultima(repositorio.reservas(), idLivro, null); }
+
+    // ---- Empréstimos ----
+    public void registrarEmprestimo(Emprestimo e) { repositorio.salvarEmprestimo(e); }
+    public boolean removerEmprestimo(Emprestimo e) { return repositorio.removerEmprestimo(e); }
 
     public Emprestimo buscarEmprestimo(int idLivro, String idEstudante) {
-        return buscar(Emprestimo.class, idLivro, idEstudante);
+        return ultima(repositorio.emprestimos(), idLivro, idEstudante);
     }
 
+    public Emprestimo buscarEmprestimoAtivo(int idLivro) { return ultima(repositorio.emprestimos(), idLivro, null); }
+
+    // ---- Devoluções ----
+    public void registrarDevolucao(Devolucao d) { repositorio.salvarDevolucao(d); }
+
+    /** Devolução mais recente do livro por esse estudante, ou {@code null}. */
     public Devolucao buscarDevolucao(int idLivro, String idEstudante) {
-        return buscar(Devolucao.class, idLivro, idEstudante);
+        return ultima(repositorio.devolucoes(), idLivro, idEstudante);
     }
 
-    /** Procura a transação do tipo pedido (Reserva, Emprestimo ou Devolucao) que envolve o livro e o estudante. */
-    private <T extends Transacao> T buscar(Class<T> tipo, int idLivro, String idEstudante) {
-        for (Transacao t : transacoes) {
-            if (tipo.isInstance(t) && t.envolve(idLivro, idEstudante)) return tipo.cast(t);
+    /** A transação mais recente da lista que envolve o livro (e o estudante, se informado). */
+    private static <T extends Transacao> T ultima(List<T> transacoes, int idLivro, String idEstudante) {
+        T encontrada = null;
+        for (T t : transacoes) {
+            boolean doLivro = t.getLivro().getIdLivro() == idLivro;
+            boolean doEstudante = idEstudante == null || t.envolve(idLivro, idEstudante);
+            if (doLivro && doEstudante) encontrada = t;
         }
-        return null;
+        return encontrada;
     }
 }

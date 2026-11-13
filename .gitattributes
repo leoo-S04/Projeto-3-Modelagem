@@ -1,0 +1,6 @@
+# Fins de linha: LF no repositório; scripts .cmd com CRLF (Windows)
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.png binary
+*.asta binary
+*.pdf binary

@@ -1,6 +1,7 @@
 package br.pucpr.ib2b.rh;
 
-import org.junit.jupiter.api.BeforeEach;
+import br.pucpr.ib2b.Cenario;
+import br.pucpr.ib2b.comum.StatusCadastro;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,39 +9,36 @@ import static org.junit.jupiter.api.Assertions.*;
 /** Regras 2.1 a 2.4 (manter Pessoa). */
 class TratadorDePessoaTest {
 
-    private iPessoa tratador;
-
-    @BeforeEach
-    void preparar() {
-        tratador = new TratadorDePessoa(new GrupoDePessoas());
-    }
+    private final iPessoa tratador = new Cenario().pessoas;   // já tem 111 (Ana) e 222 (Bruno)
 
     @Test
     void inserirPessoaNovaGravaNoGrupo() {
-        Pessoa p = tratador.inserirPessoa("111", "Ana", "Souza", "ana@pucpr.br");
+        var r = tratador.inserirPessoa("444", "Davi", "Melo", "davi@pucpr.br");
 
-        assertEquals("Ana", p.getNome());
-        assertSame(p, tratador.consultarPessoa("111"));
+        assertEquals(StatusCadastro.NOVO, r.getStatus());
+        assertSame(r.getEntidade(), tratador.consultarPessoa("444"));
     }
 
     @Test
     void inserirCpfJaCadastradoDevolveAExistenteSemDuplicar() {
-        Pessoa primeira = tratador.inserirPessoa("111", "Ana", "Souza", "ana@pucpr.br");
+        var r = tratador.inserirPessoa("111", "Outro", "Nome", "x@x.com");
 
-        Pessoa segunda = tratador.inserirPessoa("111", "Outro", "Nome", "x@x.com");
-
-        assertSame(primeira, segunda);
-        assertEquals("Ana", segunda.getNome());          // dados originais preservados
+        assertEquals(StatusCadastro.EXISTENTE, r.getStatus());
+        assertEquals("Ana", r.getEntidade().getNome());         // dados originais preservados
         assertTrue(tratador.excluirPessoa("111"));
-        assertNull(tratador.consultarPessoa("111"));      // havia só uma: após excluir, não sobra cópia
+        assertNull(tratador.consultarPessoa("111"));            // havia só uma
+    }
+
+    @Test
+    void cpfInvalidoERecusado() {
+        var r = tratador.inserirPessoa("12a", "X", "Y", "z@z.com");
+        assertEquals(StatusCadastro.RECUSADO, r.getStatus());
+        assertNull(tratador.consultarPessoa("12a"));
     }
 
     @Test
     void atualizarPessoaCadastradaMudaOsDados() {
-        tratador.inserirPessoa("111", "Ana", "Souza", "ana@pucpr.br");
-
         assertTrue(tratador.atualizarPessoa("111", "Ana", "Lima", "ana.lima@pucpr.br"));
-
         assertEquals("Lima", tratador.consultarPessoa("111").getSobrenome());
     }
 

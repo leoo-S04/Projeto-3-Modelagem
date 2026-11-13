@@ -15,8 +15,8 @@ Legenda: ✅ implementado e testado · ⬜ pendente (etapa prevista)
 | 4 | Facade | _a definir na Etapa 3_ | `R04_...` | ⬜ Etapa 3 |
 | 5 | Observer | _a definir na Etapa 4_ | `R05_...` | ⬜ Etapa 4 |
 | 6 | Command | _a definir na Etapa 3_ | `R06_...` | ⬜ Etapa 3 |
-| 7 | Template Method | _a definir na Etapa 2_ | `R07_...` | ⬜ Etapa 2 |
-| 8 | Abstract Factory | _a definir na Etapa 2_ | `R08_...` | ⬜ Etapa 2 |
+| 7 | Template Method | AbstractClass → `TratadorDeCadastro<T, D>` (método-modelo `inserir`, final; gancho `verificarPreRequisitos`); ConcreteClass → `TratadorDeAcervo`, `TratadorDePessoa`, `TratadorDeEstudante`, `TratadorDeAtendente`; resultado → `ResultadoCadastro` | `R07_CadastroTemplateMethodTest`: `R07_estudanteDuplicadoRetornaOExistente`, `R07_estudanteComCpfNaoCadastradoFalhaAntesDeQualquerGravacao` | ✅ |
+| 8 | Abstract Factory | AbstractFactory → `FabricaDePersistencia`; ConcreteFactory → `FabricaEmMemoria`, `FabricaJson`; AbstractProduct → `UnidadeDeTrabalho`, `RepositorioLivro`, `RepositorioMovimentacao`, `RepositorioRelacionamento`; ConcreteProduct → `...EmMemoria`, `...Json`; escolha → `ConfiguradorDePersistencia`; cliente → `Sistema` (Acervo, Movimentacao, grupos) | `R08_FamiliasDePersistenciaTest`: `R08_configuracaoDeTesteFornecesSoObjetosEmMemoria`, `R08_configuracaoDeProducaoFornecesRepositoriosJsonQueCompartilhamAMesmaUnidade`, `R08_desfazerAposFalhaDeixaOArquivoInalterado`, `R08_naoEPermitidoMisturarFamilias` | ✅ |
 | 9 | Decorator | _a definir na Etapa 5_ | `R09_...` | ⬜ Etapa 5 |
 | 10 | Composite | _a definir na Etapa 5_ | `R10_...` | ⬜ Etapa 5 |
 

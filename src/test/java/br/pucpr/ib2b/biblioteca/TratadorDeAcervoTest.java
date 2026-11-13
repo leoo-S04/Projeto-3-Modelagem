@@ -1,6 +1,7 @@
 package br.pucpr.ib2b.biblioteca;
 
-import org.junit.jupiter.api.BeforeEach;
+import br.pucpr.ib2b.Cenario;
+import br.pucpr.ib2b.comum.StatusCadastro;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,38 +9,35 @@ import static org.junit.jupiter.api.Assertions.*;
 /** Regras 1.1 a 1.4 (manter Livro). */
 class TratadorDeAcervoTest {
 
-    private Acervo acervo;
-    private iLivro tratador;
-
-    @BeforeEach
-    void preparar() {
-        acervo = new Acervo();
-        tratador = new TratadorDeAcervo(acervo);
-    }
+    private final Cenario c = new Cenario();                // já tem o livro 1 "Dom Casmurro"
+    private final iLivro tratador = c.tratadorDeAcervo;
 
     @Test
     void livroNovoNasceLivreNoAcervo() {
-        Livro l = tratador.inserirLivro(1, "Dom Casmurro");
+        var r = tratador.inserirLivro(2, "Memórias Póstumas");
 
-        assertEquals(Situacao.LIVRE, l.getEstado());
-        assertSame(l, tratador.consultarLivro(1));
+        assertEquals(StatusCadastro.NOVO, r.getStatus());
+        assertEquals(Situacao.LIVRE, r.getEntidade().getEstado());
+        assertSame(r.getEntidade(), tratador.consultarLivro(2));
     }
 
     @Test
     void inserirLivroJaCadastradoDevolveOExistenteSemDuplicar() {
-        Livro primeiro = tratador.inserirLivro(1, "Dom Casmurro");
+        var r = tratador.inserirLivro(1, "Outro título");
 
-        Livro segundo = tratador.inserirLivro(1, "Outro título");
+        assertEquals(StatusCadastro.EXISTENTE, r.getStatus());
+        assertEquals("Dom Casmurro", r.getEntidade().getTitulo());
+        assertEquals(1, c.acervo().listar().size());
+    }
 
-        assertSame(primeiro, segundo);
-        assertEquals("Dom Casmurro", segundo.getTitulo());
-        assertEquals(1, acervo.listar().size());
+    @Test
+    void livroSemTituloERecusado() {
+        assertEquals(StatusCadastro.RECUSADO, tratador.inserirLivro(5, "").getStatus());
+        assertNull(tratador.consultarLivro(5));
     }
 
     @Test
     void atualizarEExcluirLivro() {
-        tratador.inserirLivro(1, "Dom Casmurro");
-
         assertTrue(tratador.atualizarLivro(1, "Dom Casmurro (2ª ed.)"));
         assertEquals("Dom Casmurro (2ª ed.)", tratador.consultarLivro(1).getTitulo());
         assertTrue(tratador.excluirLivro(1));
@@ -55,19 +53,15 @@ class TratadorDeAcervoTest {
 
     @Test
     void livroEmprestadoNaoPodeSerExcluido() {
-        br.pucpr.ib2b.Cenario c = new br.pucpr.ib2b.Cenario();
-        c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
-        c.tratadorDeEmprestimo.emprestarLivro(1, "M-100", "F-01");
+        c.emprestarLivro1();
 
-        assertThrows(OperacaoInvalidaException.class, () -> c.tratadorDeAcervo.excluirLivro(1));
-        assertNotNull(c.tratadorDeAcervo.consultarLivro(1));
+        assertThrows(OperacaoInvalidaException.class, () -> tratador.excluirLivro(1));
+        assertNotNull(tratador.consultarLivro(1));
     }
 
     @Test
     void listarNaoPermiteAlterarOAcervoPorFora() {
-        tratador.inserirLivro(1, "Dom Casmurro");
-
-        assertThrows(UnsupportedOperationException.class, () -> acervo.listar().clear());
-        assertEquals(1, acervo.listar().size());
+        assertThrows(UnsupportedOperationException.class, () -> c.acervo().listar().clear());
+        assertEquals(1, c.acervo().listar().size());
     }
 }
