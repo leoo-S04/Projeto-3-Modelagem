@@ -17,16 +17,29 @@ public class TratadorDeDevolucao implements iDevolucao {
     private final PublicadorDeDevolucao publicador;
     private final iMulta financeiro;
     private final AgendaDeInspecao agenda;
+    private final PainelDeIndicadores painel;
     private final Clock relogio;
 
     public TratadorDeDevolucao(iCirculacao circulacao, PublicadorDeDevolucao publicador, iMulta financeiro,
-                               AgendaDeInspecao agenda, Clock relogio) {
+                               AgendaDeInspecao agenda, PainelDeIndicadores painel, Clock relogio) {
         this.circulacao = circulacao;
         this.publicador = publicador;
         this.financeiro = financeiro;
         this.agenda = agenda;
+        this.painel = painel;
         this.relogio = relogio;
     }
+
+    // ---- Consultas para as telas (alimentadas pelos ouvintes da devolução) ----
+    public java.util.List<AgendaDeInspecao.ItemDeInspecao> inspecoesPendentes() { return agenda.pendentes(); }
+
+    public IndicadoresDTO indicadores() {
+        return new IndicadoresDTO(painel.totalDeDevolucoes(), painel.devolucoesAtrasadas(), painel.totalDeDiasDeAtraso());
+    }
+
+    public int falhasDeNotificacaoPendentes() { return publicador.falhasPendentes().size(); }
+
+    public void reenviarNotificacoesComFalha() { publicador.reenviarFalhas(); }
 
     /** f5 — regra 9: devolve (transação confirmada) e SÓ ENTÃO publica o evento. O livro fica DEVOLVIDO. */
     @Override

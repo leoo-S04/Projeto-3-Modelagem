@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Início')}"></head>
+<body>
+<header th:replace="~{fragmentos :: topo}"></header>
+<main>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
+
+    <section class="cartao">
+        <h2>Fluxo da demonstração</h2>
+        <ol>
+            <li><a th:href="@{/cadastros}">Cadastros</a>: pessoa → estudante (exige a pessoa) → livro <span class="padrao">(Template Method)</span></li>
+            <li><a th:href="@{/circulacao}">Circulação</a>: reservar → emprestar → renovar <span class="padrao">(State, Facade, Command)</span></li>
+            <li><a th:href="@{/admin}">Administração</a>: adiantar o relógio para simular atraso</li>
+            <li><a th:href="@{/circulacao}">Circulação</a>: devolver → inspeção, multa, indicadores e e-mail reagem <span class="padrao">(Observer)</span></li>
+            <li><a th:href="@{/financeiro}">Financeiro</a>: boleto com a política vigente, pago no banco simulado <span class="padrao">(Strategy, Adapter)</span></li>
+            <li><a th:href="@{/acervo}">Acervo</a>: organização em unidades/seções e consulta com cache e medição <span class="padrao">(Composite, Decorator)</span></li>
+        </ol>
+        <p class="suave">Persistência: arquivo <code>dados/biblioteca.json</code> criado pela fábrica da família JSON <span class="padrao">(Abstract Factory)</span>.</p>
+    </section>
+
+    <section class="cartao">
+        <h2>Livros</h2>
+        <table th:replace="~{fragmentos :: tabelaLivros(${livros})}"></table>
+    </section>
+
+    <div class="grade">
+        <section class="cartao">
+            <h2>Indicadores de devolução</h2>
+            <p>Devoluções: <strong th:text="${indicadores.totalDeDevolucoes()}">0</strong> ·
+               Atrasadas: <strong th:text="${indicadores.devolucoesAtrasadas()}">0</strong> ·
+               Dias de atraso: <strong th:text="${indicadores.totalDeDiasDeAtraso()}">0</strong></p>
+            <h3>Aguardando inspeção</h3>
+            <p th:if="${#lists.isEmpty(inspecoes)}" class="suave">Nenhum livro.</p>
+            <ul><li th:each="i : ${inspecoes}" th:text="'Livro ' + ${i.idLivro()} + ' — ' + ${i.titulo()} + ' (devolvido em ' + ${#temporals.format(i.devolvidoEm(), 'dd/MM/yyyy')} + ')'"></li></ul>
+        </section>
+        <section class="cartao">
+            <h2>Boletos de multa</h2>
+            <p th:if="${#lists.isEmpty(cobrancas)}" class="suave">Nenhum boleto emitido.</p>
+            <ul><li th:each="c : ${cobrancas}">
+                Boleto <span th:text="${c.idBoleto()}"></span>: R$ <span th:text="${c.valor()}"></span>
+                (<span th:text="${c.politicaAplicada()}"></span>, banco <span th:text="${c.banco()}"></span>)
+                <span class="etiqueta" th:classappend="${c.situacao()}" th:text="${c.situacao()}"></span>
+            </li></ul>
+        </section>
+    </div>
+</main>
+</body>
+</html>

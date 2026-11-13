@@ -1,0 +1,112 @@
+{
+  "pessoas" : [ {
+    "cpf" : "12345678909",
+    "nome" : "Ana",
+    "sobrenome" : "Souza",
+    "email" : "ana.souza@exemplo.com"
+  }, {
+    "cpf" : "98765432100",
+    "nome" : "Bruno",
+    "sobrenome" : "Alves",
+    "email" : "bruno.alves@exemplo.com"
+  }, {
+    "cpf" : "11144477735",
+    "nome" : "Caio",
+    "sobrenome" : "Reis",
+    "email" : "caio.reis@exemplo.com"
+  }, {
+    "cpf" : "52998224725",
+    "nome" : "Daniela",
+    "sobrenome" : "Lima",
+    "email" : "daniela.lima@exemplo.com"
+  } ],
+  "estudantes" : [ {
+    "id" : 1,
+    "matricula" : "M-100",
+    "cpf" : "12345678909"
+  }, {
+    "id" : 2,
+    "matricula" : "M-300",
+    "cpf" : "11144477735"
+  } ],
+  "atendentes" : [ {
+    "id" : 3,
+    "matriculaFuncional" : "F-01",
+    "cpf" : "98765432100"
+  } ],
+  "livros" : [ {
+    "id" : 1,
+    "titulo" : "Dom Casmurro",
+    "situacao" : "LIVRE",
+    "reservante" : null,
+    "vencimento" : null,
+    "numRenovacoes" : 0
+  }, {
+    "id" : 2,
+    "titulo" : "Memórias Póstumas de Brás Cubas",
+    "situacao" : "LIVRE",
+    "reservante" : null,
+    "vencimento" : null,
+    "numRenovacoes" : 0
+  }, {
+    "id" : 3,
+    "titulo" : "Quincas Borba",
+    "situacao" : "LIVRE",
+    "reservante" : null,
+    "vencimento" : null,
+    "numRenovacoes" : 0
+  }, {
+    "id" : 4,
+    "titulo" : "O Cortiço",
+    "situacao" : "LIVRE",
+    "reservante" : null,
+    "vencimento" : null,
+    "numRenovacoes" : 0
+  }, {
+    "id" : 5,
+    "titulo" : "Iracema",
+    "situacao" : "LIVRE",
+    "reservante" : null,
+    "vencimento" : null,
+    "numRenovacoes" : 0
+  }, {
+    "id" : 6,
+    "titulo" : "A Moreninha",
+    "situacao" : "LIVRE",
+    "reservante" : null,
+    "vencimento" : null,
+    "numRenovacoes" : 0
+  } ],
+  "reservas" : [ ],
+  "emprestimos" : [ ],
+  "devolucoes" : [ ],
+  "solicitacoes" : [ ],
+  "multas" : [ ],
+  "cobrancas" : [ ],
+  "configuracao" : {
+    "politicaVigente" : "ORIGINAL",
+    "bancoEmUso" : "A"
+  },
+  "acervo" : [ {
+    "nome" : "Biblioteca Central",
+    "tipo" : "UNIDADE",
+    "pai" : null,
+    "livros" : [ ]
+  }, {
+    "nome" : "Realismo",
+    "tipo" : "SECAO",
+    "pai" : "Biblioteca Central",
+    "livros" : [ 1, 2, 3 ]
+  }, {
+    "nome" : "Romantismo",
+    "tipo" : "SECAO",
+    "pai" : "Biblioteca Central",
+    "livros" : [ 5, 6 ]
+  } ],
+  "contadores" : {
+    "ultimoIdTransacao" : 0,
+    "ultimoIdPapel" : 3,
+    "ultimoIdMulta" : 0,
+    "ultimoIdBoleto" : 0
+  }
+}

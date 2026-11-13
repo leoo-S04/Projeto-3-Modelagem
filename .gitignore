@@ -5,6 +5,8 @@ target/
 # O arquivo de exemplo dados/exemplo.json, quando existir, É versionado.
 dados/biblioteca.json
 dados/biblioteca.json.tmp
+# Certificado de teste do perfil https (gerado localmente, ver README)
+dados/biblioteca.p12
 
 # PDFs da disciplina (enunciado e soluções do professor, Trabalhos 01/02): ficam só na cópia local
 docs/*.pdf

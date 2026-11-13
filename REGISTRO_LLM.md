@@ -51,3 +51,9 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
 |---|---|---|---|---|
 | 15 | Executar a Etapa 5 (CLAUDE.md, modo autônomo) | `ComponenteDoAcervo`, `ItemDoAcervo`, `GrupoDoAcervo`, `OrganizadorDoAcervo` (com persistência da árvore no JSON); `ConsultaAcervo`, `ConsultaAcervoBasica`, decoradores de medição e cache, `MontadorDeConsulta`; integração no `TratadorDeAcervo`; R09 e R10; guia `ETAPA05_Composite_Decorator.md`; decisões D50–D56 | | |
+
+## Etapa 6 — Interface web e demonstração — modo autônomo
+
+| # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
+|---|---|---|---|---|
+| 16 | Executar a Etapa 6 (CLAUDE.md, modo autônomo) | Aplicação Spring Boot (pacote `web`): telas de cadastros, circulação, financeiro, acervo e administração; API JSON; pontos de entrada e simulador dos bancos; relógio ajustável; perfil HTTPS opcional; `dados/exemplo.json`; `FluxoCompletoWebTest` e `ArquiteturaTest`; README final; `DEMO.md`, `ARGUICAO.md`, guia `ETAPA06_Web_Demonstracao.md`; lista final do Astah por diagrama; decisões D57–D64. Verificado: `mvnw test` (105 testes) e execução real do `biblioteca.jar` (HTTP e HTTPS) | | |

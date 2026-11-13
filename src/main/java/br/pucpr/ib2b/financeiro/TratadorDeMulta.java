@@ -50,6 +50,13 @@ public class TratadorDeMulta implements iMulta, iQuitacao {
 
     // ---- Consultas para as telas ----
     public List<BoletoDeMulta> listarBoletos() { return repositorio.listarBoletos(); }
+    /** Boletos com a política aplicada em cada multa (DTOs), para as telas. */
+    public List<CobrancaDTO> relatorioDeCobrancas() {
+        return repositorio.listarBoletos().stream().map(b -> new CobrancaDTO(b.getIdBoleto(), b.getCpf(),
+                b.getDiasAtraso(), b.getValorTotal(), repositorio.buscarMulta(b.getIdMulta()).politicaAplicada(),
+                b.getBanco(), b.getIdExterno(), b.getSituacao(), b.getDataEmissao(), b.getDataPagamento())).toList();
+    }
+
     public Multa consultarMultaDoBoleto(int idBoleto) {
         BoletoDeMulta b = repositorio.buscarBoleto(idBoleto);
         return b == null ? null : repositorio.buscarMulta(b.getIdMulta());

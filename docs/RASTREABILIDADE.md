@@ -35,3 +35,14 @@ Legenda: ✅ implementado e testado · ⬜ pendente (etapa prevista)
 | 9 Registrar devolução (f5) e inspeção | Biblioteca | `iDevolucao`, `TratadorDeDevolucao`, `Devolvido`, `Reparando`, `Devolucao` | `TratadorDeDevolucaoTest`, `DevolucaoTest` | ✅ |
 | 10 Emitir boleto de multa (f6) | Biblioteca + Financeiro | `TratadorDeDevolucao.emitirBoletoDeMulta`, `iMulta`, `TratadorDeMulta`, `BoletoDeMulta` | `R05_ReacoesADevolucaoTest.f6EmiteSegundaViaDoMesmoBoleto` | ✅ |
 | Pontos internos de acesso (T02) | Biblioteca | `Acervo`, `Relacionamento`, `Movimentacao` | `TratadorDeEmprestimoTest`, `MovimentacaoTest` | ✅ |
+
+## Interface web e critérios de pronto (Etapa 6)
+
+| Item | Classes | Teste | Situação |
+|---|---|---|---|
+| Fluxo reserva → empréstimo → renovação → devolução atrasada → multa → pagamento, pela web | `web.*Controller`, templates Thymeleaf, `ConfiguracaoDoSistema` | `FluxoCompletoWebTest.fluxoReservaEmprestimoRenovacaoDevolucaoAtrasadaMultaEPagamento` | ✅ |
+| API JSON com recusa de regra (HTTP 422) | `ApiController` | `FluxoCompletoWebTest.apiJsonRecusaComMensagemDoDominio` | ✅ |
+| A interface não referencia Movimentacao, Acervo, Relacionamento | pacote `web` | `ArquiteturaTest.interfaceWebNaoReferenciaMovimentacaoAcervoRelacionamento` | ✅ |
+| Nenhum tratador testa a situação do Livro | `Tratador*` | `ArquiteturaTest.nenhumTratadorTestaASituacaoDoLivro` | ✅ |
+| Serviço de multas sem `if` por banco ou política | `ServicoDeMulta` | `ArquiteturaTest.servicoDeMultasNaoTemCondicionalPorBancoNemPorPolitica` | ✅ |
+| Um `biblioteca.jar`, `biblioteca.json`, bancos simulados | `pom.xml` (spring-boot-maven-plugin), `UnidadeDeTrabalhoJson`, `financeiro.bancos` | `R08_...`, `R03_...`; execução real do jar | ✅ |

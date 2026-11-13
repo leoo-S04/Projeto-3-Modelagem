@@ -23,6 +23,10 @@ abstract class RepositorioRelacionamentoBase implements RepositorioRelacionament
     @Override public Atendente buscarAtendente(String matricula) { return uow.dados().atendentes.get(matricula); }
     @Override public boolean removerAtendente(String matricula) { return uow.dados().atendentes.remove(matricula) != null; }
 
+    @Override public java.util.List<Pessoa> listarPessoas() { return new java.util.ArrayList<>(uow.dados().pessoas.values()); }
+    @Override public java.util.List<Estudante> listarEstudantes() { return new java.util.ArrayList<>(uow.dados().estudantes.values()); }
+    @Override public java.util.List<Atendente> listarAtendentes() { return new java.util.ArrayList<>(uow.dados().atendentes.values()); }
+
     @Override public int gerarIdPapel() { return uow.proximoIdPapel(); }
 
     @Override public UnidadeDeTrabalho unidade() { return uow; }

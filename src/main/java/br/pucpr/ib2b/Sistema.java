@@ -111,7 +111,8 @@ public final class Sistema {
         publicador.registrar(new OuvinteEmail(email));
 
         tratadorDeEmprestimo = new TratadorDeEmprestimo(circulacao, executor, relogio);
-        tratadorDeDevolucao = new TratadorDeDevolucao(circulacao, publicador, tratadorDeMulta, agendaDeInspecao, relogio);
+        tratadorDeDevolucao = new TratadorDeDevolucao(circulacao, publicador, tratadorDeMulta, agendaDeInspecao,
+                painelDeIndicadores, relogio);
     }
 
     public static Sistema montar(FabricaDePersistencia fabrica, Clock relogio) {

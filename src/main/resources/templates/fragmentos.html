@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabeca(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' · Biblioteca iB2B'">Biblioteca</title>
+    <link rel="stylesheet" th:href="@{/estilo.css}">
+</head>
+<body>
+<header th:fragment="topo">
+    <h1>Biblioteca iB2B</h1>
+    <nav>
+        <a th:href="@{/}">Início</a>
+        <a th:href="@{/cadastros}">Cadastros</a>
+        <a th:href="@{/circulacao}">Circulação</a>
+        <a th:href="@{/financeiro}">Financeiro</a>
+        <a th:href="@{/acervo}">Acervo e consulta</a>
+        <a th:href="@{/admin}">Administração</a>
+    </nav>
+    <span class="hoje">Hoje: <strong th:text="${#temporals.format(hoje, 'dd/MM/yyyy')}">13/11/2026</strong></span>
+</header>
+
+<div th:fragment="mensagens">
+    <div class="msg ok" th:if="${sucesso}" th:text="${sucesso}">ok</div>
+    <div class="msg erro" th:if="${erro}" th:text="${erro}">erro</div>
+</div>
+
+<table th:fragment="tabelaLivros(livros)">
+    <tr><th>Id</th><th>Título</th><th>Situação</th><th>Reservante</th><th>Vencimento</th><th>Renovações</th></tr>
+    <tr th:each="l : ${livros}">
+        <td th:text="${l.idLivro()}">1</td>
+        <td th:text="${l.titulo()}">Dom Casmurro</td>
+        <td><span class="etiqueta" th:classappend="${l.situacao()}" th:text="${l.situacao()}">LIVRE</span></td>
+        <td th:text="${l.matriculaReservante()} ?: '—'">—</td>
+        <td th:text="${l.vencimento() != null} ? ${#temporals.format(l.vencimento(), 'dd/MM/yyyy')} : '—'">—</td>
+        <td th:text="${l.numRenovacoes()}">0</td>
+    </tr>
+</table>
+<!-- Fragmento recursivo: desenha um grupo e seus subgrupos (a mesma estrutura do Composite) -->
+<ul class="arvore" th:fragment="arvore(no)">
+    <li>
+        <strong th:text="${no.nome()}">Central</strong>
+        <span class="etiqueta" th:text="${no.tipo()}">UNIDADE</span>
+        — <span th:text="${no.totalDeLivros()}">5</span> livro(s)
+        <small th:unless="${#lists.isEmpty(no.idsDiretos())}" th:text="' · livros aqui: ' + ${no.idsDiretos()}"></small>
+        <th:block th:each="sub : ${no.subgrupos()}">
+            <div th:replace="~{fragmentos :: arvore(${sub})}"></div>
+        </th:block>
+    </li>
+</ul>
+</body>
+</html>

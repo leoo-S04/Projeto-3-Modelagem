@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Financeiro')}"></head>
+<body>
+<header th:replace="~{fragmentos :: topo}"></header>
+<main>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
+
+    <div class="grade">
+        <section class="cartao">
+            <h2>Política de multa vigente <span class="padrao">(Strategy, Req. 2)</span></h2>
+            <form method="post" th:action="@{/financeiro/politica}">
+                <label>Política <select name="id">
+                    <option th:each="p : ${politicas}" th:value="${p.id()}" th:text="${p.id()} + ' — ' + ${p.descricao()}"
+                            th:selected="${p.id() == politicaVigente}"></option></select></label>
+                <button>Salvar configuração</button>
+            </form>
+            <p class="suave">Trocar a política não recalcula multas já emitidas (cada multa guarda valor e política aplicada).</p>
+            <h3>Simulação</h3>
+            <form method="get" th:action="@{/financeiro}">
+                <label>Dias de atraso <input name="dias" type="number" min="0" th:value="${dias} ?: 5"></label>
+                <button class="secundario">Simular</button>
+            </form>
+            <table th:if="${simulacao}">
+                <tr><th>Política</th><th>Valor</th></tr>
+                <tr th:each="s : ${simulacao}"><td th:text="${s.key}"></td><td th:text="'R$ ' + ${s.value}"></td></tr>
+            </table>
+        </section>
+
+        <section class="cartao">
+            <h2>Banco da instalação <span class="padrao">(Adapter, Req. 3)</span></h2>
+            <p>Banco em uso: <strong th:text="${bancoEmUso}">A</strong>.
+                O serviço de multas só conhece o contrato <code>iCobranca</code>; o adaptador converte
+                (banco A: centavos e "nosso número"; banco B: valor decimal, CPF formatado e "txid").</p>
+            <p class="suave">"Pagar" simula o banco gerando a notificação (A: JSON; B: XML) e chamando o ponto de entrada
+                do sistema. "Reenviar" repete a mesma notificação: a quitação não acontece duas vezes.</p>
+        </section>
+    </div>
+
+    <section class="cartao">
+        <h2>Boletos de multa</h2>
+        <p th:if="${#lists.isEmpty(cobrancas)}" class="suave">Nenhum boleto emitido. Faça uma devolução atrasada na Circulação.</p>
+        <table th:unless="${#lists.isEmpty(cobrancas)}">
+            <tr><th>Boleto</th><th>CPF</th><th>Dias</th><th>Valor</th><th>Política</th><th>Banco</th><th>Id no banco</th><th>Situação</th><th>Ações no banco (simulador)</th></tr>
+            <tr th:each="c : ${cobrancas}">
+                <td th:text="${c.idBoleto()}"></td><td th:text="${c.cpf()}"></td><td th:text="${c.diasAtraso()}"></td>
+                <td th:text="'R$ ' + ${c.valor()}"></td><td th:text="${c.politicaAplicada()}"></td><td th:text="${c.banco()}"></td>
+                <td><code th:text="${c.idExterno()}"></code></td>
+                <td><span class="etiqueta" th:classappend="${c.situacao()}" th:text="${c.situacao()}"></span>
+                    <small th:if="${c.dataPagamento()}" th:text="' em ' + ${#temporals.format(c.dataPagamento(), 'dd/MM/yyyy')}"></small></td>
+                <td>
+                    <form class="inline" method="post" th:if="${c.situacao() == 'EMITIDO'}"
+                          th:action="@{/simulador/banco-{b}/pagar/{id}(b=${#strings.toLowerCase(c.banco())}, id=${c.idExterno()})}">
+                        <button>Pagar</button></form>
+                    <form class="inline" method="post" th:if="${c.situacao() == 'QUITADO'}"
+                          th:action="@{/simulador/banco-{b}/reenviar/{id}(b=${#strings.toLowerCase(c.banco())}, id=${c.idExterno()})}">
+                        <button class="secundario">Reenviar notificação</button></form>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

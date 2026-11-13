@@ -36,6 +36,9 @@ public class TratadorDePessoa extends TratadorDeCadastro<Pessoa, DadosPessoa> im
     @Override protected void armazenar(Pessoa p) { grupoDePessoas.adicionar(p); }
 
     // ---- Demais operações de iPessoa ----
+    /** Pessoas cadastradas (DTOs), para as telas. */
+    public java.util.List<PessoaDTO> listarPessoas() { return grupoDePessoas.listar().stream().map(PessoaDTO::de).toList(); }
+
     /** 2.3: devolve a pessoa, ou {@code null} se não cadastrada. */
     @Override
     public Pessoa consultarPessoa(String cpf) { return grupoDePessoas.buscarPorCpf(cpf); }

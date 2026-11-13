@@ -13,6 +13,8 @@ public class GrupoDePessoas {
 
     public boolean remover(String cpf) { return repositorio.removerPessoa(cpf); }
 
+    public java.util.List<Pessoa> listar() { return repositorio.listarPessoas(); }
+
     /** Devolve a pessoa com esse CPF, ou {@code null} se não estiver cadastrada. */
     public Pessoa buscarPorCpf(String cpf) { return repositorio.buscarPessoa(cpf); }
 }

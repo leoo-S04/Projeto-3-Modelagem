@@ -50,6 +50,9 @@ public class TratadorDeEstudante extends TratadorDeCadastro<Estudante, DadosEstu
     @Override protected void armazenar(Estudante e) { grupoDeAcademicos.adicionar(e); }
 
     // ---- Demais operações de iEstudante ----
+    /** Estudantes cadastrados (DTOs), para as telas. */
+    public java.util.List<EstudanteDTO> listarEstudantes() { return grupoDeAcademicos.listar().stream().map(EstudanteDTO::de).toList(); }
+
     /** 3.3: devolve o estudante, ou {@code null} se não cadastrado. */
     @Override
     public Estudante consultarEstudante(String matricula) { return grupoDeAcademicos.buscarPorMatricula(matricula); }

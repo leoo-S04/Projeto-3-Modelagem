@@ -13,6 +13,8 @@ public class GrupoDeAcademicos {
 
     public boolean remover(String matricula) { return repositorio.removerEstudante(matricula); }
 
+    public java.util.List<Estudante> listar() { return repositorio.listarEstudantes(); }
+
     /** Devolve o estudante com essa matrícula, ou {@code null}. */
     public Estudante buscarPorMatricula(String matricula) { return repositorio.buscarEstudante(matricula); }
 

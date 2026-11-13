@@ -47,6 +47,9 @@ public class TratadorDeAtendente extends TratadorDeCadastro<Atendente, DadosAten
     @Override protected void armazenar(Atendente a) { grupoDeColaboradores.adicionar(a); }
 
     // ---- Demais operações de iAtendente ----
+    /** Atendentes cadastrados (DTOs), para as telas. */
+    public java.util.List<AtendenteDTO> listarAtendentes() { return grupoDeColaboradores.listar().stream().map(AtendenteDTO::de).toList(); }
+
     /** 4.3: devolve o atendente, ou {@code null} se não cadastrado. */
     @Override
     public Atendente consultarAtendente(String matriculaFuncional) {

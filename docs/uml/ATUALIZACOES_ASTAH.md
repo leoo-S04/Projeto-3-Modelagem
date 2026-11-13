@@ -70,6 +70,14 @@ Colunas: **Diagrama** · **Elemento** · **De → Para** · **Motivo** · **Orig
 | 58 | Classes de Projeto | `TratadorDeAcervo` e `iLivro` | `TratadorDeAcervo`: associações com `OrganizadorDoAcervo` e `ConsultaAcervo`; novas operações `+buscarMetadados(termo)`, `+listarLivros(): List<SituacaoLivroDTO>`, `+criarUnidade(nome)`, `+criarGrupo(nomeDoPai, nome, tipo)`, `+adicionarLivroAoGrupo(nomeDoGrupo, idLivro)`, `+moverLivro(idLivro, nomeDoDestino)`, `+contarLivros(nomeDoGrupo)`, `+estruturaDoAcervo()` (fora de `iLivro`, que continua com as 4 operações de cadastro) | Entrada da web para Composite e Decorator (D53). | Etapa 5 |
 | 59 | Classes de Projeto | Abstract Factory (complementa os itens 32, 42 e 51) | Novo produto «interface» `RepositorioDeOrganizacao` (`+unidades()`, `+adicionarUnidade(g)`, `+unidade()`) com `RepositorioDeOrganizacaoEmMemoria` e `RepositorioDeOrganizacaoJson`; nova operação `FabricaDePersistencia.criarRepositorioDeOrganizacao(uow)` | Seção `acervo` do JSON (D52). | Etapa 5 |
 | 60 | Componentes | Nota de classes do componente Biblioteca | Acrescentar as classes do Composite (item 56) e do Decorator (item 57) | Coerência. | Etapa 5 |
+| 61 | Classes de Projeto (ou diagrama de pacotes à parte) | Camada web (pacote `web`) | «boundary» `InicioController`, `CadastrosController`, `CirculacaoController`, `FinanceiroController`, `AcervoController`, `AdministracaoController`, `ApiController`, `BancosController`; `ConfiguracaoDoSistema` (monta o `Sistema` e publica os tratadores); `AplicacaoBiblioteca`; dependências «use» só para os tratadores (e, no `BancosController`, para os adaptadores dos bancos) | Interface Web chamando apenas os tratadores (D57–D59). Opcional no diagrama de classes principal. | Etapa 6 |
+| 62 | Classes de Projeto | Tratadores e grupos de RH/Acadêmico | `TratadorDePessoa +listarPessoas(): List<PessoaDTO>`, `TratadorDeEstudante +listarEstudantes(): List<EstudanteDTO>`, `TratadorDeAtendente +listarAtendentes(): List<AtendenteDTO>`; «dataType» `PessoaDTO`, `EstudanteDTO`, `AtendenteDTO`; `GrupoDePessoas/GrupoDeAcademicos/GrupoDeColaboradores +listar()`; `RepositorioRelacionamento +listarPessoas()`, `+listarEstudantes()`, `+listarAtendentes()` | Listagens para as telas, em DTO (D60). | Etapa 6 |
+| 63 | Classes de Projeto | `TratadorDeDevolucao`, `TratadorDeMulta` | `TratadorDeDevolucao`: associação com `PainelDeIndicadores`; `+inspecoesPendentes()`, `+indicadores(): IndicadoresDTO`, `+falhasDeNotificacaoPendentes(): int`, `+reenviarNotificacoesComFalha()`; `TratadorDeMulta +relatorioDeCobrancas(): List<CobrancaDTO>`; «dataType» `IndicadoresDTO`, `CobrancaDTO` | Consultas para as telas (D60). | Etapa 6 |
+| 64 | Sequência (SD Manter Livro, SD Manter Pessoa, SD Manter Estudante, SD Manter Atendente) | Mensagens de inclusão | `: TratadorDe... .inserirX(...)` → `inserir(dados)` (método-modelo) → `buscarExistente` → `alt [existe] apresentar(existente)` / `[else] validar` → `verificarPreRequisitos` (Estudante/Atendente: `: iPessoa.consultarPessoa(cpf)`) → «create» entidade → `: UnidadeDeTrabalho.executar(armazenar)` → `: GrupoDe... .adicionar` → `apresentar(novo)`; retorno `ResultadoCadastro` | Coerência com o Template Method (Req. 7). | Etapa 6 |
+| 65 | Componentes | Componente Interface Web e ligação com o Banco | Nota na Interface Web: "realizada pelo pacote `web` (controladores Spring MVC + páginas Thymeleaf) dentro de biblioteca.jar; depende só das interfaces dos tratadores". Ligação Banco → `iQuitacao`: nota "pontos de entrada HTTP `/api/bancos/a/webhook` (JSON) e `/api/bancos/b/notificacao` (XML), traduzidos pelos adaptadores" | Coerência com a implementação. | Etapa 6 |
+| 66 | Implantação (opcional) | Notas | Nenhuma mudança obrigatória: um `biblioteca.jar` com Tomcat embutido na JVM 17, `biblioteca.json` no mesmo servidor, bancos A e B como nós externos simulados no jar — como já está. Notas sugeridas: "interface-web (HTML/JS) é gerada pelo biblioteca.jar (Thymeleaf) e exibida no navegador"; "HTTPS pelo perfil https (porta 8443); HTTP 8080 na execução local"; "dados/biblioteca.json é criado a partir de dados/exemplo.json na primeira execução" | Coerência (D61, D62). | Etapa 6 |
+| 67 | Casos de Uso (opcional) | Casos de uso novos | Atendente: "Inspecionar livro", "Enviar para reparo / retornar / incinerar"; Administrador: "Configurar política de multa", "Simular multa", "Organizar acervo" (unidades, seções, mover livro); ator externo Banco: "Informar pagamento"; Estudante/usuário: "Consultar acervo" | Funções que o sistema passou a oferecer nas telas. | Etapa 6 |
+| 68 | Modelo de Domínio (opcional) | Conceitos novos | `Multa` (valor, política aplicada) entre `Devolucao` e `BoletoDeMulta`; `SolicitacaoDeCirculacao` (reserva/renovação); `GrupoDoAcervo` (unidade/seção/subseção) contendo exemplares (`ItemDoAcervo` → `Livro`) | Conceitos do domínio introduzidos pelos padrões. | Etapa 6 |
 
 ## Conferência: diagrama "Classes de Projeto" × código (fim da Etapa 0)
 
@@ -92,6 +100,82 @@ Colunas: **Diagrama** · **Elemento** · **De → Para** · **Motivo** · **Orig
 | `CRUD` | — | removida (item 4) |
 | — | `Relacionamento` | nova (itens 3, 15) |
 
-## Lista final por diagrama
+## Lista final por diagrama (entrega da Etapa 6)
 
-_Entregue na Etapa 6._
+Use esta lista para atualizar o Astah de uma vez. Os números entre colchetes remetem à tabela acima, que tem os
+detalhes (assinaturas completas e motivo). Itens superados por outros já estão indicados.
+
+**Sugestão de organização:** além de atualizar o diagrama "Classes de Projeto", criar **um diagrama de classes por
+padrão** (como nas Soluções do professor): State, Strategy, Adapter, Facade, Observer, Command, Template Method,
+Abstract Factory, Decorator, Composite. O enunciado pede "diagrama de classes de cada padrão".
+
+### 1. Classes de Projeto
+**1.1 Renomear**
+- `AcervoDeLivros` → `Acervo` [1]
+- enumeração `EstadoLivro` → `Situacao`; o atributo `Livro.estado` passa a ser do tipo da classe abstrata `EstadoLivro` [5, 18]
+- `GrupoDeAcademicos.-estudante` → `-estudantes` [10]
+
+**1.2 Remover**
+- interface `CRUD`, suas realizações e as operações `inserir/consultar/atualizar/excluir()` de `Pessoa`, `Estudante`, `Atendente`, `Livro` [4]
+- `Livro.+setEstado` (vira `~mudarPara`) [18]
+- `Emprestimo`: `dataVencimento`, `numRenovacoes`, `renovar()`, `getDataVencimento()`, `getNumRenovacoes()`, `setDataVencimento()`, `incrementarRenovacoes()` [21]
+- `Movimentacao`: `-transacoes`, `adicionar(t)`, `remover(t)` (viram 3 associações) [33]
+- `BoletoDeMulta`: `valorDiario`, `calcularValor()`, `enviarPorEmail()`; `quitar(data)` vira `~quitarSeAberto(data, idPagamento)` [45]
+- associação direta `TratadorDeMulta -boletos` [48]; associações "delega" dos tratadores de circulação com `GrupoDeAcademicos`/`GrupoDeColaboradores` [16, 27, 39]
+- `-proximoId` dos tratadores de Estudante/Atendente [13 → 31]
+
+**1.3 Mudar assinaturas**
+- `iLivro/iPessoa/iEstudante/iAtendente.inserirX(...)`: retorno → `ResultadoCadastro<X>` [29]
+- `iEmprestimo`: `reservarLivro` e `renovarEmprestimo` → `ResultadoSolicitacao` (+ sobrecargas com `idSolicitacao: UUID`); `consultarReserva` → `ComprovanteReserva`; `emprestarLivro` → `ComprovanteEmprestimo`; nova `consultarSituacao` [40]
+- `iDevolucao`: `registrarDevolucao` → `ComprovanteDevolucao`; `emitirBoletoDeMulta(idLivro, idEstudante): BoletoDeMulta` [40, 50]
+- `iMulta.gerarMulta(cpf, idDevolucao, diasAtraso)`; `iQuitacao.registrarQuitacao(c: ConfirmacaoPagamento): boolean`; `iCobranca.registrarBoleto(..., valor: BigDecimal, ...)`, `consultarPagamento(idExterno: String)`, `+codigoDoBanco()` [46]
+- `BoletoDeMulta`: valores em `BigDecimal`; novos atributos `idMulta`, `banco`, `idExterno`, `dataPagamento`, `idPagamento` [45]
+
+**1.4 Acrescentar em classes existentes**
+- `Pessoa` [6]; `Papel` [7]; `Atendente` [8]; `Livro` [9, 18, 34]; `Transacao` [14]; `Devolucao` [17, 22]
+- `Movimentacao` [25, 33]; `Acervo` [33]; grupos [31, 33, 62]
+- `TratadorDeAcervo` [28, 58]; `TratadorDePessoa/Estudante/Atendente` [11, 12, 28, 62]; `TratadorDeEmprestimo` [39];
+  `TratadorDeDevolucao` [39, 50, 63]; `TratadorDeMulta` [48, 63]; todos os tratadores: `-transacao` [35]
+
+**1.5 Classes novas, por padrão**
+- **State:** `EstadoLivro`, `Livre`, `Reservado`, `Emprestado`, `Renovado`, `Devolvido`, `Reparando`, `Incinerado`, `OperacaoInvalidaException`, `RenovacaoNegadaException` [19, 20]
+- **Template Method:** `TratadorDeCadastro<T, D>`, `ResultadoCadastro<T>`, `StatusCadastro`, `CadastroRecusadoException`, `ExcecaoDeDominio`, `DadosLivro`, `DadosPessoa`, `DadosEstudante`, `DadosAtendente` [28, 30]
+- **Abstract Factory:** `FabricaDePersistencia`, `FabricaEmMemoria`, `FabricaJson`, `UnidadeDeTrabalho` (+ EmMemoria/Json), `RepositorioLivro`, `RepositorioMovimentacao`, `RepositorioRelacionamento`, `RepositorioDeSolicitacoes`, `RepositorioFinanceiro`, `RepositorioDeOrganizacao` (+ EmMemoria/Json), `ConfiguradorDePersistencia`, `Perfil`, `FamiliaIncompativelException` [32, 42, 51, 59]
+- **Facade:** `iCirculacao`, `ServicoDeCirculacao`, `ComprovanteReserva`, `ComprovanteEmprestimo`, `ComprovanteRenovacao`, `ComprovanteDevolucao`, `SituacaoLivroDTO`, `ReservaInvalidaException` [38]
+- **Command:** `SolicitacaoDeCirculacao`, `SolicitacaoDeReserva`, `SolicitacaoDeRenovacao`, `ExecutorDeSolicitacoes`, `RegistroDeSolicitacoes`, `ResultadoSolicitacao`, `StatusSolicitacao` [41]
+- **Strategy:** `PoliticaDeMulta`, `MultaDiaria`, `MultaComTeto`, `MultaComTolerancia`, `SeletorDePolitica`, `ConfiguracaoAdministrativa`, `ServicoDeMulta`, `ServicoDeSimulacao`, `Multa`, `PoliticaInexistenteException` [44]
+- **Adapter:** `AdaptadorBancoA`, `AdaptadorBancoB`, «external» `ApiBancoA`, `TituloA`, `StatusA`, `ApiBancoB`, `CobrancaB`, `ConfirmacaoPagamento`, `ServicoDeQuitacao`, `ValorInvalidoException` [47]
+- **Observer:** `PublicadorDeDevolucao`, `OuvinteDeDevolucao`, `OuvinteInspecao`, `OuvinteMulta`, `OuvinteIndicadores`, `OuvinteEmail`, `EventoDevolucao`, `AgendaDeInspecao`, `PainelDeIndicadores`, `ServicoDeEmail`, `ServicoDeEmailSimulado` [49]
+- **Composite:** `ComponenteDoAcervo`, `ItemDoAcervo`, `GrupoDoAcervo`, `TipoDeGrupo`, `OrganizadorDoAcervo`, `NoDoAcervoDTO`, `HierarquiaInvalidaException` [56]
+- **Decorator:** `ConsultaAcervo`, `ConsultaAcervoBasica`, `DecoradorDeConsulta`, `DecoradorDeMedicao`, `DecoradorDeCache`, `MontadorDeConsulta`, `ConfigInstalacao`, `MetadadosLivro`, `Criterio`, `RegistroDeMetricas`, `ArmazenamentoDeCache` [57]
+- **Apoio:** `Relacionamento` [3, 15]; `Sistema`, `RelogioAjustavel` [36]; DTOs das telas `PessoaDTO`, `EstudanteDTO`, `AtendenteDTO`, `IndicadoresDTO`, `CobrancaDTO` [62, 63]; camada web (opcional) [61]
+
+### 2. Máquina de Estados - Livro
+- Efeitos das transições: reservar `/ adicionar(reserva); reservante := e`; emprestar `/ adicionar(emprestimo); vencimento := data + 30`; renovar `/ vencimento += 30; numRenovacoes++`; inspecionar [bom estado] e retornarDoReparo `/ limparCiclo()` [23]
+- Devolução: o efeito `[atraso] / emitirBoletoDeMulta` passa a `/ publicar(EventoDevolucao)` (a multa vem do OuvinteMulta), ou manter o nó de decisão com nota [52]
+- Nomes dos eventos e guardas **não mudam** (D08); o evento `incinerar` é o "laudo irrecuperável".
+
+### 3. Diagramas de Sequência
+- SD Reservar Livro, SD Renovar Emprestimo: Command → fachada → State [43]
+- SD Emprestar Livro: fachada com transação e `alt [reserva inválida]` [43]
+- SD Consultar Reserva: via `iCirculacao` [43]
+- SD Registrar Devolucao: fachada → commit → publicar evento (loop de ouvintes) [43, 53]
+- SD Emitir Boleto de Multa: iMulta → ServicoDeMulta → política (Strategy) → iCobranca (Adapter) [53]
+- SD Manter Livro / Pessoa / Estudante / Atendente: passos do método-modelo [64]
+- (O item [26] foi substituído pelo [43].)
+
+### 4. Componentes
+- Nota do componente Biblioteca: `Acervo`, `Relacionamento`, classes do State, Facade, Command, Observer, Composite e Decorator [2, 24, 60]
+- Nota do componente Financeiro: classes do Strategy e do Adapter; Banco «external» simulado no jar [54]
+- Pacotes de infraestrutura `comum` e `persistencia` dentro de biblioteca.jar [37]
+- Interface Web realizada pelo pacote `web`; entradas HTTP dos bancos [65]
+
+### 5. Implantação (e instâncias)
+- Nenhuma mudança obrigatória; notas opcionais sobre Thymeleaf, HTTPS (perfil `https`) e `exemplo.json` [66]
+
+### 6. Atividades - Reserva a Quitação da Multa
+- E-mail com o boleto enviado pelo Banco; pagamento chega pela notificação traduzida pelo adaptador e não quita duas vezes (opcional) [55]
+
+### 7. Casos de Uso e Modelo de Domínio (opcionais)
+- Casos de uso novos: inspecionar, reparo/incineração, configurar e simular política, organizar acervo, consultar acervo, Banco informa pagamento [67]
+- Modelo de domínio: `Multa`, `SolicitacaoDeCirculacao`, organização do acervo [68]

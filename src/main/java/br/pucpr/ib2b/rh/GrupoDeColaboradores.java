@@ -13,6 +13,8 @@ public class GrupoDeColaboradores {
 
     public boolean remover(String matricula) { return repositorio.removerAtendente(matricula); }
 
+    public java.util.List<Atendente> listar() { return repositorio.listarAtendentes(); }
+
     /** Devolve o atendente com essa matrícula funcional, ou {@code null}. */
     public Atendente buscarPorMatricula(String matricula) { return repositorio.buscarAtendente(matricula); }
 

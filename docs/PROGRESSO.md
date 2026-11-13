@@ -68,4 +68,15 @@ livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 
 - ✅ Testes `R09_ConsultaComDecoradoresTest`, `R10_OrganizacaoDoAcervoTest` (100 testes aprovados)
 - ✅ Guia `docs/estudo/ETAPA05_Composite_Decorator.md`; decisões D50–D56
 
-## Etapa 6 — Interface web e demonstração ⬜
+## Etapa 6 — Interface web e demonstração ✅
+
+- ✅ Aplicação web (Spring Boot + Thymeleaf, pacote `web`): cadastros, circulação (f1–f6, inspeção, reparo), financeiro
+  (política, simulação, bancos simulados), acervo (consulta e organização), administração (relógio, e-mail)
+- ✅ API JSON e pontos de entrada dos bancos (webhook JSON / notificação XML); perfil `https` opcional
+- ✅ `dados/exemplo.json` copiado na primeira execução; `biblioteca.jar` executável verificado (HTTP e HTTPS)
+- ✅ Testes `FluxoCompletoWebTest` e `ArquiteturaTest` (105 testes aprovados)
+- ✅ README final, `docs/estudo/DEMO.md`, `docs/estudo/ARGUICAO.md`, guia `ETAPA06_Web_Demonstracao.md`
+- ✅ `docs/uml/ATUALIZACOES_ASTAH.md` com a lista final por diagrama; decisões D57–D64
+
+**Projeto concluído.** Próximos passos da equipe: atualizar o Astah com a lista por diagrama, preencher as colunas
+"Decisão da equipe" do `REGISTRO_LLM.md`, estudar `docs/estudo/` e ensaiar `DEMO.md`.

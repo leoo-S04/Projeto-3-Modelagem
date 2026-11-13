@@ -18,6 +18,10 @@ public interface RepositorioRelacionamento {
     Atendente buscarAtendente(String matriculaFuncional);
     boolean removerAtendente(String matriculaFuncional);
 
+    java.util.List<Pessoa> listarPessoas();
+    java.util.List<Estudante> listarEstudantes();
+    java.util.List<Atendente> listarAtendentes();
+
     /** Id do próximo papel (estudante ou atendente). */
     int gerarIdPapel();
 
