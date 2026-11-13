@@ -6,6 +6,9 @@ import br.pucpr.ib2b.biblioteca.Emprestimo;
 import br.pucpr.ib2b.biblioteca.Livro;
 import br.pucpr.ib2b.biblioteca.Reserva;
 import br.pucpr.ib2b.biblioteca.ResultadoSolicitacao;
+import br.pucpr.ib2b.financeiro.BoletoDeMulta;
+import br.pucpr.ib2b.financeiro.ConfiguracaoAdministrativa;
+import br.pucpr.ib2b.financeiro.Multa;
 import br.pucpr.ib2b.rh.Atendente;
 import br.pucpr.ib2b.rh.Pessoa;
 
@@ -28,6 +31,11 @@ final class BaseDeDados {
     final List<Emprestimo> emprestimos = new ArrayList<>();
     final List<Devolucao> devolucoes = new ArrayList<>();
     final Map<UUID, ResultadoSolicitacao> solicitacoes = new LinkedHashMap<>();
+    final Map<Integer, Multa> multas = new LinkedHashMap<>();
+    final Map<Integer, BoletoDeMulta> boletos = new LinkedHashMap<>();
+    ConfiguracaoAdministrativa configuracao = ConfiguracaoAdministrativa.padrao();
     int ultimoIdTransacao = 0;
     int ultimoIdPapel = 0;
+    int ultimoIdMulta = 0;
+    int ultimoIdBoleto = 0;
 }

@@ -36,4 +36,6 @@ abstract class UnidadeDeTrabalhoBase implements UnidadeDeTrabalho {
     /** Ids sequenciais guardados na própria cópia de trabalho (são gravados junto). */
     synchronized int proximoIdTransacao() { return ++dados.ultimoIdTransacao; }
     synchronized int proximoIdPapel() { return ++dados.ultimoIdPapel; }
+    synchronized int proximoIdMulta() { return ++dados.ultimoIdMulta; }
+    synchronized int proximoIdBoleto() { return ++dados.ultimoIdBoleto; }
 }

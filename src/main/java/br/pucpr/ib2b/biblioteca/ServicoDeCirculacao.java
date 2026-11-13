@@ -106,6 +106,13 @@ public class ServicoDeCirculacao implements iCirculacao {
         });
     }
 
+    /** Devolução mais recente do livro por esse estudante (para a f6, emitir boleto). */
+    @Override
+    public ComprovanteDevolucao consultarDevolucao(int idLivro, String idEstudante) {
+        Devolucao d = movimentacao.buscarDevolucao(idLivro, idEstudante);
+        return d == null ? null : ComprovanteDevolucao.de(d);
+    }
+
     @Override
     public SituacaoLivroDTO registrarInspecao(int idLivro, boolean emBomEstado) {
         return noLivro(idLivro, l -> l.inspecionar(emBomEstado));

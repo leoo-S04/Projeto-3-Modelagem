@@ -1,11 +1,11 @@
 package br.pucpr.ib2b.biblioteca;
 
-/**
- * Serviços do Atendente (Astah: iDevolucao): f5 e as operações de inspeção e reparo.
- * f6 emitirBoletoDeMulta é acrescentada na Etapa 4, junto com o componente Financeiro.
- */
+import br.pucpr.ib2b.financeiro.BoletoDeMulta;
+
+/** Serviços do Atendente (Astah: iDevolucao): f5, f6 e as operações de inspeção e reparo. */
 public interface iDevolucao {
     ComprovanteDevolucao registrarDevolucao(int idLivro, String idEstudante, String idAtendente);   // f5
+    BoletoDeMulta emitirBoletoDeMulta(int idLivro, String idEstudante);                             // f6
     boolean inspecionar(int idLivro, boolean emBomEstado);
     boolean enviarParaReparo(int idLivro);
     boolean retornarDoReparo(int idLivro);

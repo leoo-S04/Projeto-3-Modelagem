@@ -51,7 +51,14 @@ livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 
 - ✅ Testes `R04_FachadaDeCirculacaoTest`, `R06_SolicitacoesCommandTest` (70 testes aprovados)
 - ✅ Guia `docs/estudo/ETAPA03_Facade_Command.md`; decisões D28–D35
 
-## Etapa 4 — Devolução e financeiro: Observer (Req 5), Strategy (Req 2) e Adapter (Req 3) ⬜
+## Etapa 4 — Devolução e financeiro: Observer (Req 5), Strategy (Req 2) e Adapter (Req 3) ✅
+
+- ✅ Observer: `PublicadorDeDevolucao`, `EventoDevolucao`, ouvintes de inspeção, multa, indicadores e e-mail (publicação após o commit)
+- ✅ Strategy: `PoliticaDeMulta` + 3 políticas, `SeletorDePolitica`, `ServicoDeMulta`, `ServicoDeSimulacao`, `Multa`
+- ✅ Adapter: `iCobranca`, `AdaptadorBancoA/B`, APIs simuladas `ApiBancoA/B`, `ServicoDeQuitacao` (idempotente)
+- ✅ f6 (`emitirBoletoDeMulta`), `TratadorDeMulta`, `RepositorioFinanceiro` (multas, cobranças, configuração no JSON)
+- ✅ Testes `R02_PoliticasDeMultaTest`, `R03_BancosAdapterTest`, `R05_ReacoesADevolucaoTest` (88 testes aprovados)
+- ✅ Guia `docs/estudo/ETAPA04_Observer_Strategy_Adapter.md`; decisões D36–D49
 
 ## Etapa 5 — Acervo e consulta: Composite (Req 10) e Decorator (Req 9) ⬜
 

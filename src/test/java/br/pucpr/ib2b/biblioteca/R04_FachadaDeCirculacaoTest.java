@@ -87,6 +87,7 @@ class R04_FachadaDeCirculacaoTest {
         @Override public RepositorioLivro criarRepositorioLivro(UnidadeDeTrabalho u) { return real.criarRepositorioLivro(u); }
         @Override public RepositorioRelacionamento criarRepositorioRelacionamento(UnidadeDeTrabalho u) { return real.criarRepositorioRelacionamento(u); }
         @Override public RepositorioDeSolicitacoes criarRepositorioDeSolicitacoes(UnidadeDeTrabalho u) { return real.criarRepositorioDeSolicitacoes(u); }
+        @Override public RepositorioFinanceiro criarRepositorioFinanceiro(UnidadeDeTrabalho u) { return real.criarRepositorioFinanceiro(u); }
 
         @Override
         public RepositorioMovimentacao criarRepositorioMovimentacao(UnidadeDeTrabalho u) {

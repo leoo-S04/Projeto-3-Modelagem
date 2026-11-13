@@ -11,6 +11,7 @@ public interface iCirculacao {
     ComprovanteEmprestimo efetivarEmprestimo(int idLivro, String idEstudante, String idAtendente);
     ComprovanteRenovacao renovar(int idLivro, String idEstudante);
     ComprovanteDevolucao devolver(int idLivro, String idEstudante, String idAtendente);
+    ComprovanteDevolucao consultarDevolucao(int idLivro, String idEstudante);
     SituacaoLivroDTO registrarInspecao(int idLivro, boolean emBomEstado);
     SituacaoLivroDTO enviarParaReparo(int idLivro);
     SituacaoLivroDTO retornarDoReparo(int idLivro);

@@ -108,6 +108,31 @@ class R08_FamiliasDePersistenciaTest {
     }
 
     @Test
+    void multaBoletoSolicitacoesEConfiguracaoSobrevivemAoReinicio() throws Exception {
+        Path arquivo = pasta.resolve("biblioteca.json");
+        RelogioAjustavel relogio = RelogioAjustavel.fixoEm(Cenario.HOJE, Cenario.FUSO);
+        Sistema s = Sistema.montar(new FabricaJson(arquivo), relogio);
+        s.tratadorDePessoa.inserirPessoa("111", "Ana", "Souza", "ana@pucpr.br");
+        s.tratadorDeEstudante.inserirEstudante("111", "M-100");
+        s.tratadorDeAcervo.inserirLivro(1, "Dom Casmurro");
+        s.tratadorDeEmprestimo.reservarLivro(1, "M-100", null);
+        s.tratadorDeEmprestimo.emprestarLivro(1, "M-100", null);
+        s.tratadorDeMulta.definirPoliticaVigente("TOLERANCIA");
+        relogio.avancarDias(37);                                              // 7 dias de atraso → 5,00
+        s.tratadorDeDevolucao.registrarDevolucao(1, "M-100", null);
+
+        String json = Files.readString(arquivo);
+        assertTrue(json.contains("\"valor\" : 5.00"));                        // BigDecimal sem perder casas
+        assertTrue(json.contains("\"politicaVigente\" : \"TOLERANCIA\""));
+
+        Sistema relido = Sistema.montar(new FabricaJson(arquivo), relogio);
+        assertEquals("TOLERANCIA", relido.tratadorDeMulta.politicaVigente());
+        var boleto = relido.tratadorDeMulta.listarBoletos().get(0);
+        assertEquals(new java.math.BigDecimal("5.00"), boleto.getValorTotal());
+        assertEquals(boleto.getIdBoleto(), relido.tratadorDeDevolucao.emitirBoletoDeMulta(1, "M-100").getIdBoleto());
+    }
+
+    @Test
     void R08_naoEPermitidoMisturarFamilias() {
         UnidadeDeTrabalho daMemoria = new FabricaEmMemoria().criarUnidadeDeTrabalho();
         FabricaJson fabricaJson = new FabricaJson(pasta.resolve("biblioteca.json"));

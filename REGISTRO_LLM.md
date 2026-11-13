@@ -39,3 +39,9 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
 |---|---|---|---|---|
 | 13 | Executar a Etapa 3 (CLAUDE.md, modo autônomo) | `iCirculacao`/`ServicoDeCirculacao` com comprovantes (DTOs) e transação; tratadores delegando; `SolicitacaoDeCirculacao`, `SolicitacaoDeReserva`, `SolicitacaoDeRenovacao`, `ExecutorDeSolicitacoes`, `RegistroDeSolicitacoes` (idempotente, gravado no JSON); R04 e R06 (inclui teste de concorrência); guia `ETAPA03_Facade_Command.md`; decisões D28–D35 | | |
+
+## Etapa 4 — Observer (Req. 5), Strategy (Req. 2) e Adapter (Req. 3) — modo autônomo
+
+| # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
+|---|---|---|---|---|
+| 14 | Executar a Etapa 4 (CLAUDE.md, modo autônomo) | Publicador, evento e 4 ouvintes de devolução; 3 políticas de multa com seletor e simulação; `Multa` e `BoletoDeMulta`; contrato `iCobranca`, adaptadores dos bancos A e B com APIs simuladas incompatíveis, quitação idempotente; f6; `TratadorDeMulta`; persistência de multas, boletos e configuração; R02, R03, R05; guia `ETAPA04_Observer_Strategy_Adapter.md`; decisões D36–D49 | | |

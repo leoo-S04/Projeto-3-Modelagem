@@ -26,6 +26,11 @@ public final class FabricaEmMemoria implements FabricaDePersistencia {
         return new RepositorioDeSolicitacoesEmMemoria(daFamilia(uow));
     }
 
+    @Override
+    public RepositorioFinanceiro criarRepositorioFinanceiro(UnidadeDeTrabalho uow) {
+        return new RepositorioFinanceiroEmMemoria(daFamilia(uow));
+    }
+
     /** Impede misturar famílias: só aceita a unidade de trabalho em memória. */
     private UnidadeDeTrabalhoEmMemoria daFamilia(UnidadeDeTrabalho uow) {
         if (uow instanceof UnidadeDeTrabalhoEmMemoria daMesmaFamilia) return daMesmaFamilia;

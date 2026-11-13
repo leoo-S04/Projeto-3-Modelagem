@@ -7,6 +7,9 @@ import br.pucpr.ib2b.biblioteca.Livro;
 import br.pucpr.ib2b.biblioteca.Reserva;
 import br.pucpr.ib2b.biblioteca.Situacao;
 import br.pucpr.ib2b.biblioteca.Transacao;
+import br.pucpr.ib2b.financeiro.BoletoDeMulta;
+import br.pucpr.ib2b.financeiro.ConfiguracaoAdministrativa;
+import br.pucpr.ib2b.financeiro.Multa;
 import br.pucpr.ib2b.persistencia.DocumentoDados.*;
 import br.pucpr.ib2b.rh.Atendente;
 import br.pucpr.ib2b.rh.Pessoa;
@@ -40,7 +43,13 @@ final class MapeadorDeDados {
                                 d.getEstudante().getMatricula(), matricula(d.getAtendente()),
                                 d.getDataDevolucao(), d.getVencimento(), transacao(d.getEmprestimo()))).toList(),
                 List.copyOf(b.solicitacoes.values()),
-                new ContadoresJson(b.ultimoIdTransacao, b.ultimoIdPapel));
+                List.copyOf(b.multas.values()),
+                b.boletos.values().stream()
+                        .map(x -> new BoletoJson(x.getIdBoleto(), x.getIdMulta(), x.getCpf(), x.getDiasAtraso(),
+                                x.getValorTotal(), x.getDataEmissao(), x.getBanco(), x.getIdExterno(), x.getSituacao(),
+                                x.getDataPagamento(), x.getIdPagamento())).toList(),
+                new ConfiguracaoJson(b.configuracao.getPoliticaVigente(), b.configuracao.getBancoEmUso()),
+                new ContadoresJson(b.ultimoIdTransacao, b.ultimoIdPapel, b.ultimoIdMulta, b.ultimoIdBoleto));
     }
 
     static BaseDeDados paraBase(DocumentoDados doc) {
@@ -75,9 +84,22 @@ final class MapeadorDeDados {
         for (var s : lista(doc.solicitacoes())) {
             b.solicitacoes.put(s.idSolicitacao(), s);
         }
+        for (Multa m : lista(doc.multas())) {
+            b.multas.put(m.idMulta(), m);
+        }
+        for (BoletoJson x : lista(doc.cobrancas())) {
+            b.boletos.put(x.idBoleto(), BoletoDeMulta.reconstituir(x.idBoleto(), x.idMulta(), x.cpf(), x.diasAtraso(),
+                    x.valor(), x.dataEmissao(), x.banco(), x.idExterno(), x.situacao(), x.dataPagamento(), x.idPagamento()));
+        }
+        if (doc.configuracao() != null) {
+            b.configuracao = new ConfiguracaoAdministrativa(doc.configuracao().politicaVigente(),
+                    doc.configuracao().bancoEmUso());
+        }
         if (doc.contadores() != null) {
             b.ultimoIdTransacao = doc.contadores().ultimoIdTransacao();
             b.ultimoIdPapel = doc.contadores().ultimoIdPapel();
+            b.ultimoIdMulta = doc.contadores().ultimoIdMulta();
+            b.ultimoIdBoleto = doc.contadores().ultimoIdBoleto();
         }
         return b;
     }

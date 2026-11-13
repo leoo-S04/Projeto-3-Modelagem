@@ -10,4 +10,5 @@ public interface FabricaDePersistencia {
     RepositorioMovimentacao criarRepositorioMovimentacao(UnidadeDeTrabalho uow);
     RepositorioRelacionamento criarRepositorioRelacionamento(UnidadeDeTrabalho uow);
     RepositorioDeSolicitacoes criarRepositorioDeSolicitacoes(UnidadeDeTrabalho uow);
+    RepositorioFinanceiro criarRepositorioFinanceiro(UnidadeDeTrabalho uow);
 }

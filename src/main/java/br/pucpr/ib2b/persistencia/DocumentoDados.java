@@ -1,7 +1,9 @@
 package br.pucpr.ib2b.persistencia;
 
 import br.pucpr.ib2b.biblioteca.ResultadoSolicitacao;
+import br.pucpr.ib2b.financeiro.Multa;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,6 +20,9 @@ public record DocumentoDados(
         List<TransacaoJson> emprestimos,
         List<DevolucaoJson> devolucoes,
         List<ResultadoSolicitacao> solicitacoes,
+        List<Multa> multas,
+        List<BoletoJson> cobrancas,
+        ConfiguracaoJson configuracao,
         ContadoresJson contadores) {
 
     public record PessoaJson(String cpf, String nome, String sobrenome, String email) { }
@@ -36,5 +41,13 @@ public record DocumentoDados(
     public record DevolucaoJson(int id, LocalDate data, int idLivro, String matriculaEstudante, String matriculaAtendente,
                          LocalDate dataDevolucao, LocalDate vencimento, TransacaoJson emprestimo) { }
 
-    public record ContadoresJson(int ultimoIdTransacao, int ultimoIdPapel) { }
+    /** Boleto registrado no banco em uso (seção "cobrancas"). */
+    public record BoletoJson(int idBoleto, int idMulta, String cpf, int diasAtraso, BigDecimal valor,
+                             LocalDate dataEmissao, String banco, String idExterno, String situacao,
+                             LocalDate dataPagamento, String idPagamento) { }
+
+    /** Configuração administrativa: política de multa vigente e banco em uso. */
+    public record ConfiguracaoJson(String politicaVigente, String bancoEmUso) { }
+
+    public record ContadoresJson(int ultimoIdTransacao, int ultimoIdPapel, int ultimoIdMulta, int ultimoIdBoleto) { }
 }
