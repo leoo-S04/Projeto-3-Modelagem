@@ -4,7 +4,8 @@ import br.pucpr.ib2b.Cenario;
 import br.pucpr.ib2b.Sistema;
 import br.pucpr.ib2b.biblioteca.Livro;
 import br.pucpr.ib2b.biblioteca.RenovacaoNegadaException;
-import br.pucpr.ib2b.biblioteca.Reserva;
+import br.pucpr.ib2b.biblioteca.ComprovanteReserva;
+import br.pucpr.ib2b.biblioteca.StatusSolicitacao;
 import br.pucpr.ib2b.biblioteca.Situacao;
 import br.pucpr.ib2b.comum.RelogioAjustavel;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ class R08_FamiliasDePersistenciaTest {
         assertInstanceOf(RepositorioLivroEmMemoria.class, fabrica.criarRepositorioLivro(uow));
         assertInstanceOf(RepositorioMovimentacaoEmMemoria.class, fabrica.criarRepositorioMovimentacao(uow));
         assertInstanceOf(RepositorioRelacionamentoEmMemoria.class, fabrica.criarRepositorioRelacionamento(uow));
+        assertInstanceOf(RepositorioDeSolicitacoesEmMemoria.class, fabrica.criarRepositorioDeSolicitacoes(uow));
         uow.executar(() -> fabrica.criarRepositorioLivro(uow).salvar(new Livro(1, "A")));
         try (var arquivos = Files.list(pasta)) {
             assertEquals(0, arquivos.count());                     // nada foi gravado em disco
@@ -69,8 +71,8 @@ class R08_FamiliasDePersistenciaTest {
         // Outro sistema lendo o mesmo arquivo reconstitui livro, estado e reserva
         Sistema relido = Sistema.montar(new FabricaJson(arquivo), RelogioAjustavel.fixoEm(Cenario.HOJE, Cenario.FUSO));
         assertEquals(Situacao.RESERVADO, relido.tratadorDeAcervo.consultarLivro(1).getEstado());
-        Reserva reserva = relido.tratadorDeEmprestimo.consultarReserva(1, "M-100");
-        assertEquals(LocalDate.of(2026, 11, 13), reserva.getData());
+        ComprovanteReserva reserva = relido.tratadorDeEmprestimo.consultarReserva(1, "M-100");
+        assertEquals(LocalDate.of(2026, 11, 13), reserva.data());
     }
 
     @Test
@@ -91,16 +93,18 @@ class R08_FamiliasDePersistenciaTest {
             s.tratadorDeAcervo.consultarLivro(1).setTitulo("ALTERADO");
             throw new IllegalStateException("falha simulada no meio da operação");
         }));
-        // Recusa de domínio também desfaz (3ª renovação)
-        assertThrows(RenovacaoNegadaException.class, () -> s.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100"));
-
         assertEquals(antes, Files.readString(arquivo));                       // arquivo inalterado
         assertEquals("Dom Casmurro", s.tratadorDeAcervo.consultarLivro(1).getTitulo()); // cópia recarregada
         assertFalse(Files.exists(pasta.resolve("biblioteca.json.tmp")));
+
+        // Recusa de domínio dentro da fachada (3ª renovação) também desfaz: o livro no arquivo não muda
+        assertThrows(RenovacaoNegadaException.class, () -> s.circulacao().renovar(1, "M-100"));
+        assertEquals(antes, Files.readString(arquivo));
+
         // Estado reconstituído do arquivo continua respeitando a guarda (2 renovações já feitas)
         Sistema relido = Sistema.montar(new FabricaJson(arquivo), RelogioAjustavel.fixoEm(Cenario.HOJE, Cenario.FUSO));
         assertEquals(Situacao.RENOVADO, relido.tratadorDeAcervo.consultarLivro(1).getEstado());
-        assertThrows(RenovacaoNegadaException.class, () -> relido.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100"));
+        assertEquals(StatusSolicitacao.RECUSADA, relido.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100").status());
     }
 
     @Test

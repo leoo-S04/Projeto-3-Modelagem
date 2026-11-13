@@ -13,9 +13,9 @@ class MovimentacaoTest {
 
     @Test
     void buscaAReservaPeloLivroEPeloEstudante() {
-        Reserva r = c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
+        assertTrue(c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01").foiExecutada());
 
-        assertEquals(r.getIdTransacao(), movimentacao.buscarReserva(1, "M-100").getIdTransacao());
+        assertNotNull(movimentacao.buscarReserva(1, "M-100"));
         assertSame(movimentacao.buscarReserva(1, "M-100"), movimentacao.buscarReservaAtiva(1));
         assertNull(movimentacao.buscarReserva(1, "M-999"));   // outro estudante
         assertNull(movimentacao.buscarReserva(2, "M-100"));   // outro livro

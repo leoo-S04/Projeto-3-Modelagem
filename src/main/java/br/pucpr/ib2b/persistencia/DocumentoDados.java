@@ -1,5 +1,7 @@
 package br.pucpr.ib2b.persistencia;
 
+import br.pucpr.ib2b.biblioteca.ResultadoSolicitacao;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,6 +17,7 @@ public record DocumentoDados(
         List<TransacaoJson> reservas,
         List<TransacaoJson> emprestimos,
         List<DevolucaoJson> devolucoes,
+        List<ResultadoSolicitacao> solicitacoes,
         ContadoresJson contadores) {
 
     public record PessoaJson(String cpf, String nome, String sobrenome, String email) { }

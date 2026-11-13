@@ -46,3 +46,16 @@ padrão exigir; nomes do Astah nos demais casos.
 | D25 | BOM do Spring Boot importado só para gerenciar versões (Jackson, JUnit) | Versões fixas manualmente | Prepara a Etapa 6 sem colocar Spring no domínio. |
 | D26 | `Sistema` (pacote raiz) é a montagem única; `RelogioAjustavel` (pacote `comum`) é o Clock injetado | Montagem em cada teste | Testes e web usam a mesma montagem; o relógio ajustável serve à demonstração. |
 | D27 | Validação de CPF: só dígitos (sem verificar tamanho/dígitos verificadores) | Validação completa | Fora do escopo dos requisitos; mantém os dados de teste simples. |
+
+## Etapa 3 — Facade e Command (decisões do modelo, modo autônomo)
+
+| # | Decisão | Alternativas | Motivo |
+|---|---|---|---|
+| D28 | Fachada `iCirculacao` / `ServicoDeCirculacao` (nomes das Soluções) no pacote `biblioteca`; os tratadores mantêm os nomes do Astah e delegam | Pôr a orquestração na web | Req. 4: a interface depende só dos tratadores. |
+| D29 | Tratadores devolvem DTOs: f2 `ComprovanteReserva`, f3 `ComprovanteEmprestimo`, f5 `ComprovanteDevolucao`; f1/f4 `ResultadoSolicitacao`; nova `consultarSituacao` → `SituacaoLivroDTO` | Devolver `Reserva`/`Emprestimo` (Astah) | Req. 4: comprovantes em vez de objetos internos ou coleções. |
+| D30 | `efetivarEmprestimo` recusa com `ReservaInvalidaException` (estudante inexistente, sem reserva ativa, reserva de outro estudante) | Devolver `null` (D09) | Sequência e tratamento de falhas das Soluções (Problema 4). Nas demais operações, inexistente continua `null`/`false`. |
+| D31 | Client do Command = `TratadorDeEmprestimo`; a tela informa o id (UUID) da solicitação | A tela cria a solicitação (Soluções) | Para criar a solicitação a tela precisaria conhecer `iCirculacao`, violando "a web depende só dos tratadores". O id vindo da tela preserva a idempotência em reenvios. |
+| D32 | Recusa de domínio dentro de uma solicitação vira `ResultadoSolicitacao` RECUSADA com a mensagem | Deixar a exceção subir (D09) | Código do executor nas Soluções; a recusa é um resultado final, gravado e devolvido nas repetições. A mensagem não se perde. |
+| D33 | Registro: `ConcurrentHashMap.putIfAbsent` + resultados gravados (seção `solicitacoes`), por meio do novo produto `RepositorioDeSolicitacoes` da fábrica; ids não são removidos após concluir; falha técnica libera o id | Só memória | Idempotência inclusive após reiniciar; sem corrida entre concluir e uma nova submissão. |
+| D34 | Execução e registro do resultado em transações separadas | Mesma transação | A unidade de trabalho não tem "savepoint": numa transação única, uma recusa no meio exigiria confirmar alterações parciais. Risco residual (queda entre as duas) documentado no guia. |
+| D35 | Sobrecargas sem id (`reservarLivro(idLivro, ...)`) geram um UUID novo | Exigir sempre o id | Mantém as assinaturas do Astah; cada chamada sem id é uma solicitação nova. |

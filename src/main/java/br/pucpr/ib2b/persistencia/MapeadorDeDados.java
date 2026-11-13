@@ -39,6 +39,7 @@ final class MapeadorDeDados {
                         .map(d -> new DevolucaoJson(d.getIdTransacao(), d.getData(), d.getLivro().getIdLivro(),
                                 d.getEstudante().getMatricula(), matricula(d.getAtendente()),
                                 d.getDataDevolucao(), d.getVencimento(), transacao(d.getEmprestimo()))).toList(),
+                List.copyOf(b.solicitacoes.values()),
                 new ContadoresJson(b.ultimoIdTransacao, b.ultimoIdPapel));
     }
 
@@ -70,6 +71,9 @@ final class MapeadorDeDados {
                     d.emprestimo() == null ? null : emprestimo(b, d.emprestimo()), d.vencimento());
             dev.registrarDataDevolucao(d.dataDevolucao());
             b.devolucoes.add(dev);
+        }
+        for (var s : lista(doc.solicitacoes())) {
+            b.solicitacoes.put(s.idSolicitacao(), s);
         }
         if (doc.contadores() != null) {
             b.ultimoIdTransacao = doc.contadores().ultimoIdTransacao();

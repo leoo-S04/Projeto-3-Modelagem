@@ -7,40 +7,43 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Req. 1 — State: cenários de verificação do enunciado, executados pelos tratadores. */
+/**
+ * Req. 1 — State: cenários de verificação do enunciado, executados pelos tratadores.
+ * f1 e f4 passam pelo executor de solicitações (Command): a recusa do estado volta como resultado RECUSADA,
+ * com a mensagem da exceção de domínio.
+ */
 class R01_CicloDeVidaDoLivroTest {
 
     private final Cenario c = new Cenario();
 
     @Test
     void R01_terceiraRenovacaoRecusadaSemAlterarVencimento() {
-        c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
-        c.tratadorDeEmprestimo.emprestarLivro(1, "M-100", "F-01");       // vencimento 13/12/2026
-        assertTrue(c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100")); // 12/01/2027
-        assertTrue(c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100")); // 11/02/2027
-        Livro livro = c.tratadorDeAcervo.consultarLivro(1);
-        assertEquals(LocalDate.of(2027, 2, 11), livro.getVencimento());
+        c.emprestarLivro1();                                                         // vencimento 13/12/2026
+        assertTrue(c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100").foiExecutada()); // 12/01/2027
+        assertTrue(c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100").foiExecutada()); // 11/02/2027
+        assertEquals(LocalDate.of(2027, 2, 11), c.tratadorDeAcervo.consultarLivro(1).getVencimento());
 
-        assertThrows(RenovacaoNegadaException.class,
-                () -> c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100"));
+        ResultadoSolicitacao terceira = c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100");
 
+        assertEquals(StatusSolicitacao.RECUSADA, terceira.status());
+        assertTrue(terceira.mensagem().contains("limite de 2 renovações"));        // RenovacaoNegadaException
         Livro depois = c.tratadorDeAcervo.consultarLivro(1);
-        assertEquals(LocalDate.of(2027, 2, 11), depois.getVencimento());  // vencimento inalterado
+        assertEquals(LocalDate.of(2027, 2, 11), depois.getVencimento());          // vencimento inalterado
         assertEquals(2, depois.getNumRenovacoes());
         assertEquals(Situacao.RENOVADO, depois.getEstado());
     }
 
     @Test
     void R01_livroDevolvidoNaoInspecionadoNaoPodeSerReservado() {
-        c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
-        c.tratadorDeEmprestimo.emprestarLivro(1, "M-100", "F-01");
+        c.emprestarLivro1();
         c.tratadorDeDevolucao.registrarDevolucao(1, "M-100", "F-01");
         assertEquals(Situacao.DEVOLVIDO, c.tratadorDeAcervo.consultarLivro(1).getEstado());
 
-        assertThrows(OperacaoInvalidaException.class,
-                () -> c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01"));
+        ResultadoSolicitacao reserva = c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
 
+        assertEquals(StatusSolicitacao.RECUSADA, reserva.status());
+        assertTrue(reserva.mensagem().contains("DEVOLVIDO"));                     // OperacaoInvalidaException
         assertEquals(Situacao.DEVOLVIDO, c.tratadorDeAcervo.consultarLivro(1).getEstado());
-        assertNull(c.tratadorDeEmprestimo.consultarReserva(1, "M-100"));  // nenhuma reserva gravada
+        assertNull(c.tratadorDeEmprestimo.consultarReserva(1, "M-100"));          // nenhuma reserva gravada
     }
 }

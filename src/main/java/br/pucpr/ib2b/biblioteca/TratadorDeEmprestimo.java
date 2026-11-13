@@ -1,89 +1,68 @@
 package br.pucpr.ib2b.biblioteca;
 
-import br.pucpr.ib2b.academico.Estudante;
-import br.pucpr.ib2b.persistencia.UnidadeDeTrabalho;
-import br.pucpr.ib2b.rh.Atendente;
-
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.util.UUID;
 
 /**
- * Serviços f1 a f4 do Estudante (Astah: TratadorDeEmprestimo). Acessa Acervo, Movimentacao e Relacionamento
- * por delegação. NÃO testa a situação do livro: dispara o evento no Livro e o estado decide (padrão State).
- * Cada operação é uma transação: se algo falhar, a unidade de trabalho desfaz tudo.
- * Recusa do estado → a OperacaoInvalidaException sobe com a mensagem; livro/estudante inexistente → null/false.
+ * Serviços f1 a f4 do Estudante (Astah: TratadorDeEmprestimo). Mantém os serviços e DELEGA:
+ * <ul>
+ *   <li>à fachada iCirculacao (Facade, Req. 4) — nada de Acervo, Movimentacao ou Relacionamento aqui;</li>
+ *   <li>f1 e f4 viram solicitações (Command, Req. 6): o tratador é o Client que cria a solicitação concreta e a
+ *       entrega ao ExecutorDeSolicitacoes (Invoker).</li>
+ * </ul>
+ * Nenhum if sobre a situação do livro (State, Req. 1).
  */
 public class TratadorDeEmprestimo implements iEmprestimo {
 
-    private final Acervo acervo;
-    private final Movimentacao movimentacao;
-    private final Relacionamento relacionamento;
+    private final iCirculacao circulacao;
+    private final ExecutorDeSolicitacoes executor;
     private final Clock relogio;
-    private final UnidadeDeTrabalho transacao;
 
-    public TratadorDeEmprestimo(Acervo acervo, Movimentacao movimentacao, Relacionamento relacionamento,
-                                Clock relogio, UnidadeDeTrabalho transacao) {
-        this.acervo = acervo;
-        this.movimentacao = movimentacao;
-        this.relacionamento = relacionamento;
+    public TratadorDeEmprestimo(iCirculacao circulacao, ExecutorDeSolicitacoes executor, Clock relogio) {
+        this.circulacao = circulacao;
+        this.executor = executor;
         this.relogio = relogio;
-        this.transacao = transacao;
     }
 
-    /** f1 — regra 5: o estado do livro decide se a reserva é aceita; só depois a Reserva é registrada. */
+    /** f1 sem id informado: cada chamada é uma solicitação nova. */
     @Override
-    public Reserva reservarLivro(int idLivro, String idEstudante, String idAtendente) {
-        return transacao.executar(() -> {
-            Livro livro = acervo.buscarPorId(idLivro);
-            Estudante estudante = relacionamento.buscarEstudante(idEstudante);
-            if (livro == null || estudante == null) return null;
-            Atendente atendente = relacionamento.buscarAtendente(idAtendente);
-
-            livro.reservarLivro(estudante);                // LIVRE → RESERVADO, ou exceção sem alterar nada
-            Reserva reserva = new Reserva(movimentacao.gerarIdTransacao(), hoje(), livro, estudante, atendente);
-            movimentacao.registrarReserva(reserva);
-            acervo.atualizar(livro);
-            return reserva;
-        });
+    public ResultadoSolicitacao reservarLivro(int idLivro, String idEstudante, String idAtendente) {
+        return reservarLivro(UUID.randomUUID(), idLivro, idEstudante, idAtendente);
     }
 
-    /** f2 — regra 6: devolve a reserva registrada na Movimentacao, ou {@code null}. */
+    /** f1 — cria o ConcreteCommand e o submete ao Invoker. */
     @Override
-    public Reserva consultarReserva(int idLivro, String idEstudante) {
-        return movimentacao.buscarReserva(idLivro, idEstudante);
+    public ResultadoSolicitacao reservarLivro(UUID idSolicitacao, int idLivro, String idEstudante, String idAtendente) {
+        return executor.submeter(new SolicitacaoDeReserva(idSolicitacao, idEstudante, Instant.now(relogio),
+                circulacao, idLivro, idEstudante, idAtendente));
     }
 
-    /** f3 — regra 7: RESERVADO → EMPRESTADO para o mesmo estudante; remove a reserva e registra o empréstimo. */
+    /** f2. */
     @Override
-    public Emprestimo emprestarLivro(int idLivro, String idEstudante, String idAtendente) {
-        return transacao.executar(() -> {
-            Livro livro = acervo.buscarPorId(idLivro);
-            Estudante estudante = relacionamento.buscarEstudante(idEstudante);
-            if (livro == null || estudante == null) return null;
-            Atendente atendente = relacionamento.buscarAtendente(idAtendente);
-
-            livro.emprestarLivro(estudante, hoje());       // guarda: reserva do mesmo estudante
-            Reserva reserva = movimentacao.buscarReserva(idLivro, idEstudante);
-            if (reserva != null) movimentacao.removerReserva(reserva);
-            Emprestimo emprestimo = new Emprestimo(movimentacao.gerarIdTransacao(), hoje(), livro, estudante, atendente);
-            movimentacao.registrarEmprestimo(emprestimo);
-            acervo.atualizar(livro);
-            return emprestimo;
-        });
+    public ComprovanteReserva consultarReserva(int idLivro, String idEstudante) {
+        return circulacao.consultarReserva(idLivro, idEstudante);
     }
 
-    /** f4 — regra 8: renova se houver empréstimo registrado; a guarda numRenovacoes < 2 fica no estado. */
+    /** f3 — delega à fachada, que valida a reserva e efetiva tudo numa transação. */
     @Override
-    public boolean renovarEmprestimo(int idLivro, String idEstudante) {
-        return transacao.executar(() -> {
-            Emprestimo emprestimo = movimentacao.buscarEmprestimo(idLivro, idEstudante);
-            if (emprestimo == null) return false;
-            Livro livro = acervo.buscarPorId(idLivro);
-            livro.renovarEmprestimo();                     // RenovacaoNegadaException na 3ª tentativa
-            acervo.atualizar(livro);
-            return true;
-        });
+    public ComprovanteEmprestimo emprestarLivro(int idLivro, String idEstudante, String idAtendente) {
+        return circulacao.efetivarEmprestimo(idLivro, idEstudante, idAtendente);
     }
 
-    private LocalDate hoje() { return LocalDate.now(relogio); }
+    /** f4 sem id informado: cada chamada é uma solicitação nova (continua limitada a 2 renovações pelo Livro). */
+    @Override
+    public ResultadoSolicitacao renovarEmprestimo(int idLivro, String idEstudante) {
+        return renovarEmprestimo(UUID.randomUUID(), idLivro, idEstudante);
+    }
+
+    /** f4 — mesmo id submetido duas vezes acrescenta apenas 30 dias. */
+    @Override
+    public ResultadoSolicitacao renovarEmprestimo(UUID idSolicitacao, int idLivro, String idEstudante) {
+        return executor.submeter(new SolicitacaoDeRenovacao(idSolicitacao, idEstudante, Instant.now(relogio),
+                circulacao, idLivro, idEstudante));
+    }
+
+    @Override
+    public SituacaoLivroDTO consultarSituacao(int idLivro) { return circulacao.consultarSituacao(idLivro); }
 }

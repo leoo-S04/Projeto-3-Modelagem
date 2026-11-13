@@ -3,6 +3,10 @@ package br.pucpr.ib2b;
 import br.pucpr.ib2b.academico.GrupoDeAcademicos;
 import br.pucpr.ib2b.academico.TratadorDeEstudante;
 import br.pucpr.ib2b.biblioteca.Acervo;
+import br.pucpr.ib2b.biblioteca.ExecutorDeSolicitacoes;
+import br.pucpr.ib2b.biblioteca.RegistroDeSolicitacoes;
+import br.pucpr.ib2b.biblioteca.ServicoDeCirculacao;
+import br.pucpr.ib2b.biblioteca.iCirculacao;
 import br.pucpr.ib2b.biblioteca.Movimentacao;
 import br.pucpr.ib2b.biblioteca.Relacionamento;
 import br.pucpr.ib2b.biblioteca.TratadorDeAcervo;
@@ -29,6 +33,8 @@ public final class Sistema {
     private final Acervo acervo;
     private final Movimentacao movimentacao;
     private final Relacionamento relacionamento;
+    private final iCirculacao circulacao;
+    private final ExecutorDeSolicitacoes executor;
 
     public final TratadorDePessoa tratadorDePessoa;
     public final TratadorDeEstudante tratadorDeEstudante;
@@ -56,8 +62,15 @@ public final class Sistema {
         movimentacao = new Movimentacao(repositorioMovimentacao);
         relacionamento = new Relacionamento(tratadorDeEstudante, tratadorDeAtendente);
         tratadorDeAcervo = new TratadorDeAcervo(acervo, unidadeDeTrabalho);
-        tratadorDeEmprestimo = new TratadorDeEmprestimo(acervo, movimentacao, relacionamento, relogio, unidadeDeTrabalho);
-        tratadorDeDevolucao = new TratadorDeDevolucao(acervo, movimentacao, relacionamento, relogio, unidadeDeTrabalho);
+
+        // Facade (Req. 4): única entrada das operações de circulação
+        circulacao = new ServicoDeCirculacao(acervo, movimentacao, relacionamento, relogio, unidadeDeTrabalho);
+        // Command (Req. 6): invocador com registro idempotente
+        executor = new ExecutorDeSolicitacoes(
+                new RegistroDeSolicitacoes(fabrica.criarRepositorioDeSolicitacoes(unidadeDeTrabalho)));
+
+        tratadorDeEmprestimo = new TratadorDeEmprestimo(circulacao, executor, relogio);
+        tratadorDeDevolucao = new TratadorDeDevolucao(circulacao);
     }
 
     public static Sistema montar(FabricaDePersistencia fabrica, Clock relogio) {
@@ -68,4 +81,6 @@ public final class Sistema {
     public Acervo acervo() { return acervo; }
     public Movimentacao movimentacao() { return movimentacao; }
     public Relacionamento relacionamento() { return relacionamento; }
+    public iCirculacao circulacao() { return circulacao; }
+    public ExecutorDeSolicitacoes executor() { return executor; }
 }

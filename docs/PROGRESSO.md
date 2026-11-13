@@ -43,7 +43,13 @@ livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 
 - ✅ Testes `R07_CadastroTemplateMethodTest`, `R08_FamiliasDePersistenciaTest` (63 testes aprovados)
 - ✅ Guia `docs/estudo/ETAPA02_TemplateMethod_AbstractFactory.md`; decisões D15–D27
 
-## Etapa 3 — Circulação: Facade (Req 4) e Command (Req 6) ⬜
+## Etapa 3 — Circulação: Facade (Req 4) e Command (Req 6) ✅
+
+- ✅ Facade: `iCirculacao` / `ServicoDeCirculacao` (transacional, devolve comprovantes); tratadores delegam
+- ✅ Command: `SolicitacaoDeCirculacao`, `SolicitacaoDeReserva`, `SolicitacaoDeRenovacao`, `ExecutorDeSolicitacoes`,
+  `RegistroDeSolicitacoes` (idempotente, gravado no JSON — novo produto `RepositorioDeSolicitacoes`)
+- ✅ Testes `R04_FachadaDeCirculacaoTest`, `R06_SolicitacoesCommandTest` (70 testes aprovados)
+- ✅ Guia `docs/estudo/ETAPA03_Facade_Command.md`; decisões D28–D35
 
 ## Etapa 4 — Devolução e financeiro: Observer (Req 5), Strategy (Req 2) e Adapter (Req 3) ⬜
 

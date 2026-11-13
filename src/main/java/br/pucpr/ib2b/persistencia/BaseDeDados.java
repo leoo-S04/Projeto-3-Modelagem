@@ -5,6 +5,7 @@ import br.pucpr.ib2b.biblioteca.Devolucao;
 import br.pucpr.ib2b.biblioteca.Emprestimo;
 import br.pucpr.ib2b.biblioteca.Livro;
 import br.pucpr.ib2b.biblioteca.Reserva;
+import br.pucpr.ib2b.biblioteca.ResultadoSolicitacao;
 import br.pucpr.ib2b.rh.Atendente;
 import br.pucpr.ib2b.rh.Pessoa;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Cópia de trabalho de uma unidade de trabalho: os objetos de domínio que os repositórios da família leem
@@ -25,6 +27,7 @@ final class BaseDeDados {
     final List<Reserva> reservas = new ArrayList<>();
     final List<Emprestimo> emprestimos = new ArrayList<>();
     final List<Devolucao> devolucoes = new ArrayList<>();
+    final Map<UUID, ResultadoSolicitacao> solicitacoes = new LinkedHashMap<>();
     int ultimoIdTransacao = 0;
     int ultimoIdPapel = 0;
 }

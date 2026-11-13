@@ -33,3 +33,9 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
 |---|---|---|---|---|
 | 12 | Executar a Etapa 2 (CLAUDE.md, modo autônomo) | `TratadorDeCadastro` (método-modelo final) e os 4 tratadores como ConcreteClass; pacote `persistencia` com fábrica abstrata, famílias em memória e JSON (gravação atômica), unidade de trabalho compartilhada; `Movimentacao` em 3 associações; `Sistema` (montagem) e `RelogioAjustavel`; R07 e R08; guia `ETAPA02_TemplateMethod_AbstractFactory.md`; decisões D15–D27 | | |
+
+## Etapa 3 — Facade (Req. 4) e Command (Req. 6) — modo autônomo
+
+| # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
+|---|---|---|---|---|
+| 13 | Executar a Etapa 3 (CLAUDE.md, modo autônomo) | `iCirculacao`/`ServicoDeCirculacao` com comprovantes (DTOs) e transação; tratadores delegando; `SolicitacaoDeCirculacao`, `SolicitacaoDeReserva`, `SolicitacaoDeRenovacao`, `ExecutorDeSolicitacoes`, `RegistroDeSolicitacoes` (idempotente, gravado no JSON); R04 e R06 (inclui teste de concorrência); guia `ETAPA03_Facade_Command.md`; decisões D28–D35 | | |

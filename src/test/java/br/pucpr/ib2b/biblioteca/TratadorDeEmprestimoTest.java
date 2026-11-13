@@ -20,26 +20,28 @@ class TratadorDeEmprestimoTest {
     }
 
     @Test
-    void f2ConsultarReservaDevolveAReservaRegistradaComADataDeHoje() {
+    void f2ConsultarReservaDevolveOComprovanteComADataDeHoje() {
         c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
 
-        Reserva consultada = c.tratadorDeEmprestimo.consultarReserva(1, "M-100");
+        ComprovanteReserva consultada = c.tratadorDeEmprestimo.consultarReserva(1, "M-100");
 
-        assertEquals(LocalDate.of(2026, 11, 13), consultada.getData());
+        assertEquals(LocalDate.of(2026, 11, 13), consultada.data());
+        assertEquals("Dom Casmurro", consultada.titulo());
         assertNull(c.tratadorDeEmprestimo.consultarReserva(1, "M-999"));
     }
 
     @Test
-    void livroOuEstudanteInexistenteDevolveNullSemAlterarNada() {
-        assertNull(c.tratadorDeEmprestimo.reservarLivro(9, "M-100", "F-01"));
-        assertNull(c.tratadorDeEmprestimo.reservarLivro(1, "M-999", "F-01"));
-        assertFalse(c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100"));
-        assertEquals(Situacao.LIVRE, c.tratadorDeAcervo.consultarLivro(1).getEstado());
+    void livroOuEstudanteInexistenteERecusadoSemAlterarNada() {
+        assertEquals(StatusSolicitacao.RECUSADA, c.tratadorDeEmprestimo.reservarLivro(9, "M-100", "F-01").status());
+        assertEquals(StatusSolicitacao.RECUSADA, c.tratadorDeEmprestimo.reservarLivro(1, "M-999", "F-01").status());
+        assertEquals(StatusSolicitacao.RECUSADA, c.tratadorDeEmprestimo.renovarEmprestimo(1, "M-100").status());
+        assertEquals(Situacao.LIVRE, c.tratadorDeEmprestimo.consultarSituacao(1).situacao());
     }
 
     @Test
     void emprestimoDefineVencimentoEmTrintaDias() {
-        c.emprestarLivro1();
-        assertEquals(LocalDate.of(2026, 12, 13), c.tratadorDeAcervo.consultarLivro(1).getVencimento());
+        c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
+        ComprovanteEmprestimo comprovante = c.tratadorDeEmprestimo.emprestarLivro(1, "M-100", "F-01");
+        assertEquals(LocalDate.of(2026, 12, 13), comprovante.vencimento());
     }
 }
