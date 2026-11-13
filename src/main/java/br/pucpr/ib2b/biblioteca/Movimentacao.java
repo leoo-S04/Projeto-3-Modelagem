@@ -10,6 +10,10 @@ import java.util.List;
 public class Movimentacao {
 
     private final List<Transacao> transacoes = new ArrayList<>();
+    private int ultimoIdTransacao = 0;
+
+    /** Gera o id da próxima transação (reserva, empréstimo ou devolução), sem repetição. */
+    public int gerarIdTransacao() { return ++ultimoIdTransacao; }
 
     public Transacao adicionar(Transacao t) {
         transacoes.add(t);

@@ -9,7 +9,7 @@ Legenda: ✅ implementado e testado · ⬜ pendente (etapa prevista)
 
 | Req | Padrão | Papel GoF → Classe | Teste do cenário | Situação |
 |---|---|---|---|---|
-| 1 | State | _a definir na Etapa 1_ | `R01_...` | ⬜ Etapa 1 |
+| 1 | State | Context → `Livro`; State → `EstadoLivro`; ConcreteState → `Livre`, `Reservado`, `Emprestado`, `Renovado`, `Devolvido`, `Reparando`, `Incinerado`; Clientes → `TratadorDeEmprestimo`, `TratadorDeDevolucao`, `TratadorDeAcervo` | `R01_CicloDeVidaDoLivroTest`: `R01_terceiraRenovacaoRecusadaSemAlterarVencimento`, `R01_livroDevolvidoNaoInspecionadoNaoPodeSerReservado` (+ `EstadoLivroTest`) | ✅ |
 | 2 | Strategy | _a definir na Etapa 4_ | `R02_...` | ⬜ Etapa 4 |
 | 3 | Adapter | _a definir na Etapa 4_ | `R03_...` | ⬜ Etapa 4 |
 | 4 | Facade | _a definir na Etapa 3_ | `R04_...` | ⬜ Etapa 3 |
@@ -28,10 +28,10 @@ Legenda: ✅ implementado e testado · ⬜ pendente (etapa prevista)
 | 2.1–2.4 Manter Pessoa | RH / `rh` | `iPessoa`, `TratadorDePessoa`, `GrupoDePessoas`, `Pessoa` | `TratadorDePessoaTest` | ✅ |
 | 3.1–3.4 Manter Estudante | Academico / `academico` | `iEstudante`, `TratadorDeEstudante`, `GrupoDeAcademicos`, `Estudante`, `Papel` | `TratadorDeEstudanteTest` | ✅ |
 | 4.1–4.4 Manter Atendente | RH / `rh` | `iAtendente`, `TratadorDeAtendente`, `GrupoDeColaboradores`, `Atendente`, `Papel` | `TratadorDeAtendenteTest` | ✅ |
-| 5 Reservar livro (f1) | Biblioteca | `iEmprestimo`, `TratadorDeEmprestimo`, `Reserva` | — | ⬜ Etapa 1 |
+| 5 Reservar livro (f1) | Biblioteca | `iEmprestimo`, `TratadorDeEmprestimo`, `Livro` + estados, `Reserva` | `R01_...`, `EstadoLivroTest` | ✅ |
 | 6 Consultar reserva (f2) | Biblioteca | `TratadorDeEmprestimo`, `Movimentacao`, `Reserva` | `TratadorDeEmprestimoTest`, `MovimentacaoTest` | ✅ |
-| 7 Emprestar livro (f3) | Biblioteca | `TratadorDeEmprestimo`, `Emprestimo` | — | ⬜ Etapa 1 |
-| 8 Renovar empréstimo (f4) | Biblioteca | `TratadorDeEmprestimo`, `Emprestimo` | — | ⬜ Etapa 1 |
-| 9 Registrar devolução (f5) e inspeção | Biblioteca | `iDevolucao`, `TratadorDeDevolucao`, `Devolucao` (atraso: `calcularDiasAtraso`) | `DevolucaoTest` (cálculo do atraso) | ⬜ Etapa 1 (fluxo) |
+| 7 Emprestar livro (f3) | Biblioteca | `TratadorDeEmprestimo`, `Reservado`, `Emprestimo` | `R01_...`, `EstadoLivroTest` | ✅ |
+| 8 Renovar empréstimo (f4) | Biblioteca | `TratadorDeEmprestimo`, `Emprestado`, `Renovado` | `R01_terceiraRenovacaoRecusadaSemAlterarVencimento` | ✅ |
+| 9 Registrar devolução (f5) e inspeção | Biblioteca | `iDevolucao`, `TratadorDeDevolucao`, `Devolvido`, `Reparando`, `Devolucao` | `TratadorDeDevolucaoTest`, `DevolucaoTest` | ✅ |
 | 10 Emitir boleto de multa (f6) | Financeiro | — | — | ⬜ Etapa 4 |
 | Pontos internos de acesso (T02) | Biblioteca | `Acervo`, `Relacionamento`, `Movimentacao` | `TratadorDeEmprestimoTest`, `MovimentacaoTest` | ✅ |

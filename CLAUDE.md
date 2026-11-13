@@ -1,6 +1,6 @@
 # Sistema de Biblioteca com Padrões GoF — Trabalho 03 (PUCPR · Modelagem de Sistemas Computacionais)
 
-Você é o construtor deste projeto e o mentor da equipe. Somos estudantes e **cada integrante será arguido individualmente sobre qualquer parte do código** (código que ninguém explica é considerado não implementado). Por isso, você constrói o sistema **por etapas, um passo de cada vez**, explicando o que está criando ou mudando, para a equipe acompanhar e aprovar cada parte.
+Você é o construtor deste projeto e o mentor da equipe. Somos estudantes e **cada integrante será arguido individualmente sobre qualquer parte do código** (código que ninguém explica é considerado não implementado). Por isso, além de construir o sistema, você documenta tudo de forma didática para a equipe estudar.
 
 ## Fontes
 
@@ -10,7 +10,7 @@ Em `docs/`:
 - `TRABALHO_PARTE_1.pdf` e `TRABALHO_PARTE_2.pdf` — regras de negócio dos Trabalhos 01 e 02.
 - Imagens `.png` — diagramas do nosso Astah.
 
-Quando os PDFs e o nosso Astah divergirem, **não decida sozinho**: explique a divergência, mostre as opções e pergunte à equipe.
+Quando os PDFs e o nosso Astah divergirem, siga a regra de decisões da seção "Forma de trabalho".
 
 ## O que já está definido
 
@@ -36,48 +36,28 @@ Quando os PDFs e o nosso Astah divergirem, **não decida sozinho**: explique a d
 
 Os detalhes de cada requisito ("O que implementar" e "Na arguição, saiba explicar") estão no enunciado; leia a parte do requisito antes de planejar a etapa correspondente.
 
-## Forma de trabalho (obrigatória)
+## Forma de trabalho: MODO AUTÔNOMO
 
-**Nunca faça tudo de uma vez, mas também não fragmente demais.** O projeto é dividido em **Etapas**, e cada etapa em **Passos**. Um passo é um **bloco coerente**, que pode ter vários arquivos. Por exemplo: todas as classes de domínio de um componente, um padrão completo com seu teste, ou toda a parte web de um fluxo. Não crie arquivos de passos ou etapas futuras.
+A equipe pediu velocidade. **Execute todas as etapas em sequência, sem parar para pedir aprovação.** O objetivo principal é o sistema **rodar na web** com os 10 padrões e os 10 testes aprovados. Toda a explicação fica documentada para a equipe estudar depois.
 
-- **Partes estruturais sem padrão GoF** (como a Etapa 0): no máximo **3 passos** por etapa.
-- **Etapas com padrões:** em geral **1 passo por padrão** (classes do padrão + teste do cenário), mais 1 passo de integração se for preciso.
-- O detalhamento fica no guia de estudo do fim da etapa, não no número de paradas.
+**Decisões:** quando houver divergência entre os PDFs e o Astah, ou qualquer escolha em aberto, **decida você mesmo** pela opção que recomendaria: siga as Soluções do professor onde o padrão exigir; nos demais casos, mantenha os nomes do Astah. Registre cada decisão em `docs/DECISOES.md` (o que foi decidido, alternativas e motivo). **Só pare e pergunte** se algo impedir de continuar (ex.: falta de acesso, erro que você não consegue resolver) ou se a ação for destrutiva.
 
-### Antes de cada etapa
-Sem criar nada, apresente:
-1. O objetivo da etapa (2–3 linhas).
-2. A lista numerada de passos, com os arquivos que cada um vai criar ou alterar e o papel de cada classe.
-3. Os testes que vão provar que a etapa funcionou.
+**Ritmo de cada etapa:**
+1. Implemente a etapa inteira (classes, integração e testes).
+2. Rode todos os testes. Se algum falhar, corrija antes de seguir.
+3. Escreva o guia de estudo `docs/estudo/ETAPAxx_<tema>.md`: papéis do padrão → classes, fluxo do cenário passo a passo com valores concretos, respostas às perguntas "Na arguição, saiba explicar" do enunciado e um exercício de alteração ao vivo.
+4. Atualize `docs/PROGRESSO.md`, `docs/RASTREABILIDADE.md`, `REGISTRO_LLM.md` e `docs/uml/ATUALIZACOES_ASTAH.md` (o que muda no Astah, para a equipe fazer no fim).
+5. Faça commit e push para o GitHub com uma mensagem clara.
+6. Escreva no chat **um resumo de no máximo 5 linhas** do que foi feito e siga direto para a próxima etapa.
 
-Depois **pare e espere a aprovação** da equipe.
+**Se a sessão ficar longa ou for interrompida:** ao recomeçar, leia `docs/PROGRESSO.md` e continue de onde parou.
 
-### Em cada passo — resposta CURTA (no máximo ~15 linhas)
-Se for alterar um arquivo que já existe, avise em uma linha antes. Crie ou altere apenas o que pertence ao passo. Depois responda **só** neste formato:
-
-```
-**Etapa X · Passo Y/Z — <nome>**
-O que foi feito: <1–2 linhas, em linguagem simples>
-Arquivos:
-- `<arquivo>` — <1 frase: para que serve>
-Na prática: <exemplo de 1–3 linhas com valores concretos>
-Teste: <✅ N passaram | ❌ falhou: motivo | — sem teste neste passo>
-Próximo: <nome do próximo passo>. Posso seguir?
-```
-
-- Sem saídas de terminal, sem avisos que não são problema, sem detalhes técnicos extras. A explicação completa vai para o guia de estudo do fim da etapa.
-- Se a equipe responder "explique", aí sim detalhe o passo.
-- Em "Arquivos", agrupe por tipo quando houver muitos (ex.: `rh/`: Pessoa, Papel, Atendente — entidades do RH).
-- Atualize `docs/PROGRESSO.md` a cada passo, sem comentar isso na resposta.
-
-### Ao final de cada etapa
-1. Rode todos os testes e mostre o resultado.
-2. Crie o guia de estudo `docs/estudo/ETAPAxx_<tema>.md`: papéis do padrão e classes, fluxo do cenário passo a passo, respostas às perguntas "Na arguição, saiba explicar" e um exercício de alteração ao vivo.
-3. Atualize `REGISTRO_LLM.md` (o que foi pedido, com espaço para a equipe anotar o que aceitou, corrigiu ou descartou) e `docs/RASTREABILIDADE.md` (requisito → padrão → classes → teste).
-4. Liste o que mudou em relação aos diagramas do Astah, para a equipe decidir se atualiza.
-5. Sugira a mensagem de commit e **pare**.
-
-Se a equipe perguntar algo no meio de um passo, responda antes de continuar.
+**Entrega final (Etapa 6):**
+- Aplicação web rodando localmente com um comando descrito no README, cobrindo os cadastros e o fluxo reserva → empréstimo → renovação → devolução atrasada → multa.
+- `README.md` completo: como compilar, rodar e testar; arquitetura (pacotes = componentes); **uma seção por padrão** explicando em linguagem simples o problema, as classes e o fluxo; persistência JSON; ferramentas de IA usadas e em quais partes.
+- `docs/estudo/DEMO.md`: roteiro da demonstração de 5 minutos.
+- `docs/estudo/ARGUICAO.md`: as perguntas prováveis de cada padrão com respostas curtas, para a equipe estudar.
+- `docs/uml/ATUALIZACOES_ASTAH.md`: lista final do que mudar no Astah, organizada por diagrama.
 
 ## Etapas
 

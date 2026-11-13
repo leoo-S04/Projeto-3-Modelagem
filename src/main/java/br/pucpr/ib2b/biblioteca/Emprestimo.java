@@ -7,20 +7,12 @@ import java.time.LocalDate;
 
 /**
  * Empréstimo de um livro reservado (Astah: Emprestimo; regra 7.2).
- * A operação renovar() do Astah, com a guarda numRenovacoes < 2, entra na Etapa 1 (State).
+ * O vencimento e o número de renovações ficam no Livro (decisão da equipe, Etapa 1, Pergunta 1 = A),
+ * porque são dados usados pelas guardas da máquina de estados do Livro.
  */
 public class Emprestimo extends Transacao {
-
-    private LocalDate dataVencimento;
-    private int numRenovacoes = 0;
 
     public Emprestimo(int idTransacao, LocalDate data, Livro livro, Estudante estudante, Atendente atendente) {
         super(idTransacao, data, livro, estudante, atendente);
     }
-
-    public LocalDate getDataVencimento() { return dataVencimento; }
-    public int getNumRenovacoes() { return numRenovacoes; }
-
-    public void setDataVencimento(LocalDate dataVencimento) { this.dataVencimento = dataVencimento; }
-    public void incrementarRenovacoes() { numRenovacoes++; }
 }

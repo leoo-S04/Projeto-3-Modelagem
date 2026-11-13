@@ -21,7 +21,19 @@ Reorganizada em 3 passos (CLAUDE.md: etapa estrutural com no máximo 3 passos).
 - ✅ Fechamento da Etapa 0 (27 testes aprovados; guia `docs/estudo/ETAPA00_Fundacao.md`)
 - Decidido para a Etapa 2: separar a `Movimentacao` em 3 associações (reservas, empréstimos, devoluções).
 
-## Etapa 1 — Ciclo de vida do Livro: State (Req 1) ⬜
+## Etapa 1 — Ciclo de vida do Livro: State (Req 1) ✅
+
+Decisões da equipe no plano: Pergunta 1 = A (reservante, vencimento e numRenovacoes no `Livro`),
+Pergunta 2 = A (nomes dos eventos do Astah), Pergunta 3 = A (recusa do estado sobe como exceção com a mensagem;
+livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 30 dias.
+
+- ✅ Passo 1 — Padrão State no Livro: `EstadoLivro`, 7 estados concretos, `OperacaoInvalidaException`,
+  `RenovacaoNegadaException`; `Livro`, `Emprestimo`, `Devolucao` alterados; `EstadoLivroTest`
+- ✅ Passo 2 — Integração: `TratadorDeEmprestimo` (f1, f3, f4), `TratadorDeDevolucao` (f5, inspeção, reparo),
+  `TratadorDeAcervo` (excluir), `Movimentacao.gerarIdTransacao`; `R01_CicloDeVidaDoLivroTest`, `TratadorDeDevolucaoTest`
+- ✅ Fechamento: 51 testes aprovados; guia `docs/estudo/ETAPA01_State.md`; `docs/DECISOES.md` criado
+
+**A partir daqui: MODO AUTÔNOMO (CLAUDE.md).** Etapas executadas em sequência; decisões em `docs/DECISOES.md`.
 
 ## Etapa 2 — Cadastros e persistência: Template Method (Req 7) e Abstract Factory (Req 8) ⬜
 

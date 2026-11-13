@@ -34,9 +34,12 @@ public class TratadorDeAcervo implements iLivro {
         return true;
     }
 
-    /** 1.4: só exclui se cadastrado. A restrição por estado (T11: só LIVRE ou INCINERADO) entra na Etapa 1. */
+    /** 1.4 + T11: só exclui se cadastrado; o estado aceita a exclusão apenas em LIVRE ou INCINERADO. */
     @Override
     public boolean excluirLivro(int idLivro) {
+        Livro l = acervo.buscarPorId(idLivro);
+        if (l == null) return false;
+        l.excluirLivro();                 // OperacaoInvalidaException nos demais estados
         return acervo.remover(idLivro);
     }
 }

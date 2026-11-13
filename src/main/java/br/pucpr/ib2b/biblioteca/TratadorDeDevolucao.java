@@ -1,13 +1,14 @@
 package br.pucpr.ib2b.biblioteca;
 
+import br.pucpr.ib2b.rh.Atendente;
+
 import java.time.Clock;
+import java.time.LocalDate;
 
 /**
- * Serviços do Atendente (Astah: TratadorDeDevolucao). Acessa Acervo, Movimentacao e Relacionamento por
- * delegação; o Clock injetado define a data da devolução (testes e demonstração simulam atraso).
- *
- * <p>Etapa 0 (decisão da equipe, Pergunta 4 = A): todas as operações dependem das regras de estado do Livro
- * e são implementadas na Etapa 1 (State). A f6 entra na Etapa 4.</p>
+ * Serviços do Atendente (Astah: TratadorDeDevolucao): f5, inspeção e reparo. Acessa Acervo, Movimentacao e
+ * Relacionamento por delegação; não testa a situação do livro (padrão State). O Clock define a data de hoje.
+ * A f6 (boleto de multa) entra na Etapa 4.
  */
 public class TratadorDeDevolucao implements iDevolucao {
 
@@ -24,29 +25,56 @@ public class TratadorDeDevolucao implements iDevolucao {
         this.relogio = relogio;
     }
 
-    /** f5 — regra 9. */
+    /** f5 — regra 9: EMPRESTADO/RENOVADO → DEVOLVIDO; troca o empréstimo ativo por uma Devolucao. */
     @Override
     public Devolucao registrarDevolucao(int idLivro, String idEstudante, String idAtendente) {
-        throw new UnsupportedOperationException("f5 registrarDevolucao: implementado na Etapa 1 (State)");
+        Emprestimo emprestimo = movimentacao.buscarEmprestimo(idLivro, idEstudante);
+        if (emprestimo == null) return null;                     // guarda [empréstimo registrado]
+        Livro livro = emprestimo.getLivro();
+        Atendente atendente = relacionamento.buscarAtendente(idAtendente);
+        LocalDate vencimento = livro.getVencimento();            // copiado antes de o ciclo ser limpo
+
+        livro.registrarDevolucao();
+        movimentacao.remover(emprestimo);
+        Devolucao devolucao = new Devolucao(movimentacao.gerarIdTransacao(), LocalDate.now(relogio), livro,
+                emprestimo.getEstudante(), atendente, emprestimo, vencimento);
+        movimentacao.adicionar(devolucao);
+        return devolucao;
     }
 
+    /** DEVOLVIDO → LIVRE (bom estado) ou REPARANDO (danificado). */
     @Override
     public boolean inspecionar(int idLivro, boolean emBomEstado) {
-        throw new UnsupportedOperationException("inspecionar: implementado na Etapa 1 (State)");
+        Livro livro = acervo.buscarPorId(idLivro);
+        if (livro == null) return false;
+        livro.inspecionar(emBomEstado);
+        return true;
     }
 
+    /** LIVRE → REPARANDO (dano identificado no acervo). */
     @Override
     public boolean enviarParaReparo(int idLivro) {
-        throw new UnsupportedOperationException("enviarParaReparo: implementado na Etapa 1 (State)");
+        Livro livro = acervo.buscarPorId(idLivro);
+        if (livro == null) return false;
+        livro.enviarParaReparo();
+        return true;
     }
 
+    /** REPARANDO → LIVRE. */
     @Override
     public boolean retornarDoReparo(int idLivro) {
-        throw new UnsupportedOperationException("retornarDoReparo: implementado na Etapa 1 (State)");
+        Livro livro = acervo.buscarPorId(idLivro);
+        if (livro == null) return false;
+        livro.retornarDoReparo();
+        return true;
     }
 
+    /** REPARANDO → INCINERADO (laudo irrecuperável). */
     @Override
     public boolean incinerar(int idLivro) {
-        throw new UnsupportedOperationException("incinerar: implementado na Etapa 1 (State)");
+        Livro livro = acervo.buscarPorId(idLivro);
+        if (livro == null) return false;
+        livro.incinerar();
+        return true;
     }
 }

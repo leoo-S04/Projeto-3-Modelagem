@@ -54,6 +54,16 @@ class TratadorDeAcervoTest {
     }
 
     @Test
+    void livroEmprestadoNaoPodeSerExcluido() {
+        br.pucpr.ib2b.Cenario c = new br.pucpr.ib2b.Cenario();
+        c.tratadorDeEmprestimo.reservarLivro(1, "M-100", "F-01");
+        c.tratadorDeEmprestimo.emprestarLivro(1, "M-100", "F-01");
+
+        assertThrows(OperacaoInvalidaException.class, () -> c.tratadorDeAcervo.excluirLivro(1));
+        assertNotNull(c.tratadorDeAcervo.consultarLivro(1));
+    }
+
+    @Test
     void listarNaoPermiteAlterarOAcervoPorFora() {
         tratador.inserirLivro(1, "Dom Casmurro");
 

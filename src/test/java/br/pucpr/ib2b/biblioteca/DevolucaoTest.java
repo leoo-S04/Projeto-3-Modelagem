@@ -18,8 +18,7 @@ class DevolucaoTest {
 
     private Devolucao devolverEm(LocalDate vencimento, LocalDate devolvidoEm) {
         Emprestimo emp = new Emprestimo(1, LocalDate.of(2026, 10, 11), livro, ana, bruno);
-        emp.setDataVencimento(vencimento);
-        return new Devolucao(2, devolvidoEm, livro, ana, bruno, emp);
+        return new Devolucao(2, devolvidoEm, livro, ana, bruno, emp, vencimento);
     }
 
     @Test
