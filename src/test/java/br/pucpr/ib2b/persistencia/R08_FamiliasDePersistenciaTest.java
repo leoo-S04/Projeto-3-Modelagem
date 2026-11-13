@@ -133,6 +133,26 @@ class R08_FamiliasDePersistenciaTest {
     }
 
     @Test
+    void organizacaoDoAcervoSobreviveAoReinicio() {
+        Path arquivo = pasta.resolve("biblioteca.json");
+        RelogioAjustavel relogio = RelogioAjustavel.fixoEm(Cenario.HOJE, Cenario.FUSO);
+        Sistema s = Sistema.montar(new FabricaJson(arquivo), relogio);
+        for (int id = 1; id <= 3; id++) s.tratadorDeAcervo.inserirLivro(id, "Livro " + id);
+        s.tratadorDeAcervo.criarUnidade("Central");
+        s.tratadorDeAcervo.criarGrupo("Central", "Literatura", br.pucpr.ib2b.biblioteca.TipoDeGrupo.SECAO);
+        s.tratadorDeAcervo.criarGrupo("Literatura", "Poesia", br.pucpr.ib2b.biblioteca.TipoDeGrupo.SUBSECAO);
+        s.tratadorDeAcervo.adicionarLivroAoGrupo("Literatura", 1);
+        s.tratadorDeAcervo.adicionarLivroAoGrupo("Poesia", 2);
+        s.tratadorDeAcervo.adicionarLivroAoGrupo("Central", 3);
+
+        Sistema relido = Sistema.montar(new FabricaJson(arquivo), relogio);
+        assertEquals(3, relido.tratadorDeAcervo.contarLivros("Central"));
+        assertEquals(1, relido.tratadorDeAcervo.contarLivros("Poesia"));
+        relido.tratadorDeAcervo.moverLivro(2, "Literatura");
+        assertEquals(2, relido.tratadorDeAcervo.contarLivros("Literatura"));
+    }
+
+    @Test
     void R08_naoEPermitidoMisturarFamilias() {
         UnidadeDeTrabalho daMemoria = new FabricaEmMemoria().criarUnidadeDeTrabalho();
         FabricaJson fabricaJson = new FabricaJson(pasta.resolve("biblioteca.json"));

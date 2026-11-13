@@ -45,3 +45,9 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
 |---|---|---|---|---|
 | 14 | Executar a Etapa 4 (CLAUDE.md, modo autônomo) | Publicador, evento e 4 ouvintes de devolução; 3 políticas de multa com seletor e simulação; `Multa` e `BoletoDeMulta`; contrato `iCobranca`, adaptadores dos bancos A e B com APIs simuladas incompatíveis, quitação idempotente; f6; `TratadorDeMulta`; persistência de multas, boletos e configuração; R02, R03, R05; guia `ETAPA04_Observer_Strategy_Adapter.md`; decisões D36–D49 | | |
+
+## Etapa 5 — Composite (Req. 10) e Decorator (Req. 9) — modo autônomo
+
+| # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
+|---|---|---|---|---|
+| 15 | Executar a Etapa 5 (CLAUDE.md, modo autônomo) | `ComponenteDoAcervo`, `ItemDoAcervo`, `GrupoDoAcervo`, `OrganizadorDoAcervo` (com persistência da árvore no JSON); `ConsultaAcervo`, `ConsultaAcervoBasica`, decoradores de medição e cache, `MontadorDeConsulta`; integração no `TratadorDeAcervo`; R09 e R10; guia `ETAPA05_Composite_Decorator.md`; decisões D50–D56 | | |

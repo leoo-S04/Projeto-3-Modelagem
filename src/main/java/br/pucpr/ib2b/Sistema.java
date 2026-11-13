@@ -18,6 +18,7 @@ import br.pucpr.ib2b.rh.TratadorDePessoa;
 import java.time.Clock;
 import java.util.List;
 import java.util.Map;
+import br.pucpr.ib2b.biblioteca.MontadorDeConsulta.ConfigInstalacao;
 
 /**
  * Montagem do sistema (composition root): recebe a fábrica da família de persistência escolhida UMA vez
@@ -47,6 +48,9 @@ public final class Sistema {
     private final PainelDeIndicadores painelDeIndicadores = new PainelDeIndicadores();
     private final ServicoDeEmailSimulado email = new ServicoDeEmailSimulado();
 
+    // Decorator: destino das medições da consulta pública
+    private final RegistroDeMetricas registroDeMetricas = new RegistroDeMetricas();
+
     public final TratadorDePessoa tratadorDePessoa;
     public final TratadorDeEstudante tratadorDeEstudante;
     public final TratadorDeAtendente tratadorDeAtendente;
@@ -55,7 +59,7 @@ public final class Sistema {
     public final TratadorDeDevolucao tratadorDeDevolucao;
     public final TratadorDeMulta tratadorDeMulta;
 
-    private Sistema(FabricaDePersistencia fabrica, Clock relogio) {
+    private Sistema(FabricaDePersistencia fabrica, Clock relogio, ConfigInstalacao instalacao) {
         // Abstract Factory (Req. 8): uma unidade de trabalho e repositórios da MESMA família
         unidadeDeTrabalho = fabrica.criarUnidadeDeTrabalho();
         var repositorioLivro = fabrica.criarRepositorioLivro(unidadeDeTrabalho);
@@ -88,7 +92,11 @@ public final class Sistema {
         acervo = new Acervo(repositorioLivro);
         movimentacao = new Movimentacao(repositorioMovimentacao);
         relacionamento = new Relacionamento(tratadorDeEstudante, tratadorDeAtendente);
-        tratadorDeAcervo = new TratadorDeAcervo(acervo, unidadeDeTrabalho);
+        // Composite (Req. 10): organização hierárquica; Decorator (Req. 9): cadeia montada conforme a instalação
+        OrganizadorDoAcervo organizador = new OrganizadorDoAcervo(fabrica.criarRepositorioDeOrganizacao(unidadeDeTrabalho), acervo);
+        ConsultaAcervo consulta = MontadorDeConsulta.montar(instalacao, new ConsultaAcervoBasica(acervo),
+                ArmazenamentoDeCache.emMemoria(), registroDeMetricas, relogio);
+        tratadorDeAcervo = new TratadorDeAcervo(acervo, unidadeDeTrabalho, organizador, consulta);
 
         // Facade (Req. 4): única entrada das operações de circulação
         circulacao = new ServicoDeCirculacao(acervo, movimentacao, relacionamento, relogio, unidadeDeTrabalho);
@@ -107,7 +115,12 @@ public final class Sistema {
     }
 
     public static Sistema montar(FabricaDePersistencia fabrica, Clock relogio) {
-        return new Sistema(fabrica, relogio);
+        return new Sistema(fabrica, relogio, ConfigInstalacao.completa());
+    }
+
+    /** Montagem com a combinação de recursos da consulta escolhida pela instalação (medição, cache, TTL). */
+    public static Sistema montar(FabricaDePersistencia fabrica, Clock relogio, ConfigInstalacao instalacao) {
+        return new Sistema(fabrica, relogio, instalacao);
     }
 
     public UnidadeDeTrabalho unidadeDeTrabalho() { return unidadeDeTrabalho; }
@@ -127,4 +140,5 @@ public final class Sistema {
     public AdaptadorBancoA adaptadorBancoA() { return adaptadorBancoA; }
     public AdaptadorBancoB adaptadorBancoB() { return adaptadorBancoB; }
     public ServicoDeQuitacao servicoDeQuitacao() { return servicoDeQuitacao; }
+    public RegistroDeMetricas registroDeMetricas() { return registroDeMetricas; }
 }

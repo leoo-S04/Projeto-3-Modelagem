@@ -78,3 +78,15 @@ padrão exigir; nomes do Astah nos demais casos.
 | D47 | f6 `emitirBoletoDeMulta(idLivro, idEstudante)` devolve o boleto da devolução atrasada (segunda via); a geração normal é feita pelo `OuvinteMulta` | f6 gerando a multa a cada chamada | Regra 10.2 fala em "segunda via"; a regra 9.3 (extensão em caso de atraso) virou reação à devolução. |
 | D48 | Novo produto da fábrica `RepositorioFinanceiro` (seções `multas`, `cobrancas`, `configuracao` do JSON) | Guardar só em memória | Multas e configuração precisam sobreviver ao reinício. |
 | D49 | `ServicoDeMulta` consulta o e-mail do estudante pela interface `iPessoa` | Receber o e-mail pelo evento | Diagrama de componentes: Financeiro requer `iPessoa` (consulta de CPF). |
+
+## Etapa 5 — Composite e Decorator (decisões do modelo, modo autônomo)
+
+| # | Decisão | Alternativas | Motivo |
+|---|---|---|---|
+| D50 | Composite com os nomes das Soluções (`ComponenteDoAcervo`, `ItemDoAcervo`, `GrupoDoAcervo`, `TipoDeGrupo`, `OrganizadorDoAcervo`); tipo do grupo como atributo | Uma classe por nível | Profundidade variável sem classes novas (Soluções, Problema 10). |
+| D51 | `GrupoDoAcervo.adicionar` recusa ciclo, componente com pai e id já presente na árvore; o `OrganizadorDoAcervo` também confere entre unidades | Só o organizador validar | O enunciado pede que o **grupo** recuse; o organizador cobre árvores diferentes. |
+| D52 | Grupos identificados por nome único; persistidos na seção `acervo` (um registro por grupo com o nome do pai, em profundidade) pelo novo produto `RepositorioDeOrganizacao` | Tabela com pai_id | Formato simples no JSON; pai sempre gravado antes dos filhos. |
+| D53 | Organização e consulta expostas à web pelo `TratadorDeAcervo` (não há tratador novo no Astah) | Controlador web chamando o organizador/consulta | Mantém "a web depende só dos tratadores". |
+| D54 | Decorator com os nomes das Soluções (`ConsultaAcervo`, `ConsultaAcervoBasica`, `DecoradorDeConsulta`, `DecoradorDeMedicao`, `DecoradorDeCache`, `MontadorDeConsulta`, `MetadadosLivro`, `Criterio`); medição por fora do cache por padrão (`ConfigInstalacao.completa()`, TTL 5 min) | Cache por fora | O cenário exige medir também as consultas atendidas pelo cache. |
+| D55 | Armazenamento do cache atrás da interface `ArmazenamentoDeCache` (padrão: memória) | Mapa fixo dentro do decorador | Permite simular falha do cache (teste) sem alterar o decorador. |
+| D56 | Invalidação do cache só por TTL (sem invalidar ao renomear livro) | Invalidar no `atualizarLivro` | Simplicidade; metadados desatualizados não afetam reservas (Soluções). |

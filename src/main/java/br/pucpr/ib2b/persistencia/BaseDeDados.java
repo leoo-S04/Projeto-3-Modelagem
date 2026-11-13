@@ -3,6 +3,7 @@ package br.pucpr.ib2b.persistencia;
 import br.pucpr.ib2b.academico.Estudante;
 import br.pucpr.ib2b.biblioteca.Devolucao;
 import br.pucpr.ib2b.biblioteca.Emprestimo;
+import br.pucpr.ib2b.biblioteca.GrupoDoAcervo;
 import br.pucpr.ib2b.biblioteca.Livro;
 import br.pucpr.ib2b.biblioteca.Reserva;
 import br.pucpr.ib2b.biblioteca.ResultadoSolicitacao;
@@ -34,6 +35,7 @@ final class BaseDeDados {
     final Map<Integer, Multa> multas = new LinkedHashMap<>();
     final Map<Integer, BoletoDeMulta> boletos = new LinkedHashMap<>();
     ConfiguracaoAdministrativa configuracao = ConfiguracaoAdministrativa.padrao();
+    final List<GrupoDoAcervo> organizacao = new ArrayList<>();
     int ultimoIdTransacao = 0;
     int ultimoIdPapel = 0;
     int ultimoIdMulta = 0;

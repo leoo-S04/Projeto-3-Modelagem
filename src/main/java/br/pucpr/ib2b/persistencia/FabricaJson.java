@@ -43,6 +43,11 @@ public final class FabricaJson implements FabricaDePersistencia {
         return new RepositorioFinanceiroJson(daFamilia(uow));
     }
 
+    @Override
+    public RepositorioDeOrganizacao criarRepositorioDeOrganizacao(UnidadeDeTrabalho uow) {
+        return new RepositorioDeOrganizacaoJson(daFamilia(uow));
+    }
+
     /** Impede misturar famílias: só aceita a unidade de trabalho JSON. */
     private UnidadeDeTrabalhoJson daFamilia(UnidadeDeTrabalho uow) {
         if (uow instanceof UnidadeDeTrabalhoJson daMesmaFamilia) return daMesmaFamilia;

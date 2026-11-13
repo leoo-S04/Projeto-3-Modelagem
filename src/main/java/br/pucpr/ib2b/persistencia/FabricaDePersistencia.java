@@ -11,4 +11,5 @@ public interface FabricaDePersistencia {
     RepositorioRelacionamento criarRepositorioRelacionamento(UnidadeDeTrabalho uow);
     RepositorioDeSolicitacoes criarRepositorioDeSolicitacoes(UnidadeDeTrabalho uow);
     RepositorioFinanceiro criarRepositorioFinanceiro(UnidadeDeTrabalho uow);
+    RepositorioDeOrganizacao criarRepositorioDeOrganizacao(UnidadeDeTrabalho uow);
 }

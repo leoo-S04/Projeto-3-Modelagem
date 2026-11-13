@@ -1,11 +1,15 @@
 package br.pucpr.ib2b.persistencia;
 
 import br.pucpr.ib2b.academico.Estudante;
+import br.pucpr.ib2b.biblioteca.ComponenteDoAcervo;
 import br.pucpr.ib2b.biblioteca.Devolucao;
 import br.pucpr.ib2b.biblioteca.Emprestimo;
+import br.pucpr.ib2b.biblioteca.GrupoDoAcervo;
+import br.pucpr.ib2b.biblioteca.ItemDoAcervo;
 import br.pucpr.ib2b.biblioteca.Livro;
 import br.pucpr.ib2b.biblioteca.Reserva;
 import br.pucpr.ib2b.biblioteca.Situacao;
+import br.pucpr.ib2b.biblioteca.TipoDeGrupo;
 import br.pucpr.ib2b.biblioteca.Transacao;
 import br.pucpr.ib2b.financeiro.BoletoDeMulta;
 import br.pucpr.ib2b.financeiro.ConfiguracaoAdministrativa;
@@ -14,7 +18,10 @@ import br.pucpr.ib2b.persistencia.DocumentoDados.*;
 import br.pucpr.ib2b.rh.Atendente;
 import br.pucpr.ib2b.rh.Pessoa;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Converte a cópia de trabalho (objetos de domínio) no documento gravável e vice-versa.
@@ -49,6 +56,7 @@ final class MapeadorDeDados {
                                 x.getValorTotal(), x.getDataEmissao(), x.getBanco(), x.getIdExterno(), x.getSituacao(),
                                 x.getDataPagamento(), x.getIdPagamento())).toList(),
                 new ConfiguracaoJson(b.configuracao.getPoliticaVigente(), b.configuracao.getBancoEmUso()),
+                grupos(b.organizacao),
                 new ContadoresJson(b.ultimoIdTransacao, b.ultimoIdPapel, b.ultimoIdMulta, b.ultimoIdBoleto));
     }
 
@@ -91,6 +99,13 @@ final class MapeadorDeDados {
             b.boletos.put(x.idBoleto(), BoletoDeMulta.reconstituir(x.idBoleto(), x.idMulta(), x.cpf(), x.diasAtraso(),
                     x.valor(), x.dataEmissao(), x.banco(), x.idExterno(), x.situacao(), x.dataPagamento(), x.idPagamento()));
         }
+        Map<String, GrupoDoAcervo> grupos = new HashMap<>();
+        for (GrupoJson g : lista(doc.acervo())) {                  // pais vêm antes dos filhos
+            GrupoDoAcervo grupo = new GrupoDoAcervo(g.nome(), TipoDeGrupo.valueOf(g.tipo()));
+            if (g.pai() == null) b.organizacao.add(grupo); else grupos.get(g.pai()).adicionar(grupo);
+            for (Integer id : lista(g.livros())) grupo.adicionar(new ItemDoAcervo(id));
+            grupos.put(g.nome(), grupo);
+        }
         if (doc.configuracao() != null) {
             b.configuracao = new ConfiguracaoAdministrativa(doc.configuracao().politicaVigente(),
                     doc.configuracao().bancoEmUso());
@@ -102,6 +117,20 @@ final class MapeadorDeDados {
             b.ultimoIdBoleto = doc.contadores().ultimoIdBoleto();
         }
         return b;
+    }
+
+    /** Percorre a árvore em profundidade (pai antes dos filhos), gerando um registro por grupo. */
+    private static List<GrupoJson> grupos(List<GrupoDoAcervo> unidades) {
+        List<GrupoJson> saida = new ArrayList<>();
+        for (GrupoDoAcervo u : unidades) grupos(u, saida);
+        return saida;
+    }
+
+    private static void grupos(GrupoDoAcervo g, List<GrupoJson> saida) {
+        List<Integer> livros = new ArrayList<>();
+        for (ComponenteDoAcervo c : g.getFilhos()) if (c instanceof ItemDoAcervo i) livros.add(i.getIdLivro());
+        saida.add(new GrupoJson(g.getNome(), g.getTipo().name(), g.getPai() == null ? null : g.getPai().getNome(), livros));
+        for (ComponenteDoAcervo c : g.getFilhos()) if (c instanceof GrupoDoAcervo sub) grupos(sub, saida);
     }
 
     private static TransacaoJson transacao(Transacao t) {

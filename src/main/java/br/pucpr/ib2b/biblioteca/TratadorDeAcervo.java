@@ -4,18 +4,41 @@ import br.pucpr.ib2b.comum.ResultadoCadastro;
 import br.pucpr.ib2b.comum.TratadorDeCadastro;
 import br.pucpr.ib2b.persistencia.UnidadeDeTrabalho;
 
+import java.util.List;
+
 /**
  * Papel GoF: ConcreteClass do Template Method (Req. 7). Regras 1.1 a 1.4 (manter Livro), delegando ao Acervo.
  * Livro não tem pré-requisito: usa o gancho vazio herdado.
+ * Também é a entrada da web para a consulta pública (Decorator, Req. 9) e para a organização hierárquica do
+ * acervo (Composite, Req. 10) — a web continua dependendo só dos tratadores.
  */
 public class TratadorDeAcervo extends TratadorDeCadastro<Livro, DadosLivro> implements iLivro {
 
     private final Acervo acervo;
+    private final OrganizadorDoAcervo organizador;
+    private final ConsultaAcervo consulta;
 
-    public TratadorDeAcervo(Acervo acervo, UnidadeDeTrabalho transacao) {
+    public TratadorDeAcervo(Acervo acervo, UnidadeDeTrabalho transacao, OrganizadorDoAcervo organizador,
+                            ConsultaAcervo consulta) {
         super(transacao);
         this.acervo = acervo;
+        this.organizador = organizador;
+        this.consulta = consulta;
     }
+
+    // ---- Consulta pública (Decorator): só metadados; a cadeia montada decide medição e cache ----
+    public List<MetadadosLivro> buscarMetadados(String termo) { return consulta.buscarMetadados(new Criterio(termo)); }
+
+    /** Situação atual de todos os livros (DTOs), para as telas. */
+    public List<SituacaoLivroDTO> listarLivros() { return acervo.listar().stream().map(SituacaoLivroDTO::de).toList(); }
+
+    // ---- Organização hierárquica (Composite) ----
+    public void criarUnidade(String nome) { organizador.criarUnidade(nome); }
+    public void criarGrupo(String nomeDoPai, String nome, TipoDeGrupo tipo) { organizador.criarGrupo(nomeDoPai, nome, tipo); }
+    public void adicionarLivroAoGrupo(String nomeDoGrupo, int idLivro) { organizador.adicionarLivro(nomeDoGrupo, idLivro); }
+    public void moverLivro(int idLivro, String nomeDoDestino) { organizador.mover(idLivro, nomeDoDestino); }
+    public int contarLivros(String nomeDoGrupo) { return organizador.contarLivros(nomeDoGrupo); }
+    public List<NoDoAcervoDTO> estruturaDoAcervo() { return organizador.estrutura(); }
 
     /** 1.1: preserva a operação do Astah; delega ao método-modelo. O livro novo nasce LIVRE. */
     @Override

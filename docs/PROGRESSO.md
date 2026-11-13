@@ -60,6 +60,12 @@ livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 
 - ✅ Testes `R02_PoliticasDeMultaTest`, `R03_BancosAdapterTest`, `R05_ReacoesADevolucaoTest` (88 testes aprovados)
 - ✅ Guia `docs/estudo/ETAPA04_Observer_Strategy_Adapter.md`; decisões D36–D49
 
-## Etapa 5 — Acervo e consulta: Composite (Req 10) e Decorator (Req 9) ⬜
+## Etapa 5 — Acervo e consulta: Composite (Req 10) e Decorator (Req 9) ✅
+
+- ✅ Composite: `ComponenteDoAcervo`, `ItemDoAcervo`, `GrupoDoAcervo`, `OrganizadorDoAcervo` (árvore gravada na seção `acervo`)
+- ✅ Decorator: `ConsultaAcervo`, `ConsultaAcervoBasica`, `DecoradorDeMedicao`, `DecoradorDeCache`, `MontadorDeConsulta`
+- ✅ Integração no `TratadorDeAcervo`; novo produto `RepositorioDeOrganizacao`
+- ✅ Testes `R09_ConsultaComDecoradoresTest`, `R10_OrganizacaoDoAcervoTest` (100 testes aprovados)
+- ✅ Guia `docs/estudo/ETAPA05_Composite_Decorator.md`; decisões D50–D56
 
 ## Etapa 6 — Interface web e demonstração ⬜

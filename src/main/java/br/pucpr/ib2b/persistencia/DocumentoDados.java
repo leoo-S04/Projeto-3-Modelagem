@@ -23,6 +23,7 @@ public record DocumentoDados(
         List<Multa> multas,
         List<BoletoJson> cobrancas,
         ConfiguracaoJson configuracao,
+        List<GrupoJson> acervo,
         ContadoresJson contadores) {
 
     public record PessoaJson(String cpf, String nome, String sobrenome, String email) { }
@@ -48,6 +49,9 @@ public record DocumentoDados(
 
     /** Configuração administrativa: política de multa vigente e banco em uso. */
     public record ConfiguracaoJson(String politicaVigente, String bancoEmUso) { }
+
+    /** Grupo da organização do acervo (Composite): pai pelo nome; livros pelos ids. Ordem: pai antes dos filhos. */
+    public record GrupoJson(String nome, String tipo, String pai, List<Integer> livros) { }
 
     public record ContadoresJson(int ultimoIdTransacao, int ultimoIdPapel, int ultimoIdMulta, int ultimoIdBoleto) { }
 }
