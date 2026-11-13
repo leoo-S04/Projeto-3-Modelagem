@@ -1,0 +1,20 @@
+# Saída do Maven (inclui target/biblioteca.jar)
+target/
+
+# Persistência local (família JSON, Req. 8): dados reais e arquivo temporário da gravação atômica.
+# O arquivo de exemplo dados/exemplo.json, quando existir, É versionado.
+dados/biblioteca.json
+dados/biblioteca.json.tmp
+
+# PDFs da disciplina (enunciado e soluções do professor, Trabalhos 01/02): ficam só na cópia local
+docs/*.pdf
+
+# IDEs e sistema operacional
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+Thumbs.db
+.DS_Store

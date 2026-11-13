@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sistema de Biblioteca com Padrões GoF — Trabalho 03 (PUCPR · Modelagem de Sistemas Computacionais)
+
+  Um único artefato: biblioteca.jar (diagrama de implantação), que manifesta os
+  componentes Biblioteca, RH, Academico e Financeiro (pacotes de mesmo nome).
+  Comando único para compilar e rodar todos os testes:  mvnw.cmd test  (Windows)  |  ./mvnw test  (Linux/macOS)
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>br.pucpr.ib2b</groupId>
+    <artifactId>biblioteca</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Sistema de Biblioteca com Padrões GoF</name>
+
+    <properties>
+        <!-- Gera bytecode para Java 17 (JVM 17 do diagrama de implantação), mesmo compilando com um JDK mais novo -->
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <junit.version>5.11.4</junit.version>
+    </properties>
+
+    <dependencies>
+        <!-- JUnit 5: um teste por cenário de verificação (R01_ ... R10_) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- Nome do artefato igual ao do diagrama de implantação: target/biblioteca.jar -->
+        <finalName>biblioteca</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+            <plugin>
+                <!-- Executa os testes JUnit 5 na fase "test" -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
