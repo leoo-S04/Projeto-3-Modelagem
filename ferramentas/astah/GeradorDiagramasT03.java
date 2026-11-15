@@ -1055,17 +1055,29 @@ public class GeradorDiagramasT03 {
     static void avisoNoDiagramaDoT02(IModel projeto) throws Exception {
         for (IDiagram d : projeto.getDiagrams()) {
             if (d instanceof IClassDiagram && d.getName().equals("Classes de Projeto")) {
-                boolean jaTem = false;
+                String texto = "Diagrama do Trabalho 02 (mantido como histórico).\n"
+                    + "O modelo do Trabalho 03 (gerado do código) está no pacote \"Trabalho 03 - Implementacao\";\n"
+                    + "os diagramas de cada padrão e dos cenários estão nos pacotes \"Req 01 - State\" ... \"Req 10 - Composite\".";
+                IPresentation existente = null;
                 for (IPresentation p : d.getPresentations()) {
                     String r = p.getLabel();
-                    if (r != null && r.contains("mantido como histórico")) jaTem = true;
+                    if (r != null && r.contains("mantido como histórico")) existente = p;
                 }
-                if (jaTem) continue;
+                // lugar livre: à direita de todos os elementos, na altura do primeiro
+                double direita = 0, topo = Double.MAX_VALUE;
+                for (IPresentation p : d.getPresentations()) {
+                    if (p == existente || !(p instanceof INodePresentation n)) continue;
+                    direita = Math.max(direita, n.getLocation().getX() + n.getWidth());
+                    topo = Math.min(topo, n.getLocation().getY());
+                }
+                Point2D lugar = new Point2D.Double(direita + 60, topo == Double.MAX_VALUE ? 20 : topo);
+                if (existente instanceof INodePresentation nota) {
+                    existente.setLabel(texto);   // atualiza o texto de uma geração anterior
+                    nota.setLocation(lugar);
+                    continue;
+                }
                 cde.setDiagram(d);
-                cde.createNote("Diagrama do Trabalho 02 (mantido como histórico).\n"
-                    + "O modelo do Trabalho 03 (gerado do código) está no pacote \"Trabalho 03 - Implementacao\";\n"
-                    + "os diagramas de cada padrão e dos cenários estão nos pacotes \"Req 01 - State\" ... \"Req 10 - Composite\".\n"
-                    + "Diferenças T02 x T03: ver o histórico do Git (docs/uml).", new Point2D.Double(20, -160));
+                cde.createNote(texto, lugar);
             }
         }
     }

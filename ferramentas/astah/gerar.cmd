@@ -18,7 +18,7 @@ set "ASTA=PROJETO 2- Leo T, Vicente A, Pedro B e Gustavos L.asta"
 set "OUT=target\astah"
 set "JAVA_ASTAH=%ASTAH_HOME%\jre\bin\java.exe"
 set "PNG=%OUT%\png\PROJETO 2- Leo T, Vicente A, Pedro B e Gustavos L"
-set "DESTINO=docs\uml\Trabalho 03"
+set "DESTINO=target\astah\diagramas"
 
 echo [1/5] Compilando o projeto (as classes sao lidas do codigo compilado)...
 call .\mvnw.cmd -q compile dependency:build-classpath -Dmdep.outputFile=target\cp.txt || exit /b 1
@@ -41,5 +41,5 @@ for /d %%d in ("%PNG%\Req *") do copy /y "%%d\*.png" "%DESTINO%\" >nul
 
 echo [5/5] Montando o PDF...
 "%JAVA_ASTAH%" -Xshare:off -cp "%OUT%\bin;%ASTAH_HOME%\lib\itext-1.3.3.jar" MontarPdf "docs\uml\Trabalho03_Diagramas.pdf" "Trabalho 03 - Diagramas UML (padroes GoF)" "%DESTINO%" || exit /b 1
-echo Pronto: "%ASTA%", "%DESTINO%\" e docs\uml\Trabalho03_Diagramas.pdf
+echo Pronto: "%ASTA%" e docs\uml\Trabalho03_Diagramas.pdf (imagens soltas em %DESTINO%)
 endlocal
