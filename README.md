@@ -15,9 +15,17 @@ Pré-requisito: JDK 17 ou superior. O Maven Wrapper baixa o Maven na primeira ex
 | Rodar a aplicação web | `mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
 | Gerar e rodar o jar | `mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
 
-Abra **http://localhost:8080**. Na primeira execução, `dados/biblioteca.json` é criado a partir de
-`dados/exemplo.json`; para recomeçar com os dados de exemplo, pare a aplicação e apague `dados/biblioteca.json`.
-Os testes usam só objetos em memória (não mexem no arquivo).
+Abra **http://localhost:8080** e entre com um dos perfis (os atores do diagrama de casos de uso):
+
+| Perfil | Login | Senha | O que faz |
+|---|---|---|---|
+| Estudante | matrícula (`M-100` Ana, `M-300` Caio) | CPF (`12345678909`, `11144477735`) | Catálogo e busca, reservar, renovar, ver e pagar as próprias multas |
+| Atendente | matrícula funcional (`F-01` Bruno) | CPF (`98765432100`) | Emprestar livros reservados, registrar devolução (gera a multa), inspeção e reparo |
+| Administrador | `admin` | `admin` | Pessoas, estudantes, atendentes, livros, organização do acervo, política de multa, relógio |
+
+O CPF como senha é uma simulação para a demonstração (o sistema não guarda senhas). Na primeira execução,
+`dados/biblioteca.json` é criado a partir de `dados/exemplo.json`; para recomeçar com os dados de exemplo, pare a
+aplicação e apague `dados/biblioteca.json`. Os testes usam só objetos em memória (não mexem no arquivo).
 
 ## Persistência
 
@@ -57,15 +65,18 @@ Diagramas UML (classes de cada padrão, máquina de estados do Livro, sequência
 
 ## Demonstração (5 min)
 
-Dados de exemplo: estudantes **M-100** (Ana) e **M-300** (Caio), atendente **F-01**, livros 1 a 6.
+Dica: abra o estudante numa janela normal e o atendente numa janela anônima (cada janela tem o seu login).
 
 1. Rodar `mvnw.cmd test`: os 10 cenários passam.
-2. **Cadastros:** estudante com CPF inexistente é recusado; estudante repetido devolve o existente (Template Method).
-3. **Circulação:** reservar o livro 1 para M-100, emprestar, renovar 2 vezes; a 3ª renovação é recusada (State, Facade, Command).
-4. **Administração:** avançar o relógio 95 dias (após 2 renovações o livro vence em 90). **Circulação:** devolver o
-   livro 1 → 5 dias de atraso, multa, inspeção e e-mail (Observer).
-5. **Financeiro:** boleto de R$ 5,00 no banco A (700 centavos); pagar; reenviar a notificação não paga duas vezes (Strategy, Adapter).
-6. **Acervo:** buscar "dom" duas vezes (cache e medição — Decorator); mover um livro de seção, a contagem continua certa (Composite).
+2. **Administrador:** em Pessoas, cadastrar estudante com um CPF que não existe → recusado; repetir a matrícula
+   `M-100` → "já estava cadastrado" (Template Method).
+3. **Estudante Ana:** reservar *Dom Casmurro*. **Atendente Bruno:** em Retiradas, Emprestar (Facade).
+4. **Ana:** renovar 2 vezes; a 3ª é recusada e o vencimento não muda (State, Command).
+5. **Administrador › Sistema:** adiantar 95 dias (após 2 renovações o livro vence em 90). **Bruno:** Registrar
+   devolução → 5 dias de atraso, boleto de R$ 5,00, livro em inspeção, e-mail enviado (Observer, Strategy).
+6. **Ana:** Minhas multas → Pagar; o banco A recebe 700 centavos e confirma (Adapter).
+7. **Ana:** buscar "dom" duas vezes; **Administrador › Sistema** mostra as 2 medições (Decorator).
+   **Administrador › Livros e acervo:** mover um livro de seção; a contagem da unidade continua 5 (Composite).
 
 ## Uso de IA
 

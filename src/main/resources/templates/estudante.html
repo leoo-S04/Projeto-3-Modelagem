@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Minha área')}"></head>
+<body>
+<header th:replace="~{fragmentos :: topo}"></header>
+<main>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
+
+    <div class="grade">
+        <section class="cartao">
+            <h2>Meus empréstimos</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(emprestimos)}">Você não tem livros emprestados.</p>
+            <table th:unless="${#lists.isEmpty(emprestimos)}">
+                <tr><th>Livro</th><th>Devolver até</th><th>Renovações</th><th></th></tr>
+                <tr th:each="l : ${emprestimos}">
+                    <td th:text="${l.titulo()}">Dom Casmurro</td>
+                    <td>
+                        <span th:text="${#temporals.format(l.vencimento(), 'dd/MM/yyyy')}">13/12/2026</span>
+                        <span class="etiqueta atrasado" th:if="${l.vencimento().isBefore(hoje)}">atrasado</span>
+                    </td>
+                    <td th:text="${l.numRenovacoes()} + ' de 2'">0 de 2</td>
+                    <td class="acoes">
+                        <form method="post" th:action="@{/estudante/renovar}">
+                            <input type="hidden" name="idSolicitacao" th:value="${idRenovacao[l.idLivro()]}">
+                            <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
+                            <button>Renovar +30 dias</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+
+            <h2>Minhas reservas</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(reservas)}">Nenhuma reserva.</p>
+            <ul class="lista" th:unless="${#lists.isEmpty(reservas)}">
+                <li th:each="l : ${reservas}"><strong th:text="${l.titulo()}">Dom Casmurro</strong>
+                    <span class="suave">— retire no balcão com o atendente</span></li>
+            </ul>
+        </section>
+
+        <section class="cartao">
+            <h2>Minhas multas</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(multas)}">Nenhuma multa.</p>
+            <table th:unless="${#lists.isEmpty(multas)}">
+                <tr><th>Boleto</th><th>Atraso</th><th>Valor</th><th>Situação</th><th></th></tr>
+                <tr th:each="m : ${multas}">
+                    <td th:text="'nº ' + ${m.idBoleto()} + ' · banco ' + ${m.banco()}">nº 1 · banco A</td>
+                    <td th:text="${m.diasAtraso()} + ' dia(s)'">5 dias</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(m.valor(), 1, 'POINT', 2, 'COMMA')}">R$ 5,00</td>
+                    <td><span class="etiqueta" th:classappend="${m.situacao()}"
+                              th:text="${m.situacao() == 'QUITADO'} ? 'Paga' : 'Em aberto'">Em aberto</span></td>
+                    <td class="acoes">
+                        <form th:if="${m.situacao() != 'QUITADO'}" method="post"
+                              th:action="${m.banco() == 'A'} ? @{/simulador/banco-a/pagar/{id}(id=${m.idExterno()})}
+                                                             : @{/simulador/banco-b/pagar/{id}(id=${m.idExterno()})}">
+                            <button>Pagar</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <p class="suave pequeno" th:unless="${#lists.isEmpty(multas)}">O pagamento é simulado: o banco confirma na hora.</p>
+        </section>
+    </div>
+
+    <section class="cartao">
+        <div class="titulo-com-busca">
+            <h2>Catálogo</h2>
+            <form method="get" th:action="@{/estudante}" class="busca">
+                <input name="busca" th:value="${busca}" placeholder="Buscar pelo título">
+                <button class="secundario">Buscar</button>
+                <a th:if="${busca}" th:href="@{/estudante}" class="suave">limpar</a>
+            </form>
+        </div>
+        <p class="vazio" th:if="${#lists.isEmpty(catalogo)}">Nenhum livro encontrado.</p>
+        <table th:unless="${#lists.isEmpty(catalogo)}">
+            <tr><th>Nº</th><th>Título</th><th>Situação</th><th></th></tr>
+            <tr th:each="l : ${catalogo}">
+                <td th:text="${l.idLivro()}">1</td>
+                <td th:text="${l.titulo()}">Dom Casmurro</td>
+                <td><span th:replace="~{fragmentos :: situacao(${l.situacao()})}"></span></td>
+                <td class="acoes">
+                    <form method="post" th:action="@{/estudante/reservar}">
+                        <input type="hidden" name="idSolicitacao" th:value="${idReserva[l.idLivro()]}">
+                        <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
+                        <button th:classappend="${l.situacao().name() != 'LIVRE'} ? 'secundario'">Reservar</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

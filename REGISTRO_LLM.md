@@ -26,3 +26,4 @@ Resumo dos principais pedidos feitos ao modelo e do que a equipe aceitou, corrig
 | 16 | Interface web e demonstração | Aplicação Spring Boot com as telas; roteiro de demonstração | |
 | 17 | Diagramas do Astah e PDF | Diagramas de classes e de sequência dos 10 padrões e máquina de estados, gerados do código; `docs/uml/Trabalho03_Diagramas.pdf` | |
 | 18 | Enxugar o repositório | Removidos guias de estudo, registro de decisões e documentos de acompanhamento; README e rastreabilidade resumidos (o conteúdo antigo continua no histórico do Git) | |
+| 19 | Refazer a interface web com login e uma área para cada ator (estudante, atendente, administrador) | Login (senha = CPF; administrador fixo), controle de acesso por perfil, telas do estudante, do balcão do atendente e da administração; telas antigas e API JSON removidas; teste do fluxo web reescrito | |

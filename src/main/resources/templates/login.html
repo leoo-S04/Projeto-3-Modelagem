@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Entrar')}"></head>
+<body class="pagina-login">
+<main class="login">
+    <div class="marca grande"><span class="logo">iB2B</span> Biblioteca</div>
+    <section class="cartao">
+        <h1>Entrar</h1>
+        <div th:replace="~{fragmentos :: mensagens}"></div>
+        <form method="post" th:action="@{/login}" class="vertical">
+            <fieldset class="perfis">
+                <legend>Eu sou</legend>
+                <label><input type="radio" name="perfil" value="ESTUDANTE"
+                              th:checked="${perfilEscolhido == null or perfilEscolhido.name() == 'ESTUDANTE'}"> Estudante</label>
+                <label><input type="radio" name="perfil" value="ATENDENTE"
+                              th:checked="${perfilEscolhido != null and perfilEscolhido.name() == 'ATENDENTE'}"> Atendente</label>
+                <label><input type="radio" name="perfil" value="ADMINISTRADOR"
+                              th:checked="${perfilEscolhido != null and perfilEscolhido.name() == 'ADMINISTRADOR'}"> Administrador</label>
+            </fieldset>
+            <label>Matrícula (ou usuário) <input name="usuario" required autofocus placeholder="ex.: M-100"></label>
+            <label>Senha (CPF) <input name="senha" type="password" required></label>
+            <button>Entrar</button>
+        </form>
+    </section>
+    <section class="cartao dica">
+        <h2>Contas de demonstração</h2>
+        <table>
+            <tr><th>Perfil</th><th>Matrícula</th><th>Senha</th></tr>
+            <tr><td>Estudante (Ana)</td><td>M-100</td><td>12345678909</td></tr>
+            <tr><td>Estudante (Caio)</td><td>M-300</td><td>11144477735</td></tr>
+            <tr><td>Atendente (Bruno)</td><td>F-01</td><td>98765432100</td></tr>
+            <tr><td>Administrador</td><td>admin</td><td>admin</td></tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

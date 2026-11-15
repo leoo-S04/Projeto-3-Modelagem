@@ -7,17 +7,16 @@
     <link rel="stylesheet" th:href="@{/estilo.css}">
 </head>
 <body>
-<header th:fragment="topo">
-    <h1>Biblioteca iB2B</h1>
-    <nav>
-        <a th:href="@{/}">Início</a>
-        <a th:href="@{/cadastros}">Cadastros</a>
-        <a th:href="@{/circulacao}">Circulação</a>
-        <a th:href="@{/financeiro}">Financeiro</a>
-        <a th:href="@{/acervo}">Acervo e consulta</a>
-        <a th:href="@{/admin}">Administração</a>
-    </nav>
-    <span class="hoje">Hoje: <strong th:text="${#temporals.format(hoje, 'dd/MM/yyyy')}">13/11/2026</strong></span>
+
+<header class="topo" th:fragment="topo">
+    <div class="marca"><span class="logo">iB2B</span> Biblioteca</div>
+    <div class="quem" th:if="${usuario != null}">
+        <span class="perfil" th:text="${usuario.perfil().rotulo()}">Estudante</span>
+        <strong th:text="${usuario.nome()}">Ana Souza</strong>
+        <span class="suave" th:if="${usuario.perfil().name() != 'ADMINISTRADOR'}" th:text="${usuario.identificador()}">M-100</span>
+    </div>
+    <div class="data">Hoje: <strong th:text="${#temporals.format(hoje, 'dd/MM/yyyy')}">13/11/2026</strong></div>
+    <form th:if="${usuario != null}" method="post" th:action="@{/sair}" class="sair"><button class="link">Sair</button></form>
 </header>
 
 <div th:fragment="mensagens">
@@ -25,24 +24,24 @@
     <div class="msg erro" th:if="${erro}" th:text="${erro}">erro</div>
 </div>
 
-<table th:fragment="tabelaLivros(livros)">
-    <tr><th>Id</th><th>Título</th><th>Situação</th><th>Reservante</th><th>Vencimento</th><th>Renovações</th></tr>
-    <tr th:each="l : ${livros}">
-        <td th:text="${l.idLivro()}">1</td>
-        <td th:text="${l.titulo()}">Dom Casmurro</td>
-        <td><span class="etiqueta" th:classappend="${l.situacao()}" th:text="${l.situacao()}">LIVRE</span></td>
-        <td th:text="${l.matriculaReservante()} ?: '—'">—</td>
-        <td th:text="${l.vencimento() != null} ? ${#temporals.format(l.vencimento(), 'dd/MM/yyyy')} : '—'">—</td>
-        <td th:text="${l.numRenovacoes()}">0</td>
-    </tr>
-</table>
-<!-- Fragmento recursivo: desenha um grupo e seus subgrupos (a mesma estrutura do Composite) -->
+<!-- Situação do livro com nome amigável -->
+<span th:fragment="situacao(s)" class="etiqueta" th:classappend="${s}" th:switch="${s.name()}">
+    <th:block th:case="'LIVRE'">Disponível</th:block>
+    <th:block th:case="'RESERVADO'">Reservado</th:block>
+    <th:block th:case="'EMPRESTADO'">Emprestado</th:block>
+    <th:block th:case="'RENOVADO'">Emprestado (renovado)</th:block>
+    <th:block th:case="'DEVOLVIDO'">Em inspeção</th:block>
+    <th:block th:case="'REPARANDO'">Em reparo</th:block>
+    <th:block th:case="'INCINERADO'">Descartado</th:block>
+</span>
+
+<!-- Organização do acervo: o mesmo desenho para unidade, seção e subseção (Composite) -->
 <ul class="arvore" th:fragment="arvore(no)">
     <li>
         <strong th:text="${no.nome()}">Central</strong>
-        <span class="etiqueta" th:text="${no.tipo()}">UNIDADE</span>
-        — <span th:text="${no.totalDeLivros()}">5</span> livro(s)
-        <small th:unless="${#lists.isEmpty(no.idsDiretos())}" th:text="' · livros aqui: ' + ${no.idsDiretos()}"></small>
+        <span class="etiqueta" th:text="${no.tipo().name() == 'SECAO'} ? 'Seção' : (${no.tipo().name() == 'SUBSECAO'} ? 'Subseção' : 'Unidade')">Unidade</span>
+        <span class="suave" th:text="${no.totalDeLivros()} + ' livro(s)'">5 livros</span>
+        <small class="suave" th:unless="${#lists.isEmpty(no.idsDiretos())}" th:text="' · livros nº ' + ${#strings.listJoin(no.idsDiretos(), ', ')}"></small>
         <th:block th:each="sub : ${no.subgrupos()}">
             <div th:replace="~{fragmentos :: arvore(${sub})}"></div>
         </th:block>

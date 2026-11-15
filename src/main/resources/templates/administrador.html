@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Administração')}"></head>
+<body>
+<header th:replace="~{fragmentos :: topo}"></header>
+<main>
+    <nav class="abas">
+        <a th:href="@{/admin(aba='pessoas')}" th:classappend="${aba == 'pessoas'} ? 'ativa'">Pessoas</a>
+        <a th:href="@{/admin(aba='livros')}" th:classappend="${aba == 'livros'} ? 'ativa'">Livros e acervo</a>
+        <a th:href="@{/admin(aba='multas')}" th:classappend="${aba == 'multas'} ? 'ativa'">Multas</a>
+        <a th:href="@{/admin(aba='sistema')}" th:classappend="${aba == 'sistema'} ? 'ativa'">Sistema</a>
+    </nav>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
+
+    <!-- ===== Pessoas, estudantes e atendentes ===== -->
+    <datalist id="cpfs"><option th:each="p : ${pessoas}" th:value="${p.cpf()}" th:text="${p.nome()} + ' ' + ${p.sobrenome()}"></option></datalist>
+    <th:block th:if="${aba == 'pessoas'}">
+        <div class="grade">
+            <section class="cartao">
+                <h2>Nova pessoa</h2>
+                <form method="post" th:action="@{/admin/pessoa}" class="vertical">
+                    <label>CPF <input name="cpf" required placeholder="somente números"></label>
+                    <label>Nome <input name="nome" required></label>
+                    <label>Sobrenome <input name="sobrenome" required></label>
+                    <label>E-mail <input name="email" type="email" required></label>
+                    <button>Cadastrar pessoa</button>
+                </form>
+            </section>
+            <section class="cartao">
+                <h2>Novo estudante</h2>
+                <p class="suave pequeno">A pessoa precisa estar cadastrada. A senha do estudante é o CPF.</p>
+                <form method="post" th:action="@{/admin/estudante}" class="vertical">
+                    <label>CPF da pessoa <input name="cpf" list="cpfs" required placeholder="escolha ou digite"></label>
+                    <label>Matrícula <input name="matricula" required placeholder="ex.: M-400"></label>
+                    <button>Cadastrar estudante</button>
+                </form>
+                <h2>Novo atendente</h2>
+                <form method="post" th:action="@{/admin/atendente}" class="vertical">
+                    <label>CPF da pessoa <input name="cpf" list="cpfs" required placeholder="escolha ou digite"></label>
+                    <label>Matrícula funcional <input name="matriculaFuncional" required placeholder="ex.: F-02"></label>
+                    <button>Cadastrar atendente</button>
+                </form>
+            </section>
+        </div>
+
+        <section class="cartao">
+            <h2>Estudantes</h2>
+            <table>
+                <tr><th>Matrícula</th><th>Nome</th><th>CPF</th><th></th></tr>
+                <tr th:each="e : ${estudantes}">
+                    <td th:text="${e.matricula()}">M-100</td><td th:text="${e.nome()}">Ana</td><td th:text="${e.cpf()}">123</td>
+                    <td class="acoes"><form method="post" th:action="@{/admin/estudante/excluir}">
+                        <input type="hidden" name="matricula" th:value="${e.matricula()}"><button class="perigo pequeno">Excluir</button></form></td>
+                </tr>
+            </table>
+            <h2>Atendentes</h2>
+            <table>
+                <tr><th>Matrícula funcional</th><th>Nome</th><th>CPF</th><th></th></tr>
+                <tr th:each="a : ${atendentes}">
+                    <td th:text="${a.matriculaFuncional()}">F-01</td><td th:text="${a.nome()}">Bruno</td><td th:text="${a.cpf()}">987</td>
+                    <td class="acoes"><form method="post" th:action="@{/admin/atendente/excluir}">
+                        <input type="hidden" name="matriculaFuncional" th:value="${a.matriculaFuncional()}"><button class="perigo pequeno">Excluir</button></form></td>
+                </tr>
+            </table>
+            <h2>Pessoas</h2>
+            <table>
+                <tr><th>CPF</th><th>Nome</th><th>E-mail</th><th></th></tr>
+                <tr th:each="p : ${pessoas}">
+                    <td th:text="${p.cpf()}">123</td><td th:text="${p.nome()} + ' ' + ${p.sobrenome()}">Ana Souza</td><td th:text="${p.email()}">a@b</td>
+                    <td class="acoes"><form method="post" th:action="@{/admin/pessoa/excluir}">
+                        <input type="hidden" name="cpf" th:value="${p.cpf()}"><button class="perigo pequeno">Excluir</button></form></td>
+                </tr>
+            </table>
+        </section>
+    </th:block>
+
+    <!-- ===== Livros e organização do acervo ===== -->
+    <th:block th:if="${aba == 'livros'}">
+        <div class="grade">
+            <section class="cartao">
+                <h2>Novo livro</h2>
+                <form method="post" th:action="@{/admin/livro}">
+                    <label>Nº <input name="idLivro" type="number" min="1" required class="curto"></label>
+                    <label>Título <input name="titulo" required></label>
+                    <button>Cadastrar</button>
+                </form>
+                <table>
+                    <tr><th>Nº</th><th>Título</th><th>Situação</th><th></th></tr>
+                    <tr th:each="l : ${livros}">
+                        <td th:text="${l.idLivro()}">1</td><td th:text="${l.titulo()}">Dom Casmurro</td>
+                        <td><span th:replace="~{fragmentos :: situacao(${l.situacao()})}"></span></td>
+                        <td class="acoes"><form method="post" th:action="@{/admin/livro/excluir}">
+                            <input type="hidden" name="idLivro" th:value="${l.idLivro()}"><button class="perigo pequeno">Excluir</button></form></td>
+                    </tr>
+                </table>
+            </section>
+
+            <section class="cartao">
+                <h2>Organização do acervo</h2>
+                <p class="vazio" th:if="${#lists.isEmpty(estrutura)}">Nenhuma unidade criada.</p>
+                <th:block th:each="u : ${estrutura}"><div th:replace="~{fragmentos :: arvore(${u})}"></div></th:block>
+
+                <h3>Mover livro</h3>
+                <form method="post" th:action="@{/admin/acervo/mover}">
+                    <label>Livro <select name="idLivro"><option th:each="l : ${livros}" th:value="${l.idLivro()}" th:text="${l.idLivro()} + ' · ' + ${l.titulo()}"></option></select></label>
+                    <label>Para <select name="destino"><option th:each="g : ${grupos}" th:value="${g}" th:text="${g}"></option></select></label>
+                    <button>Mover</button>
+                </form>
+                <h3>Colocar livro numa seção</h3>
+                <form method="post" th:action="@{/admin/acervo/livro}">
+                    <label>Livro <select name="idLivro"><option th:each="l : ${livros}" th:value="${l.idLivro()}" th:text="${l.idLivro()} + ' · ' + ${l.titulo()}"></option></select></label>
+                    <label>Seção <select name="grupo"><option th:each="g : ${grupos}" th:value="${g}" th:text="${g}"></option></select></label>
+                    <button class="secundario">Colocar</button>
+                </form>
+                <h3>Nova seção</h3>
+                <form method="post" th:action="@{/admin/acervo/grupo}">
+                    <label>Dentro de <select name="pai"><option th:each="g : ${grupos}" th:value="${g}" th:text="${g}"></option></select></label>
+                    <label>Nome <input name="nome" required></label>
+                    <label>Tipo <select name="tipo"><option th:each="t : ${tipos}" th:value="${t}" th:text="${t.name() == 'SECAO'} ? 'Seção' : (${t.name() == 'SUBSECAO'} ? 'Subseção' : 'Unidade')"></option></select></label>
+                    <button class="secundario">Criar</button>
+                </form>
+                <h3>Nova unidade</h3>
+                <form method="post" th:action="@{/admin/acervo/unidade}">
+                    <label>Nome <input name="nome" required></label>
+                    <button class="secundario">Criar</button>
+                </form>
+            </section>
+        </div>
+    </th:block>
+
+    <!-- ===== Multas ===== -->
+    <th:block th:if="${aba == 'multas'}">
+        <div class="grade">
+            <section class="cartao">
+                <h2>Política de multa</h2>
+                <form method="post" th:action="@{/admin/politica}" class="vertical">
+                    <label th:each="p : ${politicas}" class="opcao">
+                        <span><input type="radio" name="id" th:value="${p.id()}" th:checked="${p.id() == politicaVigente}">
+                        <strong th:text="${p.id()}">ORIGINAL</strong></span>
+                        <span class="suave" th:text="${p.descricao()}">R$ 1,00 por dia</span>
+                    </label>
+                    <button>Salvar política</button>
+                </form>
+                <p class="suave pequeno">Mudar a política não altera multas já emitidas.</p>
+            </section>
+            <section class="cartao">
+                <h2>Simular</h2>
+                <form method="get" th:action="@{/admin}">
+                    <input type="hidden" name="aba" value="multas">
+                    <label>Dias de atraso <input name="dias" type="number" min="0" th:value="${dias} ?: 5" class="curto"></label>
+                    <button class="secundario">Simular</button>
+                </form>
+                <table th:if="${simulacao}">
+                    <tr><th>Política</th><th th:text="'Multa para ' + ${dias} + ' dia(s)'">Multa</th></tr>
+                    <tr th:each="s : ${simulacao}"><td th:text="${s.key}">ORIGINAL</td>
+                        <td th:text="'R$ ' + ${#numbers.formatDecimal(s.value, 1, 'POINT', 2, 'COMMA')}">R$ 5,00</td></tr>
+                </table>
+            </section>
+        </div>
+        <section class="cartao">
+            <h2>Boletos emitidos</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(cobrancas)}">Nenhum boleto.</p>
+            <table th:unless="${#lists.isEmpty(cobrancas)}">
+                <tr><th>Boleto</th><th>CPF</th><th>Atraso</th><th>Valor</th><th>Política</th><th>Banco</th><th>Situação</th></tr>
+                <tr th:each="c : ${cobrancas}">
+                    <td th:text="'nº ' + ${c.idBoleto()}">1</td><td th:text="${c.cpf()}">123</td>
+                    <td th:text="${c.diasAtraso()} + ' dia(s)'">5</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(c.valor(), 1, 'POINT', 2, 'COMMA')}">R$ 5,00</td>
+                    <td th:text="${c.politicaAplicada()}">ORIGINAL</td>
+                    <td th:text="${c.banco()} + ' · ' + ${c.idExterno()}">A</td>
+                    <td><span class="etiqueta" th:classappend="${c.situacao()}" th:text="${c.situacao() == 'QUITADO'} ? 'Paga' : 'Em aberto'">Em aberto</span></td>
+                </tr>
+            </table>
+        </section>
+    </th:block>
+
+    <!-- ===== Sistema (ferramentas da demonstração) ===== -->
+    <th:block th:if="${aba == 'sistema'}">
+        <div class="grade">
+            <section class="cartao">
+                <h2>Relógio</h2>
+                <p class="suave pequeno">Para simular atraso sem esperar: adiante a data do sistema.</p>
+                <form method="post" th:action="@{/admin/relogio/avancar}">
+                    <label>Adiantar <input name="dias" type="number" min="1" value="30" class="curto"></label>
+                    <button>Adiantar dias</button>
+                </form>
+                <form method="post" th:action="@{/admin/relogio/normal}"><button class="secundario">Voltar à data real</button></form>
+            </section>
+            <section class="cartao">
+                <h2>Últimas buscas no catálogo</h2>
+                <p class="vazio" th:if="${#lists.isEmpty(medicoes)}">Nenhuma busca ainda.</p>
+                <table th:unless="${#lists.isEmpty(medicoes)}">
+                    <tr><th>Busca</th><th>Resultados</th><th>Tempo</th></tr>
+                    <tr th:each="m : ${medicoes}"><td th:text="${m.termo()}">dom</td><td th:text="${m.resultados()}">1</td>
+                        <td th:text="${m.duracao().toNanos() / 1000} + ' µs'">12 µs</td></tr>
+                </table>
+            </section>
+        </div>
+        <section class="cartao">
+            <h2>E-mails enviados</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(emails)}">Nenhum e-mail.</p>
+            <table th:unless="${#lists.isEmpty(emails)}">
+                <tr><th>Para</th><th>Assunto</th><th>Mensagem</th></tr>
+                <tr th:each="e : ${emails}"><td th:text="${e.para()}">a@b</td><td th:text="${e.assunto()}">x</td><td th:text="${e.texto()}">y</td></tr>
+            </table>
+        </section>
+    </th:block>
+</main>
+</body>
+</html>

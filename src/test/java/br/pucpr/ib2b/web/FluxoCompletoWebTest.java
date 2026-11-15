@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.UUID;
 
@@ -18,8 +19,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Interface web (Etapa 6), perfil TESTE (família em memória): o fluxo completo da demonstração —
- * cadastros → reserva → empréstimo → renovação → devolução atrasada → multa → pagamento no banco simulado.
+ * Interface web, perfil TESTE (memória): o fluxo completo pelas áreas de cada ator —
+ * administrador cadastra → estudante reserva → atendente empresta → estudante renova → devolução atrasada →
+ * multa → estudante paga no banco simulado.
  */
 @SpringBootTest(properties = "biblioteca.perfil=TESTE")
 @AutoConfigureMockMvc
@@ -30,54 +32,69 @@ class FluxoCompletoWebTest {
 
     @Test
     void fluxoReservaEmprestimoRenovacaoDevolucaoAtrasadaMultaEPagamento() throws Exception {
-        enviar("/cadastros/pessoa", "cpf", "12345678909", "nome", "Ana", "sobrenome", "Souza", "email", "ana@pucpr.br")
+        MockHttpSession admin = entrar("ADMINISTRADOR", "admin", "admin");
+        enviar(admin, "/admin/pessoa", "cpf", "123.456.789-09", "nome", "Ana", "sobrenome", "Souza", "email", "ana@pucpr.br")
                 .andExpect(flash().attribute("sucesso", containsString("cadastrado")));
-        enviar("/cadastros/estudante", "cpf", "12345678909", "matricula", "M-100");
-        enviar("/cadastros/estudante", "cpf", "00000000000", "matricula", "M-999")      // pessoa inexistente
+        enviar(admin, "/admin/estudante", "cpf", "12345678909", "matricula", "M-100");
+        enviar(admin, "/admin/estudante", "cpf", "00000000000", "matricula", "M-999")       // pessoa inexistente
                 .andExpect(flash().attribute("erro", containsString("pessoa não cadastrada")));
-        enviar("/cadastros/pessoa", "cpf", "98765432100", "nome", "Bruno", "sobrenome", "Alves", "email", "bruno@pucpr.br");
-        enviar("/cadastros/atendente", "cpf", "98765432100", "matriculaFuncional", "F-01");
-        enviar("/cadastros/livro", "idLivro", "1", "titulo", "Dom Casmurro");
+        enviar(admin, "/admin/pessoa", "cpf", "98765432100", "nome", "Bruno", "sobrenome", "Alves", "email", "bruno@pucpr.br");
+        enviar(admin, "/admin/atendente", "cpf", "98765432100", "matriculaFuncional", "F-01");
+        enviar(admin, "/admin/livro", "idLivro", "1", "titulo", "Dom Casmurro");
 
-        enviar("/circulacao/reservar", "idSolicitacao", UUID.randomUUID().toString(), "idLivro", "1",
-                "idEstudante", "M-100", "idAtendente", "F-01")
-                .andExpect(flash().attribute("sucesso", containsString("Reserva")));
-        enviar("/circulacao/emprestar", "idLivro", "1", "idEstudante", "M-100", "idAtendente", "F-01")
-                .andExpect(flash().attribute("sucesso", containsString("vencimento")));
+        MockHttpSession ana = entrar("ESTUDANTE", "M-100", "123.456.789-09");
+        MockHttpSession bruno = entrar("ATENDENTE", "F-01", "98765432100");
+
+        enviar(ana, "/estudante/reservar", "idSolicitacao", UUID.randomUUID().toString(), "idLivro", "1")
+                .andExpect(flash().attribute("sucesso", containsString("reservado")));
+        enviar(bruno, "/atendente/emprestar", "idLivro", "1", "idEstudante", "M-100")
+                .andExpect(flash().attribute("sucesso", containsString("Devolver até")));
         String idRenovacao = UUID.randomUUID().toString();
-        enviar("/circulacao/renovar", "idSolicitacao", idRenovacao, "idLivro", "1", "idEstudante", "M-100")
+        enviar(ana, "/estudante/renovar", "idSolicitacao", idRenovacao, "idLivro", "1")
                 .andExpect(flash().attribute("sucesso", containsString("renovado")));
-        enviar("/circulacao/renovar", "idSolicitacao", idRenovacao, "idLivro", "1", "idEstudante", "M-100"); // duplo clique
+        enviar(ana, "/estudante/renovar", "idSolicitacao", idRenovacao, "idLivro", "1");   // duplo clique: não renova de novo
 
-        enviar("/admin/relogio/avancar", "dias", "65");                                 // vencimento = hoje + 60
-        enviar("/circulacao/devolver", "idLivro", "1", "idEstudante", "M-100", "idAtendente", "F-01")
-                .andExpect(flash().attribute("sucesso", containsString("5 dia(s) de atraso")));
+        enviar(admin, "/admin/relogio/avancar", "dias", "65");                                // vencimento = hoje + 60
+        enviar(bruno, "/atendente/devolver", "idLivro", "1", "idEstudante", "M-100")
+                .andExpect(flash().attribute("sucesso", containsString("5 dia(s) de atraso")))
+                .andExpect(flash().attribute("sucesso", containsString("Boleto")));
 
         CobrancaDTO boleto = multas.relatorioDeCobrancas().get(0);
-        assertEquals("5.00", boleto.valor().toPlainString());                           // ORIGINAL: 5 × 1,00
-        web.perform(get("/financeiro")).andExpect(status().isOk()).andExpect(content().string(containsString("EMITIDO")));
-
-        enviar("/simulador/banco-a/pagar/" + boleto.idExterno());
-        enviar("/simulador/banco-a/reenviar/" + boleto.idExterno());
-        web.perform(get("/financeiro")).andExpect(content().string(containsString("QUITADO")));
+        assertEquals("5.00", boleto.valor().toPlainString());                                // ORIGINAL: 5 × 1,00
+        web.perform(get("/estudante").session(ana)).andExpect(content().string(containsString("Em aberto")));
+        enviar(ana, "/simulador/banco-a/pagar/" + boleto.idExterno())
+                .andExpect(flash().attribute("sucesso", containsString("Pagamento confirmado")));
+        web.perform(get("/estudante").session(ana)).andExpect(content().string(containsString("Paga")));
 
         // todas as páginas renderizam
-        for (String pagina : new String[]{"/", "/cadastros", "/circulacao", "/acervo?termo=dom", "/admin", "/financeiro?dias=5"}) {
-            web.perform(get(pagina)).andExpect(status().isOk());
+        web.perform(get("/estudante?busca=dom").session(ana)).andExpect(content().string(containsString("Dom Casmurro")));
+        web.perform(get("/atendente").session(bruno)).andExpect(status().isOk());
+        for (String aba : new String[]{"pessoas", "livros", "multas&dias=5", "sistema"}) {
+            web.perform(get("/admin?aba=" + aba).session(admin)).andExpect(status().isOk());
         }
-        web.perform(get("/acervo?termo=dom")).andExpect(content().string(containsString("Dom Casmurro")));
     }
 
     @Test
-    void apiJsonRecusaComMensagemDoDominio() throws Exception {
-        web.perform(post("/api/emprestimos").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"idLivro\":\"77\",\"idEstudante\":\"X-1\"}"))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.erro", containsString("Empréstimo recusado")));
+    void cadaPerfilSoAbreAsSuasPaginas() throws Exception {
+        web.perform(get("/estudante")).andExpect(redirectedUrl("/login"));                // sem login
+        web.perform(get("/login")).andExpect(status().isOk());
+        MockHttpSession admin = entrar("ADMINISTRADOR", "admin", "admin");
+        web.perform(get("/estudante").session(admin)).andExpect(redirectedUrl("/admin"));  // outro perfil
+        web.perform(post("/login").param("perfil", "ADMINISTRADOR").param("usuario", "admin").param("senha", "errada"))
+                .andExpect(redirectedUrl("/login"))
+                .andExpect(flash().attribute("erro", containsString("incorretos")));
     }
 
-    private org.springframework.test.web.servlet.ResultActions enviar(String url, String... campos) throws Exception {
-        var requisicao = post(url);
+    private MockHttpSession entrar(String perfil, String usuario, String senha) throws Exception {
+        MockHttpSession sessao = new MockHttpSession();
+        web.perform(post("/login").session(sessao).param("perfil", perfil).param("usuario", usuario).param("senha", senha))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeCount(0));
+        return sessao;
+    }
+
+    private ResultActions enviar(MockHttpSession sessao, String url, String... campos) throws Exception {
+        var requisicao = post(url).session(sessao);
         for (int i = 0; i < campos.length; i += 2) requisicao = requisicao.param(campos[i], campos[i + 1]);
         return web.perform(requisicao).andExpect(status().is3xxRedirection());
     }

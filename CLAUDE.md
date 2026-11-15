@@ -31,7 +31,7 @@ Quando os PDFs e o nosso Astah divergirem, siga as Soluções do professor onde 
 | 6 | Command | Mesma renovação executada 2× com o mesmo id → só +30 dias; solicitações diferentes continuam limitadas a 2 renovações |
 | 7 | Template Method | Estudante duplicado retorna o existente; estudante com CPF não cadastrado falha antes de qualquer gravação |
 | 8 | Abstract Factory | Configuração de teste fornece só objetos em memória; configuração de produção fornece repositórios JSON que compartilham a mesma unidade de trabalho |
-| 9 | Decorator | 2ª consulta de metadados usa cache e ainda gera medição; cache antigo nunca autoriza reservar livro que deixou de estar LIVRE |
+| 9 | Decorator | 2ª consulta de metadados usa cache e ainda gera medição; cache antigo nunca "auto"riza reservar livro que deixou de estar LIVRE |
 | 10 | Composite | Unidade com 2 seções (3 e 2 livros) informa 5; mover livro entre seções não altera id, estado nem empréstimo |
 
 Os detalhes de cada requisito ("O que implementar" e "Na arguição, saiba explicar") estão no enunciado; leia a parte do requisito antes de planejar a etapa correspondente.
