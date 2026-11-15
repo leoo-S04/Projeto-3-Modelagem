@@ -5,6 +5,9 @@ import br.pucpr.ib2b.persistencia.UnidadeDeTrabalho;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -128,6 +131,20 @@ public class ServicoDeCirculacao implements iCirculacao {
         return l == null ? null : SituacaoLivroDTO.de(l);
     }
 
+    @Override
+    public HistoricoDeEmprestimos consultarEmprestimos(String idEstudante) {
+        List<EmprestimoDTO> lista = new ArrayList<>();
+        for (Emprestimo e : movimentacao.listarEmprestimos()) {
+            if (doEstudante(e, idEstudante)) lista.add(EmprestimoDTO.emAndamento(e));
+        }
+        for (Devolucao d : movimentacao.listarDevolucoes()) {
+            if (doEstudante(d, idEstudante)) lista.add(EmprestimoDTO.devolvido(d));
+        }
+        lista.sort(Comparator.comparing(EmprestimoDTO::dataEmprestimo, Comparator.nullsLast(Comparator.reverseOrder()))
+                .thenComparing(EmprestimoDTO::idEmprestimo, Comparator.reverseOrder()));
+        return new HistoricoDeEmprestimos(lista);
+    }
+
     // ---- auxiliares ----
 
     /** Regra 7: precisa existir reserva ativa do livro, e ela precisa ser do mesmo estudante. */
@@ -147,6 +164,10 @@ public class ServicoDeCirculacao implements iCirculacao {
             acervo.atualizar(livro);
             return SituacaoLivroDTO.de(livro);
         });
+    }
+
+    private static boolean doEstudante(Transacao t, String idEstudante) {
+        return idEstudante == null || t.getEstudante().getMatricula().equals(idEstudante);
     }
 
     private LocalDate hoje() { return LocalDate.now(relogio); }

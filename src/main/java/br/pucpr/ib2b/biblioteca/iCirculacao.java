@@ -17,4 +17,7 @@ public interface iCirculacao {
     SituacaoLivroDTO retornarDoReparo(int idLivro);
     SituacaoLivroDTO incinerar(int idLivro);
     SituacaoLivroDTO consultarSituacao(int idLivro);
+
+    /** Empréstimos em andamento e já devolvidos (de um estudante, ou de todos se idEstudante for nulo). */
+    HistoricoDeEmprestimos consultarEmprestimos(String idEstudante);
 }

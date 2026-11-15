@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Ficha do estudante')}"></head>
+<body>
+<header th:replace="~{fragmentos :: topo}"></header>
+<main>
+    <p><a th:href="@{/admin(aba='estudantes')}" class="voltar">← Voltar aos estudantes</a></p>
+
+    <section class="boas-vindas">
+        <div>
+            <span class="suave pequeno">Ficha do estudante</span>
+            <h1 th:text="${pessoa != null} ? ${pessoa.nome()} + ' ' + ${pessoa.sobrenome()} : ${estudante.nome()}">Ana Souza</h1>
+            <p class="suave">
+                matrícula <strong th:text="${estudante.matricula()}">M-100</strong> ·
+                CPF <span th:text="${estudante.cpf()}">123</span>
+                <th:block th:if="${pessoa != null}"> · <span th:text="${pessoa.email()}">ana@exemplo.com</span></th:block>
+            </p>
+        </div>
+        <div class="numeros">
+            <div><strong th:text="${#lists.size(emAndamento)}">1</strong><span>com o estudante</span></div>
+            <div><strong th:text="${#lists.size(devolvidos)}">3</strong><span>devolvido(s)</span></div>
+            <div><strong th:text="${#lists.size(multas)}">0</strong><span>multa(s)</span></div>
+        </div>
+    </section>
+
+    <section class="cartao">
+        <h2>Com o estudante agora</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(emAndamento)}">Nenhum livro emprestado.</p>
+        <div class="emprestimo" th:each="e : ${emAndamento}">
+            <div class="cabecalho">
+                <div>
+                    <strong class="titulo" th:text="${e.titulo()}">Dom Casmurro</strong>
+                    <div class="suave pequeno">
+                        Empréstimo nº <span th:text="${e.idEmprestimo()}">7</span> ·
+                        emprestado em <span th:text="${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')}">13/11/2026</span> ·
+                        devolver até <strong th:text="${#temporals.format(e.vencimento(), 'dd/MM/yyyy')}">13/12/2026</strong> ·
+                        renovações <span th:text="${e.numRenovacoes()} + ' de 2'">0 de 2</span>
+                    </div>
+                </div>
+            </div>
+            <div th:replace="~{fragmentos :: barra(${prazos[e.idEmprestimo()]})}"></div>
+        </div>
+    </section>
+
+    <section class="cartao">
+        <h2>Histórico de empréstimos</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(devolvidos)}">Nenhum empréstimo devolvido.</p>
+        <table th:unless="${#lists.isEmpty(devolvidos)}">
+            <tr><th>Nº</th><th>Livro</th><th>Emprestado em</th><th>Devolvido em</th><th>Situação</th></tr>
+            <tr th:each="e : ${devolvidos}">
+                <td th:text="${e.idEmprestimo()}">7</td>
+                <td th:text="${e.titulo()}">Dom Casmurro</td>
+                <td th:text="${e.dataEmprestimo() != null} ? ${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')} : '—'">13/11/2026</td>
+                <td th:text="${#temporals.format(e.devolvidoEm(), 'dd/MM/yyyy')}">16/12/2026</td>
+                <td><span th:replace="~{fragmentos :: situacaoEmprestimo(${e})}"></span></td>
+            </tr>
+        </table>
+
+        <th:block th:unless="${#lists.isEmpty(multas)}">
+            <h2>Multas</h2>
+            <table>
+                <tr><th>Boleto</th><th>Atraso</th><th>Valor</th><th>Política</th><th>Situação</th></tr>
+                <tr th:each="m : ${multas}">
+                    <td th:text="'nº ' + ${m.idBoleto()} + ' · banco ' + ${m.banco()}">nº 1</td>
+                    <td th:text="${m.diasAtraso()} + ' dia(s)'">5</td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(m.valor(), 1, 'POINT', 2, 'COMMA')}">R$ 5,00</td>
+                    <td th:text="${m.politicaAplicada()}">ORIGINAL</td>
+                    <td><span class="etiqueta" th:classappend="${m.situacao()}" th:text="${m.situacao() == 'QUITADO'} ? 'Paga' : 'Em aberto'">Em aberto</span></td>
+                </tr>
+            </table>
+        </th:block>
+    </section>
+</main>
+</body>
+</html>

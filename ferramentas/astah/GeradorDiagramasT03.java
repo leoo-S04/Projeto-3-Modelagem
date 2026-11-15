@@ -148,7 +148,8 @@ public class GeradorDiagramasT03 {
             {"iCirculacao"},
             {"ServicoDeCirculacao", "ReservaInvalidaException"},
             {"Acervo", "Movimentacao", "Relacionamento", "UnidadeDeTrabalho", "Livro"},
-            {"ComprovanteReserva", "ComprovanteEmprestimo", "ComprovanteRenovacao", "ComprovanteDevolucao", "SituacaoLivroDTO"}},
+            {"ComprovanteReserva", "ComprovanteEmprestimo", "ComprovanteRenovacao", "ComprovanteDevolucao", "SituacaoLivroDTO"},
+            {"HistoricoDeEmprestimos", "EmprestimoDTO"}},
             "Facade (Req. 4)\nFacade: iCirculacao / ServicoDeCirculacao\nSubsistema: Acervo, Movimentacao, Relacionamento, Livro (State), UnidadeDeTrabalho\n"
             + "Clientes: TratadorDeEmprestimo e TratadorDeDevolucao\n"
             + "efetivarEmprestimo: valida a reserva, remove a reserva ativa, cria o empréstimo e atualiza o Livro\n"

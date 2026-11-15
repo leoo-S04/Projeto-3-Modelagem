@@ -15,4 +15,7 @@ public interface iEmprestimo {
     ResultadoSolicitacao renovarEmprestimo(int idLivro, String idEstudante);                                      // f4
     ResultadoSolicitacao renovarEmprestimo(UUID idSolicitacao, int idLivro, String idEstudante);                  // f4
     SituacaoLivroDTO consultarSituacao(int idLivro);
+
+    /** Empréstimos em andamento e já devolvidos (de um estudante, ou de todos se idEstudante for nulo). */
+    HistoricoDeEmprestimos consultarEmprestimos(String idEstudante);
 }

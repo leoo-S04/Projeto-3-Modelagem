@@ -65,4 +65,7 @@ public class TratadorDeEmprestimo implements iEmprestimo {
 
     @Override
     public SituacaoLivroDTO consultarSituacao(int idLivro) { return circulacao.consultarSituacao(idLivro); }
+
+    @Override
+    public HistoricoDeEmprestimos consultarEmprestimos(String idEstudante) { return circulacao.consultarEmprestimos(idEstudante); }
 }

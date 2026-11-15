@@ -35,6 +35,18 @@
     <th:block th:case="'INCINERADO'">Descartado</th:block>
 </span>
 
+<!-- Barra do prazo do empréstimo: enche de 0 a 100% conforme os dias passam (verde, laranja, vermelho) -->
+<div th:fragment="barra(p)" class="prazo">
+    <div class="barra"><div class="preenchido" th:classappend="${p.cor()}" th:style="'width:' + ${p.percentual()} + '%'"></div></div>
+    <small class="texto-prazo" th:classappend="${p.cor()}" th:text="${p.texto()}">Faltam 10 dias</small>
+</div>
+
+<!-- Situação de um empréstimo no histórico -->
+<span th:fragment="situacaoEmprestimo(e)" class="etiqueta"
+      th:classappend="${e.emAndamento()} ? 'EMPRESTADO' : (${e.diasAtraso() > 0} ? 'RESERVADO' : 'LIVRE')"
+      th:text="${e.emAndamento()} ? (${e.numRenovacoes() > 0} ? 'Em uso · renovado ' + ${e.numRenovacoes()} + 'x' : 'Em uso')
+              : (${e.diasAtraso() > 0} ? 'Devolvido com ' + ${e.diasAtraso()} + ' dia(s) de atraso' : 'Devolvido no prazo')">Em uso</span>
+
 <!-- Organização do acervo: o mesmo desenho para unidade, seção e subseção (Composite) -->
 <ul class="arvore" th:fragment="arvore(no)">
     <li>

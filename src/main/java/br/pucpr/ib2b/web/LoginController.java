@@ -71,18 +71,18 @@ public class LoginController {
             case ESTUDANTE -> {
                 Estudante e = estudantes.consultarEstudante(usuario);
                 if (e != null && confere(e.getPessoa(), cpf)) {
-                    return new Usuario(perfil, e.getMatricula(), nomeCompleto(e.getPessoa()), e.getPessoa().getCpf());
+                    return new Usuario(perfil, e.getMatricula(), nomeCompleto(e.getPessoa()), e.getPessoa().getCpf(), e.getPessoa().getEmail());
                 }
             }
             case ATENDENTE -> {
                 Atendente a = atendentes.consultarAtendente(usuario);
                 if (a != null && confere(a.getPessoa(), cpf)) {
-                    return new Usuario(perfil, a.getMatriculaFuncional(), nomeCompleto(a.getPessoa()), a.getPessoa().getCpf());
+                    return new Usuario(perfil, a.getMatriculaFuncional(), nomeCompleto(a.getPessoa()), a.getPessoa().getCpf(), a.getPessoa().getEmail());
                 }
             }
             case ADMINISTRADOR -> {
                 if (usuarioAdmin.equals(usuario) && senhaAdmin.equals(senha)) {
-                    return new Usuario(perfil, usuario, "Administrador", null);
+                    return new Usuario(perfil, usuario, "Administrador", null, null);
                 }
             }
         }

@@ -4,62 +4,96 @@
 <body>
 <header th:replace="~{fragmentos :: topo}"></header>
 <main>
+    <section class="boas-vindas">
+        <div>
+            <h1 th:text="'Olá, ' + ${usuario.primeiroNome()} + '!'">Olá, Ana!</h1>
+            <p class="suave">
+                <span th:text="${usuario.nome()}">Ana Souza</span> ·
+                matrícula <strong th:text="${usuario.identificador()}">M-100</strong> ·
+                <span th:text="${usuario.email()}">ana@exemplo.com</span>
+            </p>
+        </div>
+        <div class="numeros">
+            <div><strong th:text="${#lists.size(comigo)}">1</strong><span>com você</span></div>
+            <div><strong th:text="${#lists.size(reservas)}">0</strong><span>reserva(s)</span></div>
+            <div><strong th:text="${#lists.size(historico)}">3</strong><span>já devolvido(s)</span></div>
+        </div>
+    </section>
+
     <div th:replace="~{fragmentos :: mensagens}"></div>
 
-    <div class="grade">
-        <section class="cartao">
-            <h2>Meus empréstimos</h2>
-            <p class="vazio" th:if="${#lists.isEmpty(emprestimos)}">Você não tem livros emprestados.</p>
-            <table th:unless="${#lists.isEmpty(emprestimos)}">
-                <tr><th>Livro</th><th>Devolver até</th><th>Renovações</th><th></th></tr>
-                <tr th:each="l : ${emprestimos}">
-                    <td th:text="${l.titulo()}">Dom Casmurro</td>
-                    <td>
-                        <span th:text="${#temporals.format(l.vencimento(), 'dd/MM/yyyy')}">13/12/2026</span>
-                        <span class="etiqueta atrasado" th:if="${l.vencimento().isBefore(hoje)}">atrasado</span>
-                    </td>
-                    <td th:text="${l.numRenovacoes()} + ' de 2'">0 de 2</td>
-                    <td class="acoes">
-                        <form method="post" th:action="@{/estudante/renovar}">
-                            <input type="hidden" name="idSolicitacao" th:value="${idRenovacao[l.idLivro()]}">
-                            <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
-                            <button>Renovar +30 dias</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
+    <section class="alerta" th:unless="${#lists.isEmpty(multasEmAberto)}">
+        <div>
+            <strong>Você tem multa em aberto:</strong>
+            <span th:text="'R$ ' + ${#numbers.formatDecimal(totalEmAberto, 1, 'POINT', 2, 'COMMA')}">R$ 5,00</span>
+        </div>
+        <div class="botoes">
+            <form th:each="m : ${multasEmAberto}" method="post"
+                  th:action="${m.banco() == 'A'} ? @{/simulador/banco-a/pagar/{id}(id=${m.idExterno()})}
+                                                 : @{/simulador/banco-b/pagar/{id}(id=${m.idExterno()})}">
+                <button th:text="'Pagar R$ ' + ${#numbers.formatDecimal(m.valor(), 1, 'POINT', 2, 'COMMA')}">Pagar</button>
+            </form>
+        </div>
+    </section>
 
+    <section class="cartao">
+        <h2>Com você agora</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(comigo)}">Você não tem livros emprestados.</p>
+        <div class="emprestimo" th:each="e : ${comigo}">
+            <div class="cabecalho">
+                <div>
+                    <strong class="titulo" th:text="${e.titulo()}">Dom Casmurro</strong>
+                    <div class="suave pequeno">
+                        Emprestado em <span th:text="${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')}">13/11/2026</span> ·
+                        devolver até <strong th:text="${#temporals.format(e.vencimento(), 'dd/MM/yyyy')}">13/12/2026</strong> ·
+                        renovações <span th:text="${e.numRenovacoes()} + ' de 2'">0 de 2</span>
+                    </div>
+                </div>
+                <form method="post" th:action="@{/estudante/renovar}">
+                    <input type="hidden" name="idSolicitacao" th:value="${idRenovacao[e.idLivro()]}">
+                    <input type="hidden" name="idLivro" th:value="${e.idLivro()}">
+                    <button class="secundario">Renovar +30 dias</button>
+                </form>
+            </div>
+            <div th:replace="~{fragmentos :: barra(${prazos[e.idEmprestimo()]})}"></div>
+        </div>
+
+        <th:block th:unless="${#lists.isEmpty(reservas)}">
             <h2>Minhas reservas</h2>
-            <p class="vazio" th:if="${#lists.isEmpty(reservas)}">Nenhuma reserva.</p>
-            <ul class="lista" th:unless="${#lists.isEmpty(reservas)}">
+            <ul class="lista">
                 <li th:each="l : ${reservas}"><strong th:text="${l.titulo()}">Dom Casmurro</strong>
                     <span class="suave">— retire no balcão com o atendente</span></li>
             </ul>
-        </section>
+        </th:block>
+    </section>
 
-        <section class="cartao">
+    <section class="cartao">
+        <h2>Meu histórico</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(historico)}">Nenhum empréstimo devolvido ainda.</p>
+        <table th:unless="${#lists.isEmpty(historico)}">
+            <tr><th>Livro</th><th>Emprestado em</th><th>Devolvido em</th><th>Situação</th></tr>
+            <tr th:each="e : ${historico}">
+                <td th:text="${e.titulo()}">Dom Casmurro</td>
+                <td th:text="${e.dataEmprestimo() != null} ? ${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')} : '—'">13/11/2026</td>
+                <td th:text="${#temporals.format(e.devolvidoEm(), 'dd/MM/yyyy')}">10/12/2026</td>
+                <td><span th:replace="~{fragmentos :: situacaoEmprestimo(${e})}"></span></td>
+            </tr>
+        </table>
+
+        <th:block th:unless="${#lists.isEmpty(multas)}">
             <h2>Minhas multas</h2>
-            <p class="vazio" th:if="${#lists.isEmpty(multas)}">Nenhuma multa.</p>
-            <table th:unless="${#lists.isEmpty(multas)}">
-                <tr><th>Boleto</th><th>Atraso</th><th>Valor</th><th>Situação</th><th></th></tr>
+            <table>
+                <tr><th>Boleto</th><th>Atraso</th><th>Valor</th><th>Situação</th></tr>
                 <tr th:each="m : ${multas}">
                     <td th:text="'nº ' + ${m.idBoleto()} + ' · banco ' + ${m.banco()}">nº 1 · banco A</td>
                     <td th:text="${m.diasAtraso()} + ' dia(s)'">5 dias</td>
                     <td th:text="'R$ ' + ${#numbers.formatDecimal(m.valor(), 1, 'POINT', 2, 'COMMA')}">R$ 5,00</td>
                     <td><span class="etiqueta" th:classappend="${m.situacao()}"
                               th:text="${m.situacao() == 'QUITADO'} ? 'Paga' : 'Em aberto'">Em aberto</span></td>
-                    <td class="acoes">
-                        <form th:if="${m.situacao() != 'QUITADO'}" method="post"
-                              th:action="${m.banco() == 'A'} ? @{/simulador/banco-a/pagar/{id}(id=${m.idExterno()})}
-                                                             : @{/simulador/banco-b/pagar/{id}(id=${m.idExterno()})}">
-                            <button>Pagar</button>
-                        </form>
-                    </td>
                 </tr>
             </table>
-            <p class="suave pequeno" th:unless="${#lists.isEmpty(multas)}">O pagamento é simulado: o banco confirma na hora.</p>
-        </section>
-    </div>
+        </th:block>
+    </section>
 
     <section class="cartao">
         <div class="titulo-com-busca">

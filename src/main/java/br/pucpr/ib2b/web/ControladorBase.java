@@ -49,6 +49,8 @@ abstract class ControladorBase {
         };
     }
 
+    protected static String reais(java.math.BigDecimal v) { return v == null ? "—" : "R$ " + v.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString().replace('.', ','); }
+
     protected static String dataBr(LocalDate d) { return d == null ? "—" : d.format(DATA); }
 
     protected static String erro(String mensagem) { return "ERRO: " + mensagem; }

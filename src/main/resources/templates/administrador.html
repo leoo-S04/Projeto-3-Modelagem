@@ -4,15 +4,69 @@
 <body>
 <header th:replace="~{fragmentos :: topo}"></header>
 <main>
+    <section class="boas-vindas">
+        <div>
+            <h1>Olá, Administrador!</h1>
+            <p class="suave">Gestão da biblioteca: pessoas, credenciais, livros, multas e acompanhamento.</p>
+        </div>
+        <div class="numeros">
+            <div><strong th:text="${#lists.size(estudantes)}">2</strong><span>estudante(s)</span></div>
+            <div><strong th:text="${#lists.size(atendentes)}">1</strong><span>atendente(s)</span></div>
+            <div><strong th:text="${#lists.size(livros)}">6</strong><span>livro(s)</span></div>
+            <div><strong th:text="${#lists.size(emAndamento)}">1</strong><span>emprestado(s)</span></div>
+        </div>
+    </section>
+
     <nav class="abas">
-        <a th:href="@{/admin(aba='pessoas')}" th:classappend="${aba == 'pessoas'} ? 'ativa'">Pessoas</a>
+        <a th:href="@{/admin(aba='estudantes')}" th:classappend="${aba == 'estudantes'} ? 'ativa'">Estudantes</a>
+        <a th:href="@{/admin(aba='emprestimos')}" th:classappend="${aba == 'emprestimos'} ? 'ativa'">Empréstimos</a>
+        <a th:href="@{/admin(aba='pessoas')}" th:classappend="${aba == 'pessoas'} ? 'ativa'">Cadastros e credenciais</a>
         <a th:href="@{/admin(aba='livros')}" th:classappend="${aba == 'livros'} ? 'ativa'">Livros e acervo</a>
         <a th:href="@{/admin(aba='multas')}" th:classappend="${aba == 'multas'} ? 'ativa'">Multas</a>
         <a th:href="@{/admin(aba='sistema')}" th:classappend="${aba == 'sistema'} ? 'ativa'">Sistema</a>
     </nav>
     <div th:replace="~{fragmentos :: mensagens}"></div>
 
-    <!-- ===== Pessoas, estudantes e atendentes ===== -->
+    <!-- ===== Estudantes: lista e ficha de cada um ===== -->
+    <section class="cartao" th:if="${aba == 'estudantes'}">
+        <h2>Estudantes cadastrados</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(estudantes)}">Nenhum estudante.</p>
+        <table th:unless="${#lists.isEmpty(estudantes)}">
+            <tr><th>Matrícula</th><th>Nome</th><th>Com o estudante agora</th><th></th></tr>
+            <tr th:each="s : ${estudantes}">
+                <td th:text="${s.matricula()}">M-100</td>
+                <td th:text="${s.nome()}">Ana Souza</td>
+                <td th:text="(${qtdPorEstudante[s.matricula()]} ?: 0) + ' livro(s)'">1 livro</td>
+                <td class="acoes"><a class="botao secundario" th:href="@{/admin/estudante/{m}(m=${s.matricula()})}">Ver ficha e histórico</a></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- ===== Empréstimos em andamento (só acompanhamento) ===== -->
+    <section class="cartao" th:if="${aba == 'emprestimos'}">
+        <div class="titulo-com-busca">
+            <h2>Empréstimos em andamento <span class="contador" th:text="${#lists.size(emAndamento)}">0</span></h2>
+            <div class="legenda">
+                <span><i class="ponto verde"></i>no prazo</span>
+                <span><i class="ponto laranja"></i>vence em até 3 dias</span>
+                <span><i class="ponto vermelho"></i>atrasado</span>
+            </div>
+        </div>
+        <p class="vazio" th:if="${#lists.isEmpty(emAndamento)}">Nenhum livro emprestado.</p>
+        <table class="monitor" th:unless="${#lists.isEmpty(emAndamento)}">
+            <tr><th>Livro</th><th>Estudante</th><th>Emprestado em</th><th>Devolver até</th><th class="col-prazo">Prazo</th></tr>
+            <tr th:each="e : ${emAndamento}" th:classappend="'faixa-' + ${prazos[e.idEmprestimo()].cor()}">
+                <td th:text="${e.titulo()}">Dom Casmurro</td>
+                <td><a th:href="@{/admin/estudante/{m}(m=${e.matriculaEstudante()})}" th:text="${e.nomeEstudante()}">Ana Souza</a></td>
+                <td th:text="${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')}">13/11/2026</td>
+                <td th:text="${#temporals.format(e.vencimento(), 'dd/MM/yyyy')}">13/12/2026</td>
+                <td class="col-prazo"><div th:replace="~{fragmentos :: barra(${prazos[e.idEmprestimo()]})}"></div></td>
+            </tr>
+        </table>
+        <p class="suave pequeno">Somente acompanhamento: empréstimos e devoluções são registrados pelo atendente no balcão.</p>
+    </section>
+
+    <!-- ===== Cadastros: pessoas, estudantes e atendentes (credenciais) ===== -->
     <datalist id="cpfs"><option th:each="p : ${pessoas}" th:value="${p.cpf()}" th:text="${p.nome()} + ' ' + ${p.sobrenome()}"></option></datalist>
     <th:block th:if="${aba == 'pessoas'}">
         <div class="grade">

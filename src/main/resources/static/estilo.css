@@ -103,3 +103,62 @@ fieldset.perfis label { flex-direction: row; align-items: center; gap: 6px; bord
 fieldset.perfis input { min-width: 0; margin: 0; }
 .dica h2 { font-size: 14px; color: var(--suave); }
 .dica td, .dica th { padding: 5px 6px; font-size: 13px; }
+
+/* Boas-vindas com números */
+.boas-vindas { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+               background: linear-gradient(120deg, #1f3b73, #1f6feb); color: #fff; border-radius: 14px;
+               padding: 22px 26px; margin-bottom: 20px; }
+.boas-vindas h1 { margin: 0 0 4px; font-size: 24px; }
+.boas-vindas .suave { color: #d6e2ff; margin: 0; }
+.boas-vindas .numeros { display: flex; gap: 12px; flex-wrap: wrap; }
+.numeros > div { background: rgba(255, 255, 255, .14); border-radius: 10px; padding: 8px 14px; min-width: 96px; text-align: center; }
+.numeros strong { display: block; font-size: 22px; }
+.numeros span { font-size: 12px; color: #d6e2ff; }
+.numeros .laranja { background: rgba(245, 158, 11, .35); }
+.numeros .vermelho { background: rgba(220, 38, 38, .4); }
+
+/* Aviso de multa */
+.alerta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+          background: #fdecea; border: 1px solid #f5c2bc; color: var(--erro); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; }
+.alerta .botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.alerta form { margin: 0; }
+.alerta button { background: var(--erro); }
+
+/* Cartão de um empréstimo com a barra de prazo */
+.emprestimo { border: 1px solid var(--borda); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+.emprestimo .cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.emprestimo .cabecalho form { margin: 0; }
+.emprestimo .titulo { font-size: 16px; }
+.prazo { margin-top: 10px; }
+.barra { height: 10px; background: #eef1f6; border-radius: 999px; overflow: hidden; }
+.preenchido { height: 100%; border-radius: 999px; transition: width .3s; }
+.preenchido.verde { background: #22a06b; }
+.preenchido.laranja { background: #f59e0b; }
+.preenchido.vermelho { background: #dc2626; }
+.texto-prazo { display: block; margin-top: 4px; font-weight: 600; }
+.texto-prazo.verde { color: var(--ok); }
+.texto-prazo.laranja { color: var(--aviso); }
+.texto-prazo.vermelho { color: var(--erro); }
+
+/* Monitoramento dos empréstimos */
+table.monitor td.col-prazo, table.monitor th.col-prazo { width: 30%; }
+table.monitor .prazo { margin-top: 0; }
+tr[data-href] { cursor: pointer; }
+tr[data-href]:hover td { background: #f6f9ff; }
+tr.faixa-verde td:first-child { border-left: 4px solid #22a06b; }
+tr.faixa-laranja td:first-child { border-left: 4px solid #f59e0b; }
+tr.faixa-vermelho td:first-child { border-left: 4px solid #dc2626; }
+.legenda { display: flex; gap: 14px; font-size: 13px; color: var(--suave); flex-wrap: wrap; }
+.ponto { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.ponto.verde { background: #22a06b; } .ponto.laranja { background: #f59e0b; } .ponto.vermelho { background: #dc2626; }
+a { color: var(--primaria); }
+a.botao { display: inline-block; text-decoration: none; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+a.botao.secundario { background: #e8edf5; color: var(--texto); }
+a.voltar { text-decoration: none; font-weight: 600; }
+
+/* Consulta de um empréstimo */
+.detalhe h1 { margin: 2px 0 0; }
+dl.dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 20px; margin: 18px 0; }
+dl.dados dt { font-size: 12px; color: var(--suave); text-transform: uppercase; letter-spacing: .3px; }
+dl.dados dd { margin: 2px 0 0; font-weight: 600; }
+.acoes-detalhe { margin-top: 16px; align-items: center; }

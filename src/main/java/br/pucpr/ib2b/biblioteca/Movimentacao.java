@@ -40,6 +40,9 @@ public class Movimentacao {
 
     public Emprestimo buscarEmprestimoAtivo(int idLivro) { return ultima(repositorio.emprestimos(), idLivro, null); }
 
+    /** Empréstimos em andamento (cópia somente leitura). */
+    public List<Emprestimo> listarEmprestimos() { return List.copyOf(repositorio.emprestimos()); }
+
     // ---- Devoluções ----
     public void registrarDevolucao(Devolucao d) { repositorio.salvarDevolucao(d); }
 
@@ -47,6 +50,9 @@ public class Movimentacao {
     public Devolucao buscarDevolucao(int idLivro, String idEstudante) {
         return ultima(repositorio.devolucoes(), idLivro, idEstudante);
     }
+
+    /** Devoluções registradas (cópia somente leitura). */
+    public List<Devolucao> listarDevolucoes() { return List.copyOf(repositorio.devolucoes()); }
 
     /** A transação mais recente da lista que envolve o livro (e o estudante, se informado). */
     private static <T extends Transacao> T ultima(List<T> transacoes, int idLivro, String idEstudante) {

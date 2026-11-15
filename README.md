@@ -19,9 +19,9 @@ Abra **http://localhost:8080** e entre com um dos perfis (os atores do diagrama 
 
 | Perfil | Login | Senha | O que faz |
 |---|---|---|---|
-| Estudante | matrícula (`M-100` Ana, `M-300` Caio) | CPF (`12345678909`, `11144477735`) | Catálogo e busca, reservar, renovar, ver e pagar as próprias multas |
-| Atendente | matrícula funcional (`F-01` Bruno) | CPF (`98765432100`) | Emprestar livros reservados, registrar devolução (gera a multa), inspeção e reparo |
-| Administrador | `admin` | `admin` | Pessoas, estudantes, atendentes, livros, organização do acervo, política de multa, relógio |
+| Estudante | matrícula (`M-100` Ana, `M-300` Caio) | CPF (`12345678909`, `11144477735`) | Acompanha os livros com a barra do prazo, histórico, aviso e pagamento de multa; catálogo, reservar e renovar |
+| Atendente | matrícula funcional (`F-01` Bruno) | CPF (`98765432100`) | Reserva para o estudante, aprova empréstimos, monitora os empréstimos (verde, laranja, vermelho) e, na consulta de cada um, registra a devolução (gera a multa) |
+| Administrador | `admin` | `admin` | Lista de estudantes com a ficha e o histórico de cada um, acompanhamento dos empréstimos (só leitura), cadastros e credenciais de atendente, livros e acervo, política de multa, relógio |
 
 O CPF como senha é uma simulação para a demonstração (o sistema não guarda senhas). Na primeira execução,
 `dados/biblioteca.json` é criado a partir de `dados/exemplo.json`; para recomeçar com os dados de exemplo, pare a
@@ -68,13 +68,13 @@ Diagramas UML (classes de cada padrão, máquina de estados do Livro, sequência
 Dica: abra o estudante numa janela normal e o atendente numa janela anônima (cada janela tem o seu login).
 
 1. Rodar `mvnw.cmd test`: os 10 cenários passam.
-2. **Administrador:** em Pessoas, cadastrar estudante com um CPF que não existe → recusado; repetir a matrícula
+2. **Administrador:** em Cadastros e credenciais, cadastrar estudante com um CPF que não existe → recusado; repetir a matrícula
    `M-100` → "já estava cadastrado" (Template Method).
-3. **Estudante Ana:** reservar *Dom Casmurro*. **Atendente Bruno:** em Retiradas, Emprestar (Facade).
+3. **Estudante Ana:** reservar *Dom Casmurro*. **Atendente Bruno:** em Reservas para aprovar, Aprovar empréstimo (Facade).
 4. **Ana:** renovar 2 vezes; a 3ª é recusada e o vencimento não muda (State, Command).
-5. **Administrador › Sistema:** adiantar 95 dias (após 2 renovações o livro vence em 90). **Bruno:** Registrar
-   devolução → 5 dias de atraso, boleto de R$ 5,00, livro em inspeção, e-mail enviado (Observer, Strategy).
-6. **Ana:** Minhas multas → Pagar; o banco A recebe 700 centavos e confirma (Adapter).
+5. **Administrador › Sistema:** adiantar 95 dias (após 2 renovações o livro vence em 90). **Bruno:** no monitoramento o
+   livro aparece em vermelho; clicar nele → Registrar devolução → 5 dias de atraso, boleto de R$ 5,00, e-mail enviado (Observer, Strategy).
+6. **Ana:** aviso de multa no topo → Pagar; o banco A recebe 700 centavos e confirma (Adapter). O livro aparece no histórico.
 7. **Ana:** buscar "dom" duas vezes; **Administrador › Sistema** mostra as 2 medições (Decorator).
    **Administrador › Livros e acervo:** mover um livro de seção; a contagem da unidade continua 5 (Composite).
 

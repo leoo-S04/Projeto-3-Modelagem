@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeca('Consulta de empréstimo')}"></head>
+<body>
+<header th:replace="~{fragmentos :: topo}"></header>
+<main>
+    <p><a th:href="@{/atendente}" class="voltar">← Voltar ao balcão</a></p>
+    <div th:replace="~{fragmentos :: mensagens}"></div>
+
+    <section class="cartao detalhe">
+        <div class="titulo-com-busca">
+            <div>
+                <span class="suave pequeno" th:text="'Empréstimo nº ' + ${e.idEmprestimo()}">Empréstimo nº 7</span>
+                <h1 th:text="${e.titulo()}">Dom Casmurro</h1>
+            </div>
+            <span th:replace="~{fragmentos :: situacaoEmprestimo(${e})}"></span>
+        </div>
+
+        <dl class="dados">
+            <div><dt>Estudante</dt><dd><span th:text="${e.nomeEstudante()}">Ana Souza</span> <span class="suave" th:text="${e.matriculaEstudante()}">M-100</span></dd></div>
+            <div><dt>Livro nº</dt><dd th:text="${e.idLivro()}">1</dd></div>
+            <div><dt>Emprestado em</dt><dd th:text="${e.dataEmprestimo() != null} ? ${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')} : '—'">13/11/2026</dd></div>
+            <div><dt>Devolver até</dt><dd th:text="${#temporals.format(e.vencimento(), 'dd/MM/yyyy')}">13/12/2026</dd></div>
+            <div><dt>Renovações</dt><dd th:text="${e.numRenovacoes()} + ' de 2'">0 de 2</dd></div>
+            <div><dt>Atendente</dt><dd th:text="${e.atendente()} ?: '—'">F-01</dd></div>
+            <div th:unless="${e.emAndamento()}"><dt>Devolvido em</dt><dd th:text="${#temporals.format(e.devolvidoEm(), 'dd/MM/yyyy')}">16/12/2026</dd></div>
+            <div th:unless="${e.emAndamento()}"><dt>Atraso</dt><dd th:text="${e.diasAtraso()} + ' dia(s)'">3</dd></div>
+        </dl>
+
+        <th:block th:if="${e.emAndamento()}">
+            <div th:replace="~{fragmentos :: barra(${prazo})}"></div>
+            <form method="post" th:action="@{/atendente/devolver}" class="acoes-detalhe">
+                <input type="hidden" name="idLivro" th:value="${e.idLivro()}">
+                <input type="hidden" name="idEstudante" th:value="${e.matriculaEstudante()}">
+                <button>Registrar devolução</button>
+                <span class="suave pequeno">Se houver atraso, a multa é calculada e o boleto emitido automaticamente.</span>
+            </form>
+        </th:block>
+
+        <form method="post" th:action="@{/atendente/boleto}" class="acoes-detalhe" th:if="${!e.emAndamento() and e.diasAtraso() > 0}">
+            <input type="hidden" name="idEmprestimo" th:value="${e.idEmprestimo()}">
+            <input type="hidden" name="idLivro" th:value="${e.idLivro()}">
+            <input type="hidden" name="idEstudante" th:value="${e.matriculaEstudante()}">
+            <button class="secundario">Emitir boleto da multa</button>
+        </form>
+    </section>
+
+    <section class="cartao">
+        <h2 th:text="'Empréstimos de ' + ${e.nomeEstudante()}">Empréstimos de Ana Souza</h2>
+        <table>
+            <tr><th>Nº</th><th>Livro</th><th>Emprestado em</th><th>Devolvido em</th><th>Situação</th></tr>
+            <tr th:each="x : ${doEstudante}">
+                <td><a th:href="@{/atendente/emprestimo/{id}(id=${x.idEmprestimo()})}" th:text="${x.idEmprestimo()}">7</a></td>
+                <td th:text="${x.titulo()}">Dom Casmurro</td>
+                <td th:text="${x.dataEmprestimo() != null} ? ${#temporals.format(x.dataEmprestimo(), 'dd/MM/yyyy')} : '—'">13/11/2026</td>
+                <td th:text="${x.devolvidoEm() != null} ? ${#temporals.format(x.devolvidoEm(), 'dd/MM/yyyy')} : '—'">—</td>
+                <td><span th:replace="~{fragmentos :: situacaoEmprestimo(${x})}"></span></td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

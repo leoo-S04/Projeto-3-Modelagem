@@ -4,115 +4,116 @@
 <body>
 <header th:replace="~{fragmentos :: topo}"></header>
 <main>
+    <section class="boas-vindas">
+        <div>
+            <h1 th:text="'Olá, ' + ${usuario.primeiroNome()} + '!'">Olá, Bruno!</h1>
+            <p class="suave">Atendente · matrícula funcional <strong th:text="${usuario.identificador()}">F-01</strong></p>
+        </div>
+        <div class="numeros">
+            <div><strong th:text="${#lists.size(reservas)}">1</strong><span>reserva(s) aguardando</span></div>
+            <div><strong th:text="${#lists.size(emAndamento)}">3</strong><span>emprestado(s)</span></div>
+            <div class="laranja"><strong th:text="${vencendo}">1</strong><span>vencem em 3 dias</span></div>
+            <div class="vermelho"><strong th:text="${atrasados}">1</strong><span>atrasado(s)</span></div>
+        </div>
+    </section>
+
     <div th:replace="~{fragmentos :: mensagens}"></div>
 
     <div class="grade">
         <section class="cartao">
-            <h2>Retiradas <span class="contador" th:text="${#lists.size(reservados)}">0</span></h2>
-            <p class="suave pequeno">Livros reservados pelos estudantes, esperando a retirada.</p>
-            <p class="vazio" th:if="${#lists.isEmpty(reservados)}">Nenhuma reserva aguardando.</p>
-            <table th:unless="${#lists.isEmpty(reservados)}">
-                <tr><th>Livro</th><th>Estudante</th><th></th></tr>
-                <tr th:each="l : ${reservados}">
-                    <td th:text="${l.titulo()}">Dom Casmurro</td>
-                    <td><span th:text="${nomes[l.matriculaReservante()]}">Ana</span>
-                        <span class="suave" th:text="${l.matriculaReservante()}">M-100</span></td>
-                    <td class="acoes">
-                        <form method="post" th:action="@{/atendente/emprestar}">
-                            <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
-                            <input type="hidden" name="idEstudante" th:value="${l.matriculaReservante()}">
-                            <button>Emprestar</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-        </section>
-
-        <section class="cartao">
-            <h2>Empréstimos em andamento <span class="contador" th:text="${#lists.size(emprestados)}">0</span></h2>
-            <p class="vazio" th:if="${#lists.isEmpty(emprestados)}">Nenhum livro emprestado.</p>
-            <table th:unless="${#lists.isEmpty(emprestados)}">
-                <tr><th>Livro</th><th>Estudante</th><th>Devolver até</th><th></th></tr>
-                <tr th:each="l : ${emprestados}">
-                    <td th:text="${l.titulo()}">Dom Casmurro</td>
-                    <td><span th:text="${nomes[l.matriculaReservante()]}">Ana</span>
-                        <span class="suave" th:text="${l.matriculaReservante()}">M-100</span></td>
-                    <td><span th:text="${#temporals.format(l.vencimento(), 'dd/MM/yyyy')}">13/12/2026</span>
-                        <span class="etiqueta atrasado" th:if="${l.vencimento().isBefore(hoje)}">atrasado</span></td>
-                    <td class="acoes">
-                        <form method="post" th:action="@{/atendente/devolver}">
-                            <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
-                            <input type="hidden" name="idEstudante" th:value="${l.matriculaReservante()}">
-                            <button>Registrar devolução</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-        </section>
-    </div>
-
-    <div class="grade">
-        <section class="cartao">
-            <h2>Aguardando inspeção <span class="contador" th:text="${#lists.size(inspecoes)}">0</span></h2>
-            <p class="vazio" th:if="${#lists.isEmpty(inspecoes)}">Nenhum livro devolvido para inspecionar.</p>
-            <table th:unless="${#lists.isEmpty(inspecoes)}">
-                <tr><th>Livro</th><th>Devolvido em</th><th></th></tr>
-                <tr th:each="i : ${inspecoes}">
-                    <td th:text="${i.titulo()}">Dom Casmurro</td>
-                    <td th:text="${#temporals.format(i.devolvidoEm(), 'dd/MM/yyyy')} + (${i.diasAtraso() > 0} ? ' · ' + ${i.diasAtraso()} + ' dia(s) de atraso' : '')">16/12/2026</td>
-                    <td class="acoes">
-                        <form method="post" th:action="@{/atendente/inspecionar}">
-                            <input type="hidden" name="idLivro" th:value="${i.idLivro()}">
-                            <button name="emBomEstado" value="true">Em bom estado</button>
-                            <button name="emBomEstado" value="false" class="secundario">Danificado</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-        </section>
-
-        <section class="cartao">
-            <h2>Reparo</h2>
-            <p class="vazio" th:if="${#lists.isEmpty(emReparo)}">Nenhum livro em reparo.</p>
-            <table th:unless="${#lists.isEmpty(emReparo)}">
-                <tr><th>Livro</th><th></th></tr>
-                <tr th:each="l : ${emReparo}">
-                    <td th:text="${l.titulo()}">Dom Casmurro</td>
-                    <td class="acoes">
-                        <form method="post" th:action="@{/atendente/reparo}">
-                            <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
-                            <button name="acao" value="retornar">Reparado</button>
-                            <button name="acao" value="incinerar" class="perigo">Sem conserto (descartar)</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <form method="post" th:action="@{/atendente/reparo}" th:unless="${#lists.isEmpty(livres)}">
-                <input type="hidden" name="acao" value="enviar">
-                <label>Mandar para reparo um livro do acervo
+            <h2>Realizar reserva</h2>
+            <p class="suave pequeno">Para o estudante que pede um livro no balcão.</p>
+            <p class="vazio" th:if="${#lists.isEmpty(livres)}">Nenhum livro disponível agora.</p>
+            <form method="post" th:action="@{/atendente/reservar}" class="vertical" th:unless="${#lists.isEmpty(livres)}">
+                <input type="hidden" name="idSolicitacao" th:value="${idSolicitacao}">
+                <label>Estudante
+                    <select name="idEstudante"><option th:each="s : ${estudantes}" th:value="${s.matricula()}" th:text="${s.nome()} + ' (' + ${s.matricula()} + ')'"></option></select>
+                </label>
+                <label>Livro disponível
                     <select name="idLivro"><option th:each="l : ${livres}" th:value="${l.idLivro()}" th:text="${l.titulo()}"></option></select>
                 </label>
-                <button class="secundario">Enviar</button>
+                <button>Reservar</button>
             </form>
+        </section>
+
+        <section class="cartao">
+            <h2>Reservas para aprovar <span class="contador" th:text="${#lists.size(reservas)}">0</span></h2>
+            <p class="vazio" th:if="${#lists.isEmpty(reservas)}">Nenhuma reserva aguardando retirada.</p>
+            <table th:unless="${#lists.isEmpty(reservas)}">
+                <tr><th>Livro</th><th>Estudante</th><th>Reservado em</th><th></th></tr>
+                <tr th:each="r : ${reservas}">
+                    <td th:text="${r.titulo()}">Dom Casmurro</td>
+                    <td><span th:text="${nomes[r.matriculaEstudante()]}">Ana</span>
+                        <span class="suave" th:text="${r.matriculaEstudante()}">M-100</span></td>
+                    <td th:text="${#temporals.format(r.data(), 'dd/MM/yyyy')}">13/11/2026</td>
+                    <td class="acoes">
+                        <form method="post" th:action="@{/atendente/emprestar}">
+                            <input type="hidden" name="idLivro" th:value="${r.idLivro()}">
+                            <input type="hidden" name="idEstudante" th:value="${r.matriculaEstudante()}">
+                            <button>Aprovar empréstimo</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
         </section>
     </div>
 
     <section class="cartao">
-        <h2>Multas emitidas</h2>
-        <p class="vazio" th:if="${#lists.isEmpty(multas)}">Nenhuma multa.</p>
-        <table th:unless="${#lists.isEmpty(multas)}">
-            <tr><th>Boleto</th><th>Estudante</th><th>Atraso</th><th>Valor</th><th>Emitido em</th><th>Situação</th></tr>
-            <tr th:each="m : ${multas}">
-                <td th:text="'nº ' + ${m.idBoleto()} + ' · banco ' + ${m.banco()}">nº 1</td>
-                <td th:text="${nomesPorCpf[m.cpf()]} ?: ${m.cpf()}">Ana</td>
-                <td th:text="${m.diasAtraso()} + ' dia(s)'">5</td>
-                <td th:text="'R$ ' + ${#numbers.formatDecimal(m.valor(), 1, 'POINT', 2, 'COMMA')}">R$ 5,00</td>
-                <td th:text="${#temporals.format(m.dataEmissao(), 'dd/MM/yyyy')}">16/12/2026</td>
-                <td><span class="etiqueta" th:classappend="${m.situacao()}"
-                          th:text="${m.situacao() == 'QUITADO'} ? 'Paga' : 'Em aberto'">Em aberto</span></td>
+        <div class="titulo-com-busca">
+            <h2>Empréstimos em andamento <span class="contador" th:text="${#lists.size(emAndamento)}">0</span></h2>
+            <div class="legenda">
+                <span><i class="ponto verde"></i>no prazo</span>
+                <span><i class="ponto laranja"></i>vence em até 3 dias</span>
+                <span><i class="ponto vermelho"></i>atrasado</span>
+            </div>
+        </div>
+        <p class="vazio" th:if="${#lists.isEmpty(emAndamento)}">Nenhum livro emprestado.</p>
+        <table class="monitor" th:unless="${#lists.isEmpty(emAndamento)}">
+            <tr><th>Livro</th><th>Estudante</th><th>Emprestado em</th><th>Devolver até</th><th class="col-prazo">Prazo</th></tr>
+            <tr th:each="e : ${emAndamento}" class="clicavel" th:classappend="'faixa-' + ${prazos[e.idEmprestimo()].cor()}"
+                th:data-href="@{/atendente/emprestimo/{id}(id=${e.idEmprestimo()})}">
+                <td><a th:href="@{/atendente/emprestimo/{id}(id=${e.idEmprestimo()})}" th:text="${e.titulo()}">Dom Casmurro</a></td>
+                <td><span th:text="${e.nomeEstudante()}">Ana Souza</span> <span class="suave" th:text="${e.matriculaEstudante()}">M-100</span></td>
+                <td th:text="${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')}">13/11/2026</td>
+                <td th:text="${#temporals.format(e.vencimento(), 'dd/MM/yyyy')}">13/12/2026</td>
+                <td class="col-prazo"><div th:replace="~{fragmentos :: barra(${prazos[e.idEmprestimo()]})}"></div></td>
+            </tr>
+        </table>
+        <p class="suave pequeno" th:unless="${#lists.isEmpty(emAndamento)}">Clique em um empréstimo para ver os detalhes e registrar a devolução.</p>
+    </section>
+
+    <section class="cartao" th:unless="${#lists.isEmpty(inspecoes) and #lists.isEmpty(emReparo)}">
+        <h2>Livros devolvidos para conferir</h2>
+        <table>
+            <tr><th>Livro</th><th>Situação</th><th></th></tr>
+            <tr th:each="i : ${inspecoes}">
+                <td th:text="${i.titulo()}">Dom Casmurro</td>
+                <td th:text="'Devolvido em ' + ${#temporals.format(i.devolvidoEm(), 'dd/MM/yyyy')} + ' — aguardando inspeção'">Devolvido</td>
+                <td class="acoes">
+                    <form method="post" th:action="@{/atendente/inspecionar}">
+                        <input type="hidden" name="idLivro" th:value="${i.idLivro()}">
+                        <button name="emBomEstado" value="true">Em bom estado</button>
+                        <button name="emBomEstado" value="false" class="secundario">Danificado</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:each="l : ${emReparo}">
+                <td th:text="${l.titulo()}">Iracema</td>
+                <td>Em reparo</td>
+                <td class="acoes">
+                    <form method="post" th:action="@{/atendente/reparo}">
+                        <input type="hidden" name="idLivro" th:value="${l.idLivro()}">
+                        <button name="acao" value="retornar">Reparado</button>
+                        <button name="acao" value="incinerar" class="perigo">Sem conserto</button>
+                    </form>
+                </td>
             </tr>
         </table>
     </section>
 </main>
+<script>
+    // a linha inteira do monitoramento abre a consulta do empréstimo
+    document.querySelectorAll("tr[data-href]").forEach(tr => tr.addEventListener("click", () => location.href = tr.dataset.href));
+</script>
 </body>
 </html>

@@ -1,10 +1,14 @@
 package br.pucpr.ib2b.web;
 
+import br.pucpr.ib2b.academico.EstudanteDTO;
 import br.pucpr.ib2b.academico.TratadorDeEstudante;
+import br.pucpr.ib2b.biblioteca.EmprestimoDTO;
+import br.pucpr.ib2b.biblioteca.HistoricoDeEmprestimos;
 import br.pucpr.ib2b.biblioteca.NoDoAcervoDTO;
 import br.pucpr.ib2b.biblioteca.RegistroDeMetricas;
 import br.pucpr.ib2b.biblioteca.TipoDeGrupo;
 import br.pucpr.ib2b.biblioteca.TratadorDeAcervo;
+import br.pucpr.ib2b.biblioteca.TratadorDeEmprestimo;
 import br.pucpr.ib2b.comum.RelogioAjustavel;
 import br.pucpr.ib2b.comum.ServicoDeEmailSimulado;
 import br.pucpr.ib2b.financeiro.TratadorDeMulta;
@@ -13,6 +17,7 @@ import br.pucpr.ib2b.rh.TratadorDePessoa;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Área do administrador (casos de uso: manter pessoa, estudante, atendente e livro) + organização do acervo,
@@ -34,18 +41,20 @@ public class AdministradorController extends ControladorBase {
     private final TratadorDeEstudante estudantes;
     private final TratadorDeAtendente atendentes;
     private final TratadorDeAcervo acervo;
+    private final TratadorDeEmprestimo emprestimos;
     private final TratadorDeMulta multas;
     private final RelogioAjustavel relogio;
     private final ServicoDeEmailSimulado email;
     private final RegistroDeMetricas metricas;
 
     public AdministradorController(TratadorDePessoa pessoas, TratadorDeEstudante estudantes, TratadorDeAtendente atendentes,
-                                   TratadorDeAcervo acervo, TratadorDeMulta multas, RelogioAjustavel relogio,
+                                   TratadorDeAcervo acervo, TratadorDeEmprestimo emprestimos, TratadorDeMulta multas, RelogioAjustavel relogio,
                                    ServicoDeEmailSimulado email, RegistroDeMetricas metricas) {
         this.pessoas = pessoas;
         this.estudantes = estudantes;
         this.atendentes = atendentes;
         this.acervo = acervo;
+        this.emprestimos = emprestimos;
         this.multas = multas;
         this.relogio = relogio;
         this.email = email;
@@ -53,9 +62,14 @@ public class AdministradorController extends ControladorBase {
     }
 
     @GetMapping
-    public String pagina(@RequestParam(defaultValue = "pessoas") String aba, @RequestParam(required = false) Integer dias,
+    public String pagina(@RequestParam(defaultValue = "estudantes") String aba, @RequestParam(required = false) Integer dias,
                          Model model) {
         model.addAttribute("aba", aba);
+        List<EmprestimoDTO> emAndamento = emprestimos.consultarEmprestimos(null).emAndamento();
+        model.addAttribute("emAndamento", emAndamento);
+        model.addAttribute("prazos", prazos(emAndamento));
+        model.addAttribute("qtdPorEstudante", emAndamento.stream()
+                .collect(Collectors.groupingBy(EmprestimoDTO::matriculaEstudante, Collectors.counting())));
         model.addAttribute("pessoas", pessoas.listarPessoas());
         model.addAttribute("estudantes", estudantes.listarEstudantes());
         model.addAttribute("atendentes", atendentes.listarAtendentes());
@@ -78,6 +92,26 @@ public class AdministradorController extends ControladorBase {
         Collections.reverse(medicoes);
         model.addAttribute("medicoes", medicoes.subList(0, Math.min(8, medicoes.size())));
         return "administrador";
+    }
+
+    /** Ficha de um estudante: dados, empréstimos (em andamento e histórico) e multas — só leitura. */
+    @GetMapping("/estudante/{matricula}")
+    public String fichaDoEstudante(@PathVariable String matricula, Model model, RedirectAttributes ra) {
+        EstudanteDTO estudante = estudantes.listarEstudantes().stream()
+                .filter(e -> e.matricula().equals(matricula)).findFirst().orElse(null);
+        if (estudante == null) {
+            ra.addFlashAttribute("erro", "Estudante " + matricula + " não encontrado(a).");
+            return "redirect:/admin";
+        }
+        HistoricoDeEmprestimos historico = emprestimos.consultarEmprestimos(matricula);
+        model.addAttribute("estudante", estudante);
+        model.addAttribute("pessoa", pessoas.listarPessoas().stream()
+                .filter(p -> p.cpf().equals(estudante.cpf())).findFirst().orElse(null));
+        model.addAttribute("emAndamento", historico.emAndamento());
+        model.addAttribute("devolvidos", historico.devolvidos());
+        model.addAttribute("prazos", prazos(historico.emAndamento()));
+        model.addAttribute("multas", multas.relatorioDeCobrancas().stream().filter(c -> c.cpf().equals(estudante.cpf())).toList());
+        return "ficha-estudante";
     }
 
     // ---- Pessoas, estudantes e atendentes ----
@@ -184,6 +218,11 @@ public class AdministradorController extends ControladorBase {
     public String normal(RedirectAttributes ra) {
         return executar(ra, "/admin?aba=sistema",
                 () -> { relogio.voltarAoNormal(); return "Relógio de volta à data real: " + dataBr(relogio.hoje()) + "."; });
+    }
+
+    private Map<Integer, Prazo> prazos(List<EmprestimoDTO> lista) {
+        return lista.stream().collect(Collectors.toMap(EmprestimoDTO::idEmprestimo,
+                e -> Prazo.de(e.dataEmprestimo(), e.vencimento(), relogio.hoje()), (a, b) -> a));
     }
 
     private static List<String> nomes(List<NoDoAcervoDTO> nos) {

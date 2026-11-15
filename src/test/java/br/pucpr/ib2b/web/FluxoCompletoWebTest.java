@@ -1,5 +1,6 @@
 package br.pucpr.ib2b.web;
 
+import br.pucpr.ib2b.biblioteca.TratadorDeEmprestimo;
 import br.pucpr.ib2b.financeiro.CobrancaDTO;
 import br.pucpr.ib2b.financeiro.TratadorDeMulta;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class FluxoCompletoWebTest {
 
     @Autowired MockMvc web;
     @Autowired TratadorDeMulta multas;
+    @Autowired TratadorDeEmprestimo emprestimos;
 
     @Test
     void fluxoReservaEmprestimoRenovacaoDevolucaoAtrasadaMultaEPagamento() throws Exception {
@@ -57,7 +59,7 @@ class FluxoCompletoWebTest {
         enviar(admin, "/admin/relogio/avancar", "dias", "65");                                // vencimento = hoje + 60
         enviar(bruno, "/atendente/devolver", "idLivro", "1", "idEstudante", "M-100")
                 .andExpect(flash().attribute("sucesso", containsString("5 dia(s) de atraso")))
-                .andExpect(flash().attribute("sucesso", containsString("Boleto")));
+                .andExpect(flash().attribute("sucesso", containsString("boleto nº")));
 
         CobrancaDTO boleto = multas.relatorioDeCobrancas().get(0);
         assertEquals("5.00", boleto.valor().toPlainString());                                // ORIGINAL: 5 × 1,00
@@ -66,10 +68,23 @@ class FluxoCompletoWebTest {
                 .andExpect(flash().attribute("sucesso", containsString("Pagamento confirmado")));
         web.perform(get("/estudante").session(ana)).andExpect(content().string(containsString("Paga")));
 
+        // consulta do empréstimo (atendente) e ficha do estudante (administrador) mostram o histórico
+        int idEmprestimo = emprestimos.consultarEmprestimos("M-100").todos().get(0).idEmprestimo();
+        web.perform(get("/atendente/emprestimo/" + idEmprestimo).session(bruno))
+                .andExpect(content().string(containsString("5 dia(s) de atraso")));
+        web.perform(get("/admin/estudante/M-100").session(admin)).andExpect(content().string(containsString("Dom Casmurro")));
+
+        // o atendente também reserva para o estudante no balcão
+        enviar(bruno, "/atendente/reservar", "idSolicitacao", UUID.randomUUID().toString(), "idLivro", "1", "idEstudante", "M-100")
+                .andExpect(flash().attribute("erro", containsString("DEVOLVIDO")));          // ainda não inspecionado (State)
+        enviar(bruno, "/atendente/inspecionar", "idLivro", "1", "emBomEstado", "true");
+        enviar(bruno, "/atendente/reservar", "idSolicitacao", UUID.randomUUID().toString(), "idLivro", "1", "idEstudante", "M-100")
+                .andExpect(flash().attribute("sucesso", containsString("Reserva registrada")));
+
         // todas as páginas renderizam
         web.perform(get("/estudante?busca=dom").session(ana)).andExpect(content().string(containsString("Dom Casmurro")));
         web.perform(get("/atendente").session(bruno)).andExpect(status().isOk());
-        for (String aba : new String[]{"pessoas", "livros", "multas&dias=5", "sistema"}) {
+        for (String aba : new String[]{"estudantes", "emprestimos", "pessoas", "livros", "multas&dias=5", "sistema"}) {
             web.perform(get("/admin?aba=" + aba).session(admin)).andExpect(status().isOk());
         }
     }
