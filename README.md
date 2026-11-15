@@ -206,7 +206,9 @@ Além deles: testes de cada cadastro e tratador, das transições do State (`Est
 | [`docs/estudo/`](docs/estudo) | Guias de estudo por etapa, `DEMO.md` (roteiro de 5 min) e `ARGUICAO.md` (perguntas prováveis com respostas) |
 | [`docs/RASTREABILIDADE.md`](docs/RASTREABILIDADE.md) | Requisito → padrão → classes por papel → teste |
 | [`docs/DECISOES.md`](docs/DECISOES.md) | Cada decisão tomada (PDFs × Astah), alternativas e motivo |
-| [`docs/uml/ATUALIZACOES_ASTAH.md`](docs/uml/ATUALIZACOES_ASTAH.md) | O que mudar no Astah, por diagrama |
+| [`docs/uml/Trabalho03_Diagramas.pdf`](docs/uml/Trabalho03_Diagramas.pdf) | Diagramas UML exportados do Astah: 10 de classes (um por padrão), máquina de estados do Livro, 10 de sequência (um por cenário). PNGs em [`docs/uml/Trabalho 03/`](docs/uml/Trabalho%2003/) |
+| [`docs/estudo/DIAGRAMAS_UML.md`](docs/estudo/DIAGRAMAS_UML.md) | Como os diagramas estão organizados no `.asta`, como ler cada um e como regenerar (`ferramentas/astah/gerar.cmd`) |
+| [`docs/uml/ATUALIZACOES_ASTAH.md`](docs/uml/ATUALIZACOES_ASTAH.md) | Diferenças Trabalho 02 × Trabalho 03 por diagrama e o que já está no `.asta` |
 | [`REGISTRO_LLM.md`](REGISTRO_LLM.md) | Pedidos feitos ao modelo e o que a equipe aceitou/corrigiu/descartou |
 | [`docs/PROGRESSO.md`](docs/PROGRESSO.md) | Andamento por etapa |
 
@@ -219,6 +221,8 @@ Além deles: testes de cada cadastro e tratador, das transições do State (`Est
 - **Onde foi usado:** em todas as partes do sistema — leitura dos PDFs e diagramas, planejamento das etapas,
   código de domínio e dos 10 padrões, persistência JSON, interface web, testes automatizados e toda a documentação
   (guias de estudo, rastreabilidade, decisões, lista de mudanças do Astah, roteiro de demonstração).
+  Também gerou os diagramas UML no `.asta` pela API do Astah (`ferramentas/astah/`): as classes são lidas do
+  código compilado e os fluxos dos diagramas de sequência foram escritos a partir dos testes R01–R10.
 - **Como:** Etapas 0 e 1 passo a passo, com aprovação da equipe a cada passo; Etapas 2 a 6 em modo autônomo, com
   as decisões registradas em `docs/DECISOES.md`. O detalhamento dos pedidos, e o espaço para a equipe anotar o que
   aceitou, corrigiu ou descartou, está em `REGISTRO_LLM.md`.

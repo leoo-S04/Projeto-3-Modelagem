@@ -78,5 +78,13 @@ livro/estudante inexistente → `null`/`false`). Prazo do primeiro empréstimo: 
 - ✅ README final, `docs/estudo/DEMO.md`, `docs/estudo/ARGUICAO.md`, guia `ETAPA06_Web_Demonstracao.md`
 - ✅ `docs/uml/ATUALIZACOES_ASTAH.md` com a lista final por diagrama; decisões D57–D64
 
-**Projeto concluído.** Próximos passos da equipe: atualizar o Astah com a lista por diagrama, preencher as colunas
-"Decisão da equipe" do `REGISTRO_LLM.md`, estudar `docs/estudo/` e ensaiar `DEMO.md`.
+## Entrega UML — diagramas no Astah ✅
+
+- ✅ `.asta` atualizado pela API do Astah (`ferramentas/astah/gerar.cmd`): pacote `Trabalho 03 - Implementacao`
+  (121 classes lidas do código), 10 diagramas de classes (um por padrão), 10 de sequência (um por cenário R01–R10)
+- ✅ Máquina de Estados - Livro atualizada (efeitos das transições; devolução publica o evento — Observer)
+- ✅ Exportação: `docs/uml/Trabalho03_Diagramas.pdf` e PNGs em `docs/uml/Trabalho 03/`; guia `docs/estudo/DIAGRAMAS_UML.md`; decisões D65–D69
+
+**Projeto concluído.** Próximos passos da equipe: abrir o `.asta` no Astah e conferir os diagramas, preencher as
+colunas "Decisão da equipe" do `REGISTRO_LLM.md`, estudar `docs/estudo/` e ensaiar `DEMO.md`. Opcional: aplicar no
+"Classes de Projeto", Componentes e SDs do Trabalho 02 os itens restantes de `docs/uml/ATUALIZACOES_ASTAH.md`.

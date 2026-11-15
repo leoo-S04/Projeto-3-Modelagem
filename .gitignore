@@ -20,3 +20,7 @@ docs/*.pdf
 .settings/
 Thumbs.db
 .DS_Store
+
+# Arquivos temporários do Astah (trava enquanto o .asta está aberto; cópias de segurança)
+*.asta.lock
+*.asta.bak

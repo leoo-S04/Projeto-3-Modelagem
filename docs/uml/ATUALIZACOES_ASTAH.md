@@ -6,6 +6,25 @@ organizada por diagrama, para a equipe aplicar tudo de uma vez.
 
 Colunas: **Diagrama** · **Elemento** · **De → Para** · **Motivo** · **Origem** (etapa/passo em que surgiu ou em que o código passa a refletir a mudança).
 
+## Situação em 15/11/2026: o que já está no `.asta`
+
+Os diagramas que o enunciado exige ("diagrama de classes de cada padrão, a máquina de estados de Livro e os
+diagramas de sequência dos cenários") foram **gerados no `.asta` a partir do código** (decisões D65–D69), com
+`ferramentas\astah\gerar.cmd`. Exportados em [`Trabalho03_Diagramas.pdf`](Trabalho03_Diagramas.pdf) e em PNG na
+pasta [`Trabalho 03/`](Trabalho%2003/).
+
+| No Astah | Onde | Situação |
+|---|---|---|
+| Classes do Trabalho 03 (121 classes, atributos, operações, associações, heranças) | pacote `Trabalho 03 - Implementacao` (subpacotes `biblioteca`, `financeiro`, `comum`, `persistencia`, `rh`, `academico`) | ✅ gerado do código — cobre os itens [1]–[60] da tabela abaixo para as classes que aparecem nos diagramas |
+| 10 diagramas de classes, um por padrão (com nota de papéis GoF) | pacotes `Req 01 - State` … `Req 10 - Composite` | ✅ |
+| 10 diagramas de sequência, um por cenário de verificação (R01–R10) | mesmos pacotes | ✅ substituem, para o T03, os itens [43], [53] e [64] |
+| Máquina de Estados - Livro | diagrama do T02, atualizado no lugar | ✅ itens [23] e [52] |
+| Classes de Projeto (T02) | raiz | mantido como histórico, com nota apontando para o modelo do T03 (D66) |
+| SDs do T02, Componentes, Implantação, Atividades, Casos de Uso, Modelo de Domínio | raiz | **não alterados** — itens [2], [24], [37], [54], [55], [60], [65]–[68] continuam opcionais para a equipe, se quiser |
+
+**Importante:** se o `.asta` estiver aberto no Astah enquanto o script roda, feche o Astah **sem salvar** e abra de
+novo; salvar a janela antiga sobrescreveria os diagramas gerados.
+
 ## Registro (ordem cronológica)
 
 | # | Diagrama | Elemento | De → Para | Motivo | Origem |

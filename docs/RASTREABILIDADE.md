@@ -46,3 +46,22 @@ Legenda: ✅ implementado e testado · ⬜ pendente (etapa prevista)
 | Nenhum tratador testa a situação do Livro | `Tratador*` | `ArquiteturaTest.nenhumTratadorTestaASituacaoDoLivro` | ✅ |
 | Serviço de multas sem `if` por banco ou política | `ServicoDeMulta` | `ArquiteturaTest.servicoDeMultasNaoTemCondicionalPorBancoNemPorPolitica` | ✅ |
 | Um `biblioteca.jar`, `biblioteca.json`, bancos simulados | `pom.xml` (spring-boot-maven-plugin), `UnidadeDeTrabalhoJson`, `financeiro.bancos` | `R08_...`, `R03_...`; execução real do jar | ✅ |
+
+## Modelos UML (Astah) × requisitos
+
+Cada requisito tem, no `.asta`, um pacote `Req NN - <Padrão>` com um diagrama de classes (DC) e um de sequência (SD)
+do cenário de verificação. Exportados em `docs/uml/Trabalho03_Diagramas.pdf`. As classes dos diagramas são lidas do
+código compilado (pacote `Trabalho 03 - Implementacao`), então nomes, atributos e operações coincidem com o código.
+
+| Req | Diagrama de classes | Diagrama de sequência (cenário) | Teste |
+|---|---|---|---|
+| 1 | DC Req 01 - State (ciclo de vida do Livro) + Maquina de Estados - Livro | SD R01 - Terceira renovacao recusada | `R01_CicloDeVidaDoLivroTest` |
+| 2 | DC Req 02 - Strategy (politicas de multa) | SD R02 - Politicas de multa para 5 dias e sem atraso | `R02_PoliticasDeMultaTest` |
+| 3 | DC Req 03 - Adapter (bancos A e B) | SD R03 - R$ 7,00 nos bancos A e B | `R03_BancosAdapterTest` |
+| 4 | DC Req 04 - Facade (circulacao) | SD R04 - Efetivar emprestimo pela fachada | `R04_FachadaDeCirculacaoTest` |
+| 5 | DC Req 05 - Observer (reacoes a devolucao) | SD R05 - Devolucao atrasada notifica os ouvintes | `R05_ReacoesADevolucaoTest` |
+| 6 | DC Req 06 - Command (solicitacoes de circulacao) | SD R06 - Mesma renovacao enviada duas vezes | `R06_SolicitacoesCommandTest` |
+| 7 | DC Req 07 - Template Method (cadastros) | SD R07 - Cadastro de estudante (metodo-modelo) | `R07_CadastroTemplateMethodTest` |
+| 8 | DC Req 08 - Abstract Factory (familias de persistencia) | SD R08 - Familias de teste e de producao | `R08_FamiliasDePersistenciaTest` |
+| 9 | DC Req 09 - Decorator (consulta ao acervo) | SD R09 - Segunda consulta vem do cache e e medida | `R09_ConsultaComDecoradoresTest` |
+| 10 | DC Req 10 - Composite (organizacao do acervo) | SD R10 - Contar livros e mover entre secoes | `R10_OrganizacaoDoAcervoTest` |

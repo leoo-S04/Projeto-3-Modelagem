@@ -57,3 +57,9 @@ Exigência do Trabalho 03 ("Uso de LLMs"): resumo dos principais pedidos feitos 
 | # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
 |---|---|---|---|---|
 | 16 | Executar a Etapa 6 (CLAUDE.md, modo autônomo) | Aplicação Spring Boot (pacote `web`): telas de cadastros, circulação, financeiro, acervo e administração; API JSON; pontos de entrada e simulador dos bancos; relógio ajustável; perfil HTTPS opcional; `dados/exemplo.json`; `FluxoCompletoWebTest` e `ArquiteturaTest`; README final; `DEMO.md`, `ARGUICAO.md`, guia `ETAPA06_Web_Demonstracao.md`; lista final do Astah por diagrama; decisões D57–D64. Verificado: `mvnw test` (105 testes) e execução real do `biblioteca.jar` (HTTP e HTTPS) | | |
+
+## Entrega UML — diagramas no Astah (após a Etapa 6) — modo autônomo
+
+| # | Pedido ao modelo | O que o modelo produziu | Decisão da equipe (aceitou / corrigiu / descartou) | Observações |
+|---|---|---|---|---|
+| 17 | Fazer o que faltava do enunciado: atualizar o Astah (diagrama de classes de cada padrão, máquina de estados do Livro, diagramas de sequência dos 10 cenários) e exportar em PDF | Gerador pela API Java do Astah (`ferramentas/astah/GeradorDiagramasT03.java`, `MontarPdf.java`, `gerar.cmd`): pacote `Trabalho 03 - Implementacao` com 121 classes lidas do código compilado; 10 diagramas de classes e 10 de sequência (pacotes `Req 01` … `Req 10`); máquina de estados atualizada; `docs/uml/Trabalho03_Diagramas.pdf` e PNGs; guia `docs/estudo/DIAGRAMAS_UML.md`; decisões D65–D69. A coluna "Decisão da equipe" deste registro **não** foi preenchida pelo modelo (é declaração da equipe) | | |
