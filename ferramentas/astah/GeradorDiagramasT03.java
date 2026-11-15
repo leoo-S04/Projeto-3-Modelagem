@@ -1064,7 +1064,7 @@ public class GeradorDiagramasT03 {
                 cde.createNote("Diagrama do Trabalho 02 (mantido como histórico).\n"
                     + "O modelo do Trabalho 03 (gerado do código) está no pacote \"Trabalho 03 - Implementacao\";\n"
                     + "os diagramas de cada padrão e dos cenários estão nos pacotes \"Req 01 - State\" ... \"Req 10 - Composite\".\n"
-                    + "Diferenças T02 x T03: docs/uml/ATUALIZACOES_ASTAH.md.", new Point2D.Double(20, -160));
+                    + "Diferenças T02 x T03: ver o histórico do Git (docs/uml).", new Point2D.Double(20, -160));
             }
         }
     }

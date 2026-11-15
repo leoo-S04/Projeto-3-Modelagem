@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Ponto interno único de acesso às transações (Astah: Movimentacao), mantido por três associações distintas:
- * reservas, empréstimos e devoluções (Trabalho 02; decisão D06). Os dados ficam no RepositorioMovimentacao
+ * reservas, empréstimos e devoluções (Trabalho 02). Os dados ficam no RepositorioMovimentacao
  * da família de persistência em uso.
  */
 public class Movimentacao {

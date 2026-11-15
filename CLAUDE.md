@@ -1,6 +1,6 @@
 # Sistema de Biblioteca com Padrões GoF — Trabalho 03 (PUCPR · Modelagem de Sistemas Computacionais)
 
-Você é o construtor deste projeto e o mentor da equipe. Somos estudantes e **cada integrante será arguido individualmente sobre qualquer parte do código** (código que ninguém explica é considerado não implementado). Por isso, além de construir o sistema, você documenta tudo de forma didática para a equipe estudar.
+Somos estudantes e **cada integrante será arguido individualmente sobre qualquer parte do código** (código que ninguém explica é considerado não implementado). Por isso, prefira sempre a solução **mais simples** que atende ao enunciado.
 
 ## Fontes
 
@@ -10,7 +10,7 @@ Em `docs/`:
 - `TRABALHO_PARTE_1.pdf` e `TRABALHO_PARTE_2.pdf` — regras de negócio dos Trabalhos 01 e 02.
 - Imagens `.png` — diagramas do nosso Astah.
 
-Quando os PDFs e o nosso Astah divergirem, siga a regra de decisões da seção "Forma de trabalho".
+Quando os PDFs e o nosso Astah divergirem, siga as Soluções do professor onde o padrão exigir; nos demais casos, os nomes do Astah.
 
 ## O que já está definido
 
@@ -36,35 +36,12 @@ Quando os PDFs e o nosso Astah divergirem, siga a regra de decisões da seção 
 
 Os detalhes de cada requisito ("O que implementar" e "Na arguição, saiba explicar") estão no enunciado; leia a parte do requisito antes de planejar a etapa correspondente.
 
-## Forma de trabalho: MODO AUTÔNOMO
+## Forma de trabalho (atualizada em 15/11/2026)
 
-A equipe pediu velocidade. **Execute todas as etapas em sequência, sem parar para pedir aprovação.** O objetivo principal é o sistema **rodar na web** com os 10 padrões e os 10 testes aprovados. Toda a explicação fica documentada para a equipe estudar depois.
+As etapas 0 a 6 e os diagramas do Astah estão concluídos. A equipe pediu um repositório **enxuto**:
 
-**Decisões:** quando houver divergência entre os PDFs e o Astah, ou qualquer escolha em aberto, **decida você mesmo** pela opção que recomendaria: siga as Soluções do professor onde o padrão exigir; nos demais casos, mantenha os nomes do Astah. Registre cada decisão em `docs/DECISOES.md` (o que foi decidido, alternativas e motivo). **Só pare e pergunte** se algo impedir de continuar (ex.: falta de acesso, erro que você não consegue resolver) ou se a ação for destrutiva.
-
-**Ritmo de cada etapa:**
-1. Implemente a etapa inteira (classes, integração e testes).
-2. Rode todos os testes. Se algum falhar, corrija antes de seguir.
-3. Escreva o guia de estudo `docs/estudo/ETAPAxx_<tema>.md`: papéis do padrão → classes, fluxo do cenário passo a passo com valores concretos, respostas às perguntas "Na arguição, saiba explicar" do enunciado e um exercício de alteração ao vivo.
-4. Atualize `docs/PROGRESSO.md`, `docs/RASTREABILIDADE.md`, `REGISTRO_LLM.md` e `docs/uml/ATUALIZACOES_ASTAH.md` (o que muda no Astah, para a equipe fazer no fim).
-5. Faça commit e push para o GitHub com uma mensagem clara.
-6. Escreva no chat **um resumo de no máximo 5 linhas** do que foi feito e siga direto para a próxima etapa.
-
-**Se a sessão ficar longa ou for interrompida:** ao recomeçar, leia `docs/PROGRESSO.md` e continue de onde parou.
-
-**Entrega final (Etapa 6):**
-- Aplicação web rodando localmente com um comando descrito no README, cobrindo os cadastros e o fluxo reserva → empréstimo → renovação → devolução atrasada → multa.
-- `README.md` completo: como compilar, rodar e testar; arquitetura (pacotes = componentes); **uma seção por padrão** explicando em linguagem simples o problema, as classes e o fluxo; persistência JSON; ferramentas de IA usadas e em quais partes.
-- `docs/estudo/DEMO.md`: roteiro da demonstração de 5 minutos.
-- `docs/estudo/ARGUICAO.md`: as perguntas prováveis de cada padrão com respostas curtas, para a equipe estudar.
-- `docs/uml/ATUALIZACOES_ASTAH.md`: lista final do que mudar no Astah, organizada por diagrama.
-
-## Etapas
-
-- **Etapa 0 — Fundação:** projeto Maven, estrutura de pacotes, classes de domínio do Astah, tratadores, README com o comando único, `PROGRESSO.md`, `REGISTRO_LLM.md`, `RASTREABILIDADE.md`.
-- **Etapa 1 — Ciclo de vida do Livro:** State (Req 1).
-- **Etapa 2 — Cadastros e persistência:** Template Method (Req 7) e Abstract Factory (Req 8), com as famílias em memória e JSON.
-- **Etapa 3 — Circulação:** Facade (Req 4) e Command (Req 6).
-- **Etapa 4 — Devolução e financeiro:** Observer (Req 5), Strategy (Req 2) e Adapter (Req 3).
-- **Etapa 5 — Acervo e consulta:** Composite (Req 10) e Decorator (Req 9).
-- **Etapa 6 — Interface web e demonstração:** telas e APIs para cadastros e para o fluxo reserva → empréstimo → renovação → devolução atrasada → multa; README final (inclusive ferramentas de IA usadas); roteiro da demonstração de 5 minutos.
+- **Não crie** guias de estudo, registros de decisões, arquivos de progresso nem outros documentos de acompanhamento.
+- Documentos do repositório: `README.md`, `docs/RASTREABILIDADE.md`, `REGISTRO_LLM.md` (uma linha curta por pedido relevante; a coluna "Decisão da equipe" é só da equipe) e `docs/uml/`.
+- Antes de mudanças grandes (apagar ou reescrever partes do código, trocar a interface), explique em poucas linhas e pergunte.
+- Respostas no chat curtas e em linguagem simples.
+- Se o código mudar, regenere os diagramas com `ferramentas/astah/gerar.cmd` (Astah fechado).

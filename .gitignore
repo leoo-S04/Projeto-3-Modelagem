@@ -24,3 +24,6 @@ Thumbs.db
 # Arquivos temporários do Astah (trava enquanto o .asta está aberto; cópias de segurança)
 *.asta.lock
 *.asta.bak
+
+# Configuração local do Claude Code (servidor de pré-visualização)
+.claude/launch.json
