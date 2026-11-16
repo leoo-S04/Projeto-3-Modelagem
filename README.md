@@ -15,11 +15,7 @@ Pré-requisito: JDK 17 ou superior. O Maven Wrapper baixa o Maven na primeira ex
 |---|---|---|
 | **Compilar e rodar todos os testes** | `.\mvnw.cmd test` | `./mvnw test` |
 | Rodar a aplicação web | `.\mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
-<<<<<<< HEAD
 | Gerar e rodar o jar | `mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
-=======
-| Gerar e rodar o jar | `.\mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
->>>>>>> 3fb75c48f63d03256e70c01cca97031572520059
 
 Ao rodar a aplicação, o terminal para na linha `Started AplicacaoBiblioteca` e **fica assim de propósito**: o
 servidor está ligado. Deixe o terminal aberto e abra **http://localhost:8080** no navegador. Para desligar, volte ao
