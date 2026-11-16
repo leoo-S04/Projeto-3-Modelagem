@@ -73,7 +73,7 @@ Diagramas UML (classes de cada padrão, máquina de estados do Livro, sequência
 
 Dica: abra o estudante numa janela normal e o atendente numa janela anônima (cada janela tem o seu login).
 
-1. Rodar `.mvnw.cmd test`: os 10 cenários passam (108 testes, BUILD SUCCESS).
+1. Rodar `.\mvnw.cmd test`: os 10 cenários passam (108 testes, BUILD SUCCESS).
 2. **Administrador:** em Cadastros e credenciais, cadastrar estudante com um CPF que não existe → recusado; repetir a matrícula
    `M-100` → "já estava cadastrado" (Template Method).
 3. **Estudante Ana:** reservar *Dom Casmurro*. **Atendente Bruno:** em Reservas para aprovar, Aprovar empréstimo (Facade).
