@@ -14,10 +14,10 @@ if not exist "%ASTAH_HOME%\astah-api.jar" (
   echo Astah nao encontrado em "%ASTAH_HOME%". Defina a variavel ASTAH_HOME.
   exit /b 1
 )
-set "ASTA=PROJETO 2- Leo T, Vicente A, Pedro B e Gustavos L.asta"
+set "ASTA=Trabalho 03 - Biblioteca GoF.asta"
 set "OUT=target\astah"
 set "JAVA_ASTAH=%ASTAH_HOME%\jre\bin\java.exe"
-set "PNG=%OUT%\png\PROJETO 2- Leo T, Vicente A, Pedro B e Gustavos L"
+set "PNG=%OUT%\png\Trabalho 03 - Biblioteca GoF"
 set "DESTINO=target\astah\diagramas"
 
 echo [1/5] Compilando o projeto (as classes sao lidas do codigo compilado)...

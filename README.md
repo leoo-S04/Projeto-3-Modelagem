@@ -2,6 +2,8 @@
 
 PUCPR · Modelagem de Sistemas Computacionais · Prof. Edson Emilio Scalabrin · 2º semestre de 2026
 
+**Equipe:** Leo T., Vicente A., Pedro B. e Gustavos L.
+
 Cadastro, reserva, empréstimo, renovação e devolução de livros (Trabalhos 01 e 02), com os **dez padrões GoF** do
 Trabalho 03. Cada padrão tem um teste com o cenário do enunciado (`R01_` … `R10_`).
 
@@ -13,9 +15,17 @@ Pré-requisito: JDK 17 ou superior. O Maven Wrapper baixa o Maven na primeira ex
 |---|---|---|
 | **Compilar e rodar todos os testes** | `.\mvnw.cmd test` | `./mvnw test` |
 | Rodar a aplicação web | `.\mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
+<<<<<<< HEAD
 | Gerar e rodar o jar | `mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
+=======
+| Gerar e rodar o jar | `.\mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
+>>>>>>> 3fb75c48f63d03256e70c01cca97031572520059
 
-Abra **http://localhost:8080** e entre com um dos perfis (os atores do diagrama de casos de uso):
+Ao rodar a aplicação, o terminal para na linha `Started AplicacaoBiblioteca` e **fica assim de propósito**: o
+servidor está ligado. Deixe o terminal aberto e abra **http://localhost:8080** no navegador. Para desligar, volte ao
+terminal e aperte `Ctrl+C`. Os avisos `WARNING` no início vêm do Java 25 e não afetam nada.
+
+Na tela de login, entre com um dos perfis (os atores do diagrama de casos de uso):
 
 | Perfil | Login | Senha | O que faz |
 |---|---|---|---|
@@ -67,7 +77,7 @@ Diagramas UML (classes de cada padrão, máquina de estados do Livro, sequência
 
 Dica: abra o estudante numa janela normal e o atendente numa janela anônima (cada janela tem o seu login).
 
-1. Rodar `mvnw.cmd test`: os 10 cenários passam.
+1. Rodar `.\mvnw.cmd test`: os 10 cenários passam (108 testes, BUILD SUCCESS).
 2. **Administrador:** em Cadastros e credenciais, cadastrar estudante com um CPF que não existe → recusado; repetir a matrícula
    `M-100` → "já estava cadastrado" (Template Method).
 3. **Estudante Ana:** reservar *Dom Casmurro*. **Atendente Bruno:** em Reservas para aprovar, Aprovar empréstimo (Facade).

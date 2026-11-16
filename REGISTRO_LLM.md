@@ -1,7 +1,10 @@
 # Registro de uso de LLM
 
 Resumo dos principais pedidos feitos ao modelo e do que a equipe aceitou, corrigiu ou descartou
-(exigência do Trabalho 03). A coluna "Decisão da equipe" é preenchida pela equipe.
+(exigência do Trabalho 03). A coluna "Decisão da equipe" foi preenchida pela equipe.
+
+A equipe usou o modelo em todas as partes do trabalho (código, testes, diagramas e documentação) e aceitou as
+propostas como vieram, com uma exceção: a interface web, refeita a partir das ideias da equipe (linhas 16, 19 e 20).
 
 - **Ferramenta:** Claude Code (Anthropic), trabalhando direto no repositório.
 - **Modelo:** Claude Opus 5.5 (`claude-opus-5-5`).
@@ -17,14 +20,14 @@ Resumo dos principais pedidos feitos ao modelo e do que a equipe aceitou, corrig
 | 7 | Circulação | `Reserva`, `Emprestimo`, `Devolucao`, `Movimentacao`, `Relacionamento`, tratadores; apontou divergência na `Movimentacao` | Decidiu separar em 3 associações |
 | 8 | Fechar a Etapa 0 | 27 testes aprovados | Aceitou |
 | 9 | Planejar a Etapa 1 | 3 perguntas sobre vencimento, nomes dos eventos e recusas | Aceitou as recomendações (prazo de 30 dias) |
-| 10 | State (Req. 1) | `EstadoLivro` e os 7 estados; `Livro` delega os eventos | |
-| 11 | Seguir as etapas sem pedir aprovação a cada passo | Tratadores usando o State; teste R01 | |
-| 12 | Template Method (Req. 7) e Abstract Factory (Req. 8) | `TratadorDeCadastro`; fábricas memória/JSON; testes R07 e R08 | |
-| 13 | Facade (Req. 4) e Command (Req. 6) | `ServicoDeCirculacao`; solicitações de reserva e renovação; testes R04 e R06 | |
-| 14 | Observer (Req. 5), Strategy (Req. 2) e Adapter (Req. 3) | Ouvintes da devolução; 3 políticas de multa; adaptadores dos bancos A e B; testes R02, R03, R05 | |
-| 15 | Composite (Req. 10) e Decorator (Req. 9) | Organização do acervo em grupos; consulta com cache e medição; testes R09 e R10 | |
-| 16 | Interface web e demonstração | Aplicação Spring Boot com as telas; roteiro de demonstração | |
-| 17 | Diagramas do Astah e PDF | Diagramas de classes e de sequência dos 10 padrões e máquina de estados, gerados do código; `docs/uml/Trabalho03_Diagramas.pdf` | |
-| 18 | Enxugar o repositório | Removidos guias de estudo, registro de decisões e documentos de acompanhamento; README e rastreabilidade resumidos (o conteúdo antigo continua no histórico do Git) | |
-| 19 | Refazer a interface web com login e uma área para cada ator (estudante, atendente, administrador) | Login (senha = CPF; administrador fixo), controle de acesso por perfil, telas do estudante, do balcão do atendente e da administração; telas antigas e API JSON removidas; teste do fluxo web reescrito | |
-| 20 | Telas com boas-vindas e acompanhamento: barra do prazo, histórico, monitoramento colorido, consulta do empréstimo e ficha do estudante | Nova consulta de empréstimos na fachada (`consultarEmprestimos`, com `EmprestimoDTO` e `HistoricoDeEmprestimos`) e teste; telas do estudante, do atendente (balcão, monitoramento, consulta) e do administrador (estudantes, empréstimos) | |
+| 10 | State (Req. 1) | `EstadoLivro` e os 7 estados; `Livro` delega os eventos | Aceitou |
+| 11 | Seguir as etapas sem pedir aprovação a cada passo | Tratadores usando o State; teste R01 | Aceitou |
+| 12 | Template Method (Req. 7) e Abstract Factory (Req. 8) | `TratadorDeCadastro`; fábricas memória/JSON; testes R07 e R08 | Aceitou |
+| 13 | Facade (Req. 4) e Command (Req. 6) | `ServicoDeCirculacao`; solicitações de reserva e renovação; testes R04 e R06 | Aceitou |
+| 14 | Observer (Req. 5), Strategy (Req. 2) e Adapter (Req. 3) | Ouvintes da devolução; 3 políticas de multa; adaptadores dos bancos A e B; testes R02, R03, R05 | Aceitou |
+| 15 | Composite (Req. 10) e Decorator (Req. 9) | Organização do acervo em grupos; consulta com cache e medição; testes R09 e R10 | Aceitou |
+| 16 | Interface web e demonstração | Aplicação Spring Boot com as telas; roteiro de demonstração | Descartou: a equipe achou as telas técnicas demais; substituídas pelas telas por ator (linhas 19 e 20) |
+| 17 | Diagramas do Astah e PDF | Diagramas de classes e de sequência dos 10 padrões e máquina de estados, gerados do código; `docs/uml/Trabalho03_Diagramas.pdf` | Aceitou |
+| 18 | Enxugar o repositório | Removidos guias de estudo, registro de decisões e documentos de acompanhamento; README e rastreabilidade resumidos (o conteúdo antigo continua no histórico do Git) | Aceitou |
+| 19 | Refazer a interface web com login e uma área para cada ator (estudante, atendente, administrador) | Login (senha = CPF; administrador fixo), controle de acesso por perfil, telas do estudante, do balcão do atendente e da administração; telas antigas e API JSON removidas; teste do fluxo web reescrito | Corrigiu: ideia da equipe — login e uma tela para cada ator do diagrama de casos de uso |
+| 20 | Telas com boas-vindas e acompanhamento: barra do prazo, histórico, monitoramento colorido, consulta do empréstimo e ficha do estudante | Nova consulta de empréstimos na fachada (`consultarEmprestimos`, com `EmprestimoDTO` e `HistoricoDeEmprestimos`) e teste; telas do estudante, do atendente (balcão, monitoramento, consulta) e do administrador (estudantes, empréstimos) | Corrigiu: a equipe definiu o conteúdo das telas (barra do prazo, histórico, aviso de multa, monitoramento colorido, ficha do estudante) |
