@@ -13,11 +13,15 @@ Pré-requisito: JDK 17 ou superior. O Maven Wrapper baixa o Maven na primeira ex
 
 | O quê | Windows | Linux / macOS |
 |---|---|---|
-| **Compilar e rodar todos os testes** | `mvnw.cmd test` | `./mvnw test` |
-| Rodar a aplicação web | `mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
-| Gerar e rodar o jar | `mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
+| **Compilar e rodar todos os testes** | `.\mvnw.cmd test` | `./mvnw test` |
+| Rodar a aplicação web | `.\mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
+| Gerar e rodar o jar | `.\mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
 
-Abra **http://localhost:8080** e entre com um dos perfis (os atores do diagrama de casos de uso):
+Ao rodar a aplicação, o terminal para na linha `Started AplicacaoBiblioteca` e **fica assim de propósito**: o
+servidor está ligado. Deixe o terminal aberto e abra **http://localhost:8080** no navegador. Para desligar, volte ao
+terminal e aperte `Ctrl+C`. Os avisos `WARNING` no início vêm do Java 25 e não afetam nada.
+
+Na tela de login, entre com um dos perfis (os atores do diagrama de casos de uso):
 
 | Perfil | Login | Senha | O que faz |
 |---|---|---|---|
@@ -69,7 +73,7 @@ Diagramas UML (classes de cada padrão, máquina de estados do Livro, sequência
 
 Dica: abra o estudante numa janela normal e o atendente numa janela anônima (cada janela tem o seu login).
 
-1. Rodar `mvnw.cmd test`: os 10 cenários passam.
+1. Rodar `.mvnw.cmd test`: os 10 cenários passam (108 testes, BUILD SUCCESS).
 2. **Administrador:** em Cadastros e credenciais, cadastrar estudante com um CPF que não existe → recusado; repetir a matrícula
    `M-100` → "já estava cadastrado" (Template Method).
 3. **Estudante Ana:** reservar *Dom Casmurro*. **Atendente Bruno:** em Reservas para aprovar, Aprovar empréstimo (Facade).
