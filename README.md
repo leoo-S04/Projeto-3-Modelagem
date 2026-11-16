@@ -11,8 +11,8 @@ Pré-requisito: JDK 17 ou superior. O Maven Wrapper baixa o Maven na primeira ex
 
 | O quê | Windows | Linux / macOS |
 |---|---|---|
-| **Compilar e rodar todos os testes** | `mvnw.cmd test` | `./mvnw test` |
-| Rodar a aplicação web | `mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
+| **Compilar e rodar todos os testes** | `.\mvnw.cmd test` | `./mvnw test` |
+| Rodar a aplicação web | `.\mvnw.cmd spring-boot:run` | `./mvnw spring-boot:run` |
 | Gerar e rodar o jar | `mvnw.cmd package` e `java -jar target\biblioteca.jar` | `./mvnw package` e `java -jar target/biblioteca.jar` |
 
 Abra **http://localhost:8080** e entre com um dos perfis (os atores do diagrama de casos de uso):
