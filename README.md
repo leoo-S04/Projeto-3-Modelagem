@@ -2,6 +2,8 @@
 
 PUCPR · Modelagem de Sistemas Computacionais · Prof. Edson Emilio Scalabrin · 2º semestre de 2026
 
+**Equipe:** Leo T., Vicente A., Pedro B. e Gustavos L.
+
 Cadastro, reserva, empréstimo, renovação e devolução de livros (Trabalhos 01 e 02), com os **dez padrões GoF** do
 Trabalho 03. Cada padrão tem um teste com o cenário do enunciado (`R01_` … `R10_`).
 
